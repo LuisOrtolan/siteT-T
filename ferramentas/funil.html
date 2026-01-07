@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trilhas &amp; Tesouros - Forja do Funil (Nível 0)</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div id="header"></div>
+
+  <main class="container">
+    <section class="section-card funil-shell">
+      <div class="funil-title">
+        <div>
+          <h1>Forja do Funil (Nível 0)</h1>
+          <p class="muted">
+            O destino desta sessão é selado por um único presságio. Para mudar o resultado, vire a página.
+          </p>
+        </div>
+
+        <div class="funil-seed">
+          <span class="seed-label">Selo do Destino</span>
+          <span id="seed-value" class="seed-value">—</span>
+        </div>
+      </div>
+
+      <div class="funil-layout">
+        <aside class="funil-panel">
+          <div class="panel-block">
+            <h2>Ritual</h2>
+
+            <div class="panel-row">
+              <span class="panel-hint">Quantidade</span>
+              <div class="qty-buttons" role="group" aria-label="Quantidade de personagens">
+                <button class="qty-btn" data-qty="3" type="button">3</button>
+                <button class="qty-btn is-active" data-qty="4" type="button">4</button>
+                <button class="qty-btn" data-qty="5" type="button">5</button>
+                <button class="qty-btn" data-qty="6" type="button">6</button>
+              </div>
+            </div>
+
+            <div class="panel-row">
+              <label class="switch">
+                <input id="toggle-rolls" type="checkbox" checked />
+                <span class="slider"></span>
+                <span class="switch-label">Mostrar rolagens</span>
+              </label>
+            </div>
+
+            <div class="panel-row">
+              <label class="switch">
+                <input id="toggle-sound" type="checkbox" checked />
+                <span class="slider"></span>
+                <span class="switch-label">Som</span>
+              </label>
+            </div>
+
+            <div class="panel-actions">
+              <button id="btn-light" class="btn-primary" type="button">Acender a Vela</button>
+              <button id="btn-roll" class="btn-primary" type="button" disabled>Rolar Funil</button>
+              <button id="btn-export" class="btn-ghost" type="button" disabled>Exportar (.txt)</button>
+              <button id="btn-new-seed" class="btn-ghost" type="button">Virar a Página (Nova seed)</button>
+            </div>
+
+            <p id="pressagio" class="pressagio muted" aria-live="polite"></p>
+          </div>
+
+          <div class="panel-block panel-note">
+            <h2>Rolagens do Funil</h2>
+            <ul class="mini-list">
+              <li>Atributos: 3d6 (em ordem)</li>
+              <li>Raça: 3d6</li>
+              <li>Ocupação: d66 (dezena + unidade)</li>
+              <li>Fortuna: 1d20</li>
+              <li>Equipamentos: 2× (1d20) + 1× d66</li>
+            </ul>
+          </div>
+        </aside>
+
+        <section class="funil-board" aria-live="polite">
+          <div id="board-overlay" class="board-overlay" hidden>
+            <div class="overlay-card">
+              <div class="overlay-wax"></div>
+              <p>O papel range. A vela tremula. A tinta se prepara…</p>
+            </div>
+          </div>
+
+          <div id="cards" class="funil-cards"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+  <script src="../js/funil.js"></script>
+</body>
+</html>

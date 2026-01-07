@@ -1,0 +1,25 @@
+{
+  "dado": "1d20",
+  "mapa": {
+    "1": "Arpéu",
+    "11": "Pé de cabra",
+    "2": "Cajado de exploração",
+    "12": "5x Pitões",
+    "3": "Pederneira",
+    "13": "Mochila",
+    "4": "Corda (50’)",
+    "14": "5x Tochas",
+    "5": "Tinta (frasqueta) e pena",
+    "15": "5x Velas",
+    "6": "Espelho pequeno",
+    "16": "Saco de dormir",
+    "7": "5x Giz",
+    "17": "Utensílios de cozinha",
+    "8": "Lanterna",
+    "18": "2x Papiros",
+    "9": "Martelo",
+    "19": "Luneta",
+    "10": "2x Óleos (frasco)",
+    "20": "Armadura de couro (+2 CA)"
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "dado": "d66_osr",
+  "mapa": {
+    "11": {
+      "ocupacao": "Agricultor",
+      "arma_inicial": "Garfo de feno (1d6) - 2 mãos"
+    },
+    "12": {
+      "ocupacao": "Acadêmico*",
+      "arma_inicial": "Bengala (1d3)"
+    },
+    "13": {
+      "ocupacao": "Arauto",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "14": {
+      "ocupacao": "Bedel / Acólito",
+      "arma_inicial": "Maça leve (1d4)"
+    },
+    "15": {
+      "ocupacao": "Caçador",
+      "arma_inicial": "Arco curto (1d6) - 2 mãos"
+    },
+    "16": {
+      "ocupacao": "Caça-rato",
+      "arma_inicial": "Rede"
+    },
+    "21": {
+      "ocupacao": "Cartomante",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "22": {
+      "ocupacao": "Forasteiro / Ermitão",
+      "arma_inicial": "Espada curta (1d6)"
+    },
+    "23": {
+      "ocupacao": "Coveiro",
+      "arma_inicial": "Pá (1d4) - 2 mãos"
+    },
+    "24": {
+      "ocupacao": "Cozinheiro",
+      "arma_inicial": "Cutelo (1d4)"
+    },
+    "25": {
+      "ocupacao": "Cata-bosta",
+      "arma_inicial": "Pá (1d4) - 2 mãos"
+    },
+    "26": {
+      "ocupacao": "Chaveiro",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "31": {
+      "ocupacao": "Curandeiro / Herbalista",
+      "arma_inicial": "Clava (1d4)"
+    },
+    "32": {
+      "ocupacao": "Enólogo / Cervejeiro",
+      "arma_inicial": "Funda (1d4)"
+    },
+    "33": {
+      "ocupacao": "Artesão**",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "34": {
+      "ocupacao": "Escudeiro",
+      "arma_inicial": "Espada curta (1d6)"
+    },
+    "35": {
+      "ocupacao": "Estivador",
+      "arma_inicial": "Porrete (1d4)"
+    },
+    "36": {
+      "ocupacao": "Ferreiro",
+      "arma_inicial": "Martelo de ferraria (1d4)"
+    },
+    "41": {
+      "ocupacao": "Fora de lei***",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "42": {
+      "ocupacao": "Guia / Condutor de carroça",
+      "arma_inicial": "Cajado (1d4) - 2 mãos"
+    },
+    "43": {
+      "ocupacao": "Jardineiro",
+      "arma_inicial": "Pá (1d4) - 2 mãos"
+    },
+    "44": {
+      "ocupacao": "Lenhador",
+      "arma_inicial": "Machado (1d6)"
+    },
+    "45": {
+      "ocupacao": "Mineiro",
+      "arma_inicial": "Picareta (1d6) - 2 mãos"
+    },
+    "46": {
+      "ocupacao": "Marinheiro",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "51": {
+      "ocupacao": "Mascate",
+      "arma_inicial": "Cajado (1d4) - 2 mãos"
+    },
+    "52": {
+      "ocupacao": "Cuidador de animais****",
+      "arma_inicial": "Cajado (1d4) - 2 mãos"
+    },
+    "53": {
+      "ocupacao": "Pedreiro",
+      "arma_inicial": "Martelo grande (1d6) - 2 mãos"
+    },
+    "54": {
+      "ocupacao": "Postilhão (carteiro)",
+      "arma_inicial": "Cajado (1d4) -2 mãos"
+    },
+    "55": {
+      "ocupacao": "Guarda",
+      "arma_inicial": "Espada curta (1d6)"
+    },
+    "56": {
+      "ocupacao": "Mercante / Taverneiro",
+      "arma_inicial": "Besta pequena (1d6) - 2 mãos"
+    },
+    "61": {
+      "ocupacao": "Pescador",
+      "arma_inicial": "1d3 Azagaias (1d6)"
+    },
+    "62": {
+      "ocupacao": "Tiradentes / Barbeiro",
+      "arma_inicial": "Adaga (1d4)"
+    },
+    "63": {
+      "ocupacao": "Artista*****",
+      "arma_inicial": "Dardo (1d3)"
+    },
+    "64": {
+      "ocupacao": "Mendingo",
+      "arma_inicial": "Funda (1d4)"
+    },
+    "65": {
+      "ocupacao": "Causídico (advogado)",
+      "arma_inicial": "Bengala (1d3)"
+    },
+    "66": {
+      "ocupacao": "Nobre falido",
+      "arma_inicial": "Espada curta (1d6)"
+    }
+  }
+}

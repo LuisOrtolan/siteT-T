@@ -1,0 +1,21 @@
+{
+  "dado": "3d6",
+  "mapa": {
+    "3": "Halfling",
+    "4": "Halfling",
+    "5": "Anão",
+    "6": "Anão",
+    "7": "Humano",
+    "8": "Humano",
+    "9": "Humano",
+    "10": "Humano",
+    "11": "Humano",
+    "12": "Humano",
+    "13": "Humano",
+    "14": "Humano",
+    "15": "Jotunir*",
+    "16": "Jotunir*",
+    "17": "Elfo",
+    "18": "Elfo"
+  }
+}

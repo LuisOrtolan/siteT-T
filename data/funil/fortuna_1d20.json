@@ -1,0 +1,85 @@
+{
+  "dado": "1d20",
+  "mapa": {
+    "1": {
+      "fortuna": "Nervos de aço",
+      "explicacao": "+2 em Salvamentos contra efeitos de Medo"
+    },
+    "2": {
+      "fortuna": "Sobrevivente",
+      "explicacao": "Você começa com 1d6 de vida (ao invés de 1d4). Além disso, possui um bônus de +2 em SF de CON para ver se sobrevive ao cair com menos de 0 PV’s."
+    },
+    "3": {
+      "fortuna": "Corpo fechado",
+      "explicacao": "+1 em Salvamentos Físicos"
+    },
+    "4": {
+      "fortuna": "Mente afiada",
+      "explicacao": "+1 em Salvamentos Mentais"
+    },
+    "5": {
+      "fortuna": "Beijado pelas Nornes",
+      "explicacao": "Pode rolar de novo qualquer teste que fizer (ou que fizerem contra você), ficando com o melhor resultado. 1x/dia (2x a partir do nível 5)"
+    },
+    "6": {
+      "fortuna": "Olhos de lince",
+      "explicacao": "Enxerga melhor que o normal. Dobre a distância sob luz de tochas ou penumbra (no caso de Elfos e Anões, role novamente)"
+    },
+    "7": {
+      "fortuna": "Sangue de Dragão",
+      "explicacao": "Resiste melhor ao calor. Recebe 2 pontos a menos de dano por efeitos de fogo para cada dado de dano, e +2 em SF contra calor (no caso de Jotunirs, role novamente)."
+    },
+    "8": {
+      "fortuna": "Sangue Polar",
+      "explicacao": "Resiste melhor ao frio. Recebe 2 pontos a menos de dano por efeitos de gelo para cada dado de dano, e +2 em SF contra frio (no caso de Jotunirs, role novamente)."
+    },
+    "9": {
+      "fortuna": "Sobreviveu à praga",
+      "explicacao": "+2 em Salvamentos contra doenças"
+    },
+    "10": {
+      "fortuna": "Picado por escorpião",
+      "explicacao": "+2 em Salvamentos contra venenos"
+    },
+    "11": {
+      "fortuna": "Descendente de gigantes",
+      "explicacao": "+1 em SF de FOR, e +1 de ataque e dano em ataques  melee"
+    },
+    "12": {
+      "fortuna": "Olhos de falcão",
+      "explicacao": "+1 de ataque e dano em ataques à distância"
+    },
+    "13": {
+      "fortuna": "Sentidos da pantera",
+      "explicacao": "-1 de chance nas jogadas para ver se é surpreendido (mínimo 1 em 6)"
+    },
+    "14": {
+      "fortuna": "Aura inspiradora",
+      "explicacao": "Os aliados próximos recebem +1 em testes de Moral e em Salvamentos contra efeitos de Medo"
+    },
+    "15": {
+      "fortuna": "Costas de ferro",
+      "explicacao": "A capacidade de carga do personagem aumenta em +1 slot."
+    },
+    "16": {
+      "fortuna": "Pulmões de aço",
+      "explicacao": "Pode prender a respiração pelo dobro do tempo normal, e tem +2 em Salvamentos contra efeitos de via respiratória"
+    },
+    "17": {
+      "fortuna": "Sonhos premonitórios",
+      "explicacao": "1 vez por mês, o personagem recebe alguma premonição importante em seus sonhos (a cargo do Mestre)"
+    },
+    "18": {
+      "fortuna": "Língua da Babilônia",
+      "explicacao": "O personagem tem extrema facilidade com novos idiomas. Sempre que se deparar pela primeira vez com um idioma desconhecido, existe uma chance de 2 em 6 de ele conseguir entendê-lo minimamente para travar uma conversa (essa chance pode ser modificada pelo Mestre dependendo da raridade do idioma)"
+    },
+    "19": {
+      "fortuna": "Reflexos rápidos",
+      "explicacao": "Nos casos de Iniciativa, age primeiro em situações de empate"
+    },
+    "20": {
+      "fortuna": "Escorregadio",
+      "explicacao": "+1 na CA"
+    }
+  }
+}
