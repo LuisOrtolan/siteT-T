@@ -8,93 +8,103 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
+<div id="header"></div>
+
+<main class="container">
+  <section class="section-card trilha-header">
+    <div class="trilha-icone-grande"></div>
+    <div>
+      <h1>Trilha: Bardo</h1>
+      <p>
+        Bardos usam arte e performance para influenciar mentes de forma quase mágica:
+        canções, danças, poesia e discursos que alteram o clima do combate e do mundo social.
+      </p>
     </div>
+  </section>
 
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
+  <section class="section-card">
+    <h2>Características</h2>
 
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
+    <h3>Ataques</h3>
+    <ul><li>Adicionam <strong>1/3 do rank</strong> em ataques melee e à distância.</li></ul>
 
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
+    <h3>Armas</h3>
+    <ul><li>Sabem usar <strong>armas simples</strong> e <strong>armas leves</strong>.</li></ul>
 
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
+    <h3>Armaduras</h3>
+    <ul>
+      <li>Sabem usar <strong>armaduras leves</strong>, mas <strong>não escudos</strong>.</li>
+      <li><strong>Elmos</strong> impedem o uso das Habilidades.</li>
+    </ul>
+  </section>
 
-  </header>
+  <section class="section-card">
+    <h2>Bônus de Trilha Principal</h2>
+    <ul>
+      <li>Começa conhecendo <strong>+2 performances</strong> (Balada/Coda/Hino).</li>
+      <li>Pode manter <strong>+1 Balada</strong> ao mesmo tempo.</li>
+      <li>Com <strong>CAR 15+</strong>, recebe +1 em Testes de Performance.</li>
+      <li>Criar performances custa <strong>10% menos</strong>.</li>
+    </ul>
+  </section>
 
-  <main class="container">
-    <section class="section-card trilha-header">
-      <div class="trilha-icone-grande"></div>
-      <div>
-        <h1>Trilha: Bardo</h1>
-        <p>
-          EM DESENVOLVIMENTO
-        </p>
-      </div>
-    </section>
+  <section class="section-card">
+    <h2>Habilidades do Bardo</h2>
 
-    <section class="section-card">
-      <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <h3>Baladas</h3>
+    <p>
+      Para iniciar uma Balada, gaste a rodada inteira performando.
+      Depois disso, pode manter enquanto faz outras ações.
+      Pode combinar 2 Baladas no 4º rank e 3 no 8º; cada uma dura até 10 rodadas.
+    </p>
+    <p>
+      Em combate, precisa de <strong>Teste de Performance</strong> (1d20 + rank ≥ dificuldade).
+      Falhar impede usar aquela Balada até 1 dia de descanso.
+    </p>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
-      <ul>
-          EM DESENVOLVIMENTO
-      </ul>
-    </section>
+    <h3>Hinos</h3>
+    <p>
+      Performances longas e fora de combate. Não combinam com Baladas/Hinos.
+      1 vez ao dia (2 vezes no 5º rank); exige instrumento musical.
+    </p>
 
-    <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <h3>Coda</h3>
+    <p>
+      Final explosivo de uma performance. Só pode usar com pelo menos 1 Balada ativa;
+      quanto mais Baladas, mais forte. Exige Teste de Performance.
+    </p>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-      <div id="magias-trilha-bardo" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
-    </section>
-  </main>
+    <h3>Performances conhecidas</h3>
+    <p>
+      No rank 1, começa com 2 opções entre Balada, Coda e Hino.
+      Novas performances podem ser aprendidas/estudadas ou criadas.
+      A primeira utilização tem -3 no teste; vai reduzindo até masterizar.
+    </p>
+
+    <h3>Música libertadora</h3>
+    <p>
+      Quando um aliado sofre influência mental, o Bardo pode gastar a rodada para ajudá-lo
+      a refazer o SM com bônus igual à metade do rank do Bardo.
+      Pode fazer isso rank vezes ao dia.
+    </p>
+
+    <h3>Instrumentos</h3>
+    <p>
+      Instrumentos específicos dão bônus adicionais às Baladas e Codas.
+    </p>
+
+    <div id="magias-trilha-bardo" class="lista-magias-trilha">
+      <!-- músicas/magias aparecem aqui via JS -->
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+
+<script src="../js/magias.js"></script>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

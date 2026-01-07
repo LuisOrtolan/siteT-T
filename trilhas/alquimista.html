@@ -8,103 +8,97 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
+<div id="header"></div>
+
+<main class="container">
+  <section class="section-card trilha-header">
+    <div class="trilha-icone-grande"></div>
+    <div>
+      <h1>Trilha: Alquimista</h1>
+      <p>
+        Alquimistas criam poções, unguentos, venenos e granadas com efeitos variados.
+        Sua arte mistura ciência, instinto e risco… e às vezes transforma ferro em ouro.
+      </p>
     </div>
+  </section>
 
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
+  <section class="section-card">
+    <h2>Características</h2>
 
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
+    <h3>Ataques</h3>
+    <ul>
+      <li>Adicionam <strong>1/3 do rank</strong> em ataques à distância para <strong>arremessos</strong>.</li>
+      <li>Adicionam <strong>1/4 do rank</strong> em ataques melee e outros ataques à distância.</li>
+    </ul>
 
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
+    <h3>Armas</h3>
+    <ul><li>Sabem usar <strong>adagas, cajados, dardos e fundas</strong>.</li></ul>
 
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
+    <h3>Armaduras</h3>
+    <ul><li>Não usam armaduras nem escudos (salvo exceções específicas das fórmulas).</li></ul>
+  </section>
 
-  </header>
+  <section class="section-card">
+    <h2>Bônus de Trilha Principal</h2>
+    <ul>
+      <li>Começa com <strong>+2 Fórmulas Comuns</strong> ou <strong>+1 Veneno Comum</strong>.</li>
+      <li>Produz <strong>2d3 doses por lote</strong> (em vez de 1d3).</li>
+      <li>Chance de lote defeituoso é <strong>-1</strong> (mín. 0).</li>
+      <li>Venenos: produz <strong>2 doses</strong> por criação.</li>
+      <li>Arremessos com frascos/granadas podem usar <strong>metade do rank</strong>.</li>
+      <li>Começa com <strong>2d4 doses</strong> distribuídas entre fórmulas conhecidas (ou 1d3 de venenos).</li>
+    </ul>
+  </section>
 
-  <main class="container">
-    <section class="section-card trilha-header">
-      <div class="trilha-icone-grande"></div>
-      <div>
-        <h1>Trilha: Alquimista</h1>
-        <p>
-          EM DESENVOLVIMENTO
-        </p>
-      </div>
-    </section>
+  <section class="section-card">
+    <h2>Habilidades do Alquimista</h2>
 
-    <section class="section-card">
-      <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <ul>
+      <li><strong>-1 PV por rank</strong>.</li>
+      <li>+1 em SF/SM contra poções e venenos (cresce +1 no 3º e a cada 3 ranks).</li>
+    </ul>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
-      <ul>
-          EM DESENVOLVIMENTO
-      </ul>
-    </section>
+    <h3>Fórmulas</h3>
+    <p>
+      Para criar poções, precisa de laboratório e matéria-prima.
+      Cada lote gera <strong>1d3 doses</strong>
+      com chance de imperfeição (3/6; 2/6 dobrando custo; 1/6 triplicando).
+    </p>
 
-    <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <h3>Venenos</h3>
+    <p>
+      Cria 1 dose com chance de imperfeição (2/6; cai para 1/6 no 4º; zera no 8º).
+    </p>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-        A lista abaixo será preenchida automaticamente com as magias, poderes
-        ou recursos da trilha <strong>Alquimista</strong>, com base no arquivo
-        de dados (magias.json) e no script de magias.
-      </p>
-      <div id="magias-trilha-alquimista" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
-    </section>
-  </main>
+    <h3>Repertório inicial</h3>
+    <ul>
+      <li>Começa com <strong>2 Fórmulas Comuns</strong> ou <strong>1 Veneno Comum</strong>.</li>
+      <li>Pode aprender novas receitas achadas/ensinadas/experimentadas.</li>
+    </ul>
 
-  <footer class="footer">
-    <p>Trilhas &amp; Tesouros — Sistema de RPG © 2025</p>
-  </footer>
+    <h3>Conhecimento de causa</h3>
+    <p>
+      Identifica poções pelo cheiro/aparência: 3/6 (4/6 no 4º; 5/6 no 8º).
+    </p>
 
-  <script src="../js/magias.js"></script>
+    <h3>Criando novas fórmulas</h3>
+    <p>
+      Combina Ingredientes e essências:
+      2 ingredientes no início; 3 no 4º rank; 4 no 7º; 5 no 10º.
+    </p>
+
+    <div id="magias-trilha-alquimista" class="lista-magias-trilha">
+      <!-- fórmulas/venenos aparecem aqui via JS -->
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+
+<script src="../js/magias.js"></script>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
 </body>
 </html>

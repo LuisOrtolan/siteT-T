@@ -8,93 +8,107 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
+<div id="header"></div>
+
+<main class="container">
+  <section class="section-card trilha-header">
+    <div class="trilha-icone-grande"></div>
+    <div>
+      <h1>Trilha: Troca-peles</h1>
+      <p>
+        Troca-peles dominam rituais antigos para assumir a forma de bestas selvagens,
+        dividindo sua alma humana com instintos animais.
+      </p>
     </div>
+  </section>
 
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
+  <section class="section-card">
+    <h2>Características</h2>
 
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
+    <h3>Ataques</h3>
+    <ul><li>Adicionam <strong>metade do rank</strong> em ataques melee ou à distância.</li></ul>
 
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
+    <h3>Armas</h3>
+    <ul><li>Sabem usar armas simples e leves.</li></ul>
 
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
+    <h3>Armaduras</h3>
+    <ul><li>Podem usar qualquer armadura e escudo (mas ver Forma Selvagem).</li></ul>
+  </section>
 
-  </header>
+  <section class="section-card">
+    <h2>Bônus de Trilha Principal</h2>
+    <ul>
+      <li>Começa com <strong>+1 Forma Animal</strong> (podendo ter Miúda ou Grande).</li>
+      <li>Ao transformar, PV temporário vira <strong>1d6/HD</strong> (em vez de 1d4).</li>
+      <li>Perde <strong>1 INT a menos</strong> ao adquirir nova forma/transformar rápido.</li>
+      <li>Com <strong>CON 15+</strong>, transforma 1 vez a mais por dia.</li>
+      <li>No 10º rank pode assumir algumas bestas fantásticas.</li>
+    </ul>
+  </section>
 
-  <main class="container">
-    <section class="section-card trilha-header">
-      <div class="trilha-icone-grande"></div>
-      <div>
-        <h1>Trilha: Troca Peles</h1>
-        <p>
-          EM DESENVOLVIMENTO
-        </p>
-      </div>
-    </section>
+  <section class="section-card">
+    <h2>Habilidades do Troca-peles</h2>
 
-    <section class="section-card">
-      <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <ul>
+      <li>+1 em SF contra efeitos que alteram seu corpo contra vontade (cresce).</li>
+    </ul>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
-      <ul>
-          EM DESENVOLVIMENTO
-      </ul>
-    </section>
+    <h3>Forma Selvagem</h3>
+    <p>
+      Pode se transformar em animal conhecido 1 vez por dia por rank ímpar.
+      Mantém HD, PV, SM, Ataque e traços mentais; ganha CA, SF, dano natural
+      e traços físicos da criatura, além de PV temporários (d4 × HD).
+      Dura horas = metade do rank.
+    </p>
+    <ul>
+      <li>5º rank: fala idiomas humanoides na forma animal.</li>
+      <li>9º rank: entende/comunica com espécies das formas mesmo como humano.</li>
+    </ul>
 
-    <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <h3>Tempo de ritual</h3>
+    <ul>
+      <li>Ranks 1-3: 10 min (1 turno).</li>
+      <li>Ranks 4-6: 1d3+1 rodadas.</li>
+      <li>Ranks 7+: 1 rodada.</li>
+    </ul>
+    <p>
+      Desde o 3º rank, pode transformar como Ação Normal, mas perde <strong>1d4 INT</strong>.
+      No 5º, vira Movimento; no 7º, Reação (custa 1d6 INT).
+    </p>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-      <div id="magias-trilha-troca-peles" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
-    </section>
-  </main>
+    <h3>Equipamento</h3>
+    <p>
+      Itens não servem na forma animal.
+      A partir do 3º rank, incorpora magia: leves e Carga Leve;
+      6º: médias/escudos/itens até Carga Média;
+      9º: tudo, incluindo pesadas e elmos.
+    </p>
+
+    <h3>Transformação parcial (5º rank)</h3>
+    <p>
+      Pode transformar parte do corpo por 1d3 turnos, com bônus acordado com o Mestre.
+      No 9º rank, mantém duas transformações parciais ao mesmo tempo.
+    </p>
+
+    <h3>Novas Formas Selvagens</h3>
+    <p>
+      Ao adquirir nova forma, faz SM de VON com penalidade igual ao número de formas.
+      Falha causa perda permanente de INT e característica animal.
+      INT ≤ 2 transforma o personagem em besta permanentemente.
+    </p>
+
+    <div id="magias-trilha-troca-peles" class="lista-magias-trilha">
+      <!-- formas/rituais aparecem aqui via JS se você quiser no futuro -->
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+
+<script src="../js/magias.js"></script>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

@@ -8,93 +8,120 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
+<div id="header"></div>
+
+<main class="container">
+  <section class="section-card trilha-header">
+    <div class="trilha-icone-grande"></div>
+    <div>
+      <h1>Trilha: Arcanista</h1>
+      <p>
+        Arcanistas dominam a magia arcana por meio de estudo, pactos ou práticas raras.
+        São magos, bruxos, feiticeiros e afins — moldando a realidade com feitiços
+        e arriscando a própria sanidade no processo.
+      </p>
     </div>
+  </section>
 
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
+  <section class="section-card">
+    <h2>Características</h2>
 
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
+    <h3>Ataques</h3>
+    <ul>
+      <li>Adicionam <strong>1/4 do rank</strong> em ataques melee ou à distância.</li>
+    </ul>
 
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
+    <h3>Armas</h3>
+    <ul>
+      <li>Sabem usar <strong>adagas, cajados, dardos e fundas</strong>.</li>
+    </ul>
 
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
+    <h3>Armaduras</h3>
+    <ul>
+      <li><strong>Não</strong> podem usar armaduras nem escudos.</li>
+    </ul>
+  </section>
 
-  </header>
+  <section class="section-card">
+    <h2>Bônus de Trilha Principal</h2>
+    <ul>
+      <li>Se tiver <strong>INT 15+</strong>, conjura <strong>1 feitiço extra de 1º círculo por dia</strong>.</li>
+      <li>Não precisa memorizar <strong>Detectar/Ler Magias</strong> (sempre disponível gastando 1 círculo).</li>
+      <li>Começa sabendo <strong>2 feitiços adicionais de 1º círculo</strong>.</li>
+    </ul>
 
-  <main class="container">
-    <section class="section-card trilha-header">
-      <div class="trilha-icone-grande"></div>
-      <div>
-        <h1>Trilha: Arcanista</h1>
-        <p>
-          EM DESENVOLVIMENTO
-        </p>
-      </div>
-    </section>
+    <h3>Queima-arcana</h3>
+    <p>
+      O Arcanista pode deteriorar a própria saúde para conjurar mais do que deveria:
+      ao conjurar sem gastar uso diário, ele “queima” permanentemente
+      <strong>1d3 pontos de CON ou FOR por círculo</strong>.
+      Isso permite conjurar círculos acima do acesso atual ou feitiços não memorizados.
+    </p>
+  </section>
 
-    <section class="section-card">
-      <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+  <section class="section-card">
+    <h2>Habilidades do Arcanista</h2>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
-      <ul>
-          EM DESENVOLVIMENTO
-      </ul>
-    </section>
+    <ul>
+      <li><strong>-1 PV por rank</strong>.</li>
+    </ul>
 
-    <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <h3>Grimório e memorização</h3>
+    <p>
+      O Arcanista possui um repertório de feitiços conhecidos em um <strong>grimório</strong>
+      (qualquer objeto que funcione como foco, sempre ocupando 1 slot).
+      Ele pode memorizar <strong>rank + mod INT</strong> feitiços (se positivo),
+      trocando após descanso completo de 6h + 1h de estudo.
+    </p>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-        EM DESENVOLVIMENTO
-      </p>
-      <div id="magias-trilha-arcanista" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
-    </section>
-  </main>
+    <h3>Feitiços por dia</h3>
+    <p>
+      O número de feitiços diários por círculo depende do rank.  
+      (Você já tem a tabela no documento; se quiser eu transformo depois em tabela HTML bonitinha.)
+    </p>
+
+    <h3>Conjuração e instabilidade</h3>
+    <ul>
+      <li>Conjurar normalmente gasta a rodada inteira; precisa voz e ao menos uma mão livre.</li>
+      <li>Se sofrer dano/perturbação durante conjuração, faz <strong>SM de VON</strong> para completar.</li>
+      <li>
+        <strong>Magia instável:</strong> repetir feitiço no mesmo dia exige 1d20.
+        Se sair ≤ 2 × número de repetições extras, algo sai do controle (ex.: 2ª vez: 2-; 3ª: 4-…).
+        Falha no SM também exige essa rolagem (1/20 se foi a 1ª conjuração).
+      </li>
+    </ul>
+
+    <h3>Repertório inicial</h3>
+    <ul>
+      <li>Começa com <strong>Detectar/Ler Magias</strong> + 1 feitiço de 1º círculo à escolha.</li>
+      <li>Role 1 vez na tabela de <strong>Corrupções</strong>.</li>
+    </ul>
+
+    <h3>Aprendendo feitiços</h3>
+    <p>
+      Pode copiar feitiços encontrados em pergaminhos/grimórios (pergaminhos são destruídos).
+      Também pode desenvolver feitiços próprios, pagando preço alto em tempo, dinheiro e sacrifício pessoal
+      (podendo gerar Corrupção).
+    </p>
+
+    <h3>Especialização (5º rank)</h3>
+    <p>
+      Pode se especializar em uma escola: feitiços da escola causam +2 dano e impõem -2 nos Salvamentos;
+      outras escolas sofrem -2 dano e +2 nos Salvamentos. Custos de aprendizado ajustam 20%.
+    </p>
+
+    <div id="magias-trilha-arcanista" class="lista-magias-trilha">
+      <!-- feitiços arcanos aparecem aqui via JS -->
+    </div>
+  </section>
+</main>
+
+<div id="footer"></div>
+
+<script src="../js/magias.js"></script>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

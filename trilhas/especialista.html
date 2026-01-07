@@ -8,53 +8,7 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
-    </div>
-
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
-
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
-
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
-
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
-
-  </header>
+  <div id="header"></div>
 
   <main class="container">
     <section class="section-card trilha-header">
@@ -62,39 +16,95 @@
       <div>
         <h1>Trilha: Especialista</h1>
         <p>
-          EM DESENVOLVIMENTO
+          Especialistas são personagens com uma gama de habilidades para situações diversas.
+          Podem ser ladrões, rastreadores, armadilheiros,
+          exploradores urbanos e outros profissionais da sobrevivência.
         </p>
       </div>
     </section>
 
     <section class="section-card">
       <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
+
+      <h3>Ataques</h3>
+      <ul>
+        <li>Adicionam <strong>metade do rank</strong> em ataques melee <em>ou</em> à distância.</li>
+      </ul>
+
+      <h3>Armas</h3>
+      <ul>
+        <li>Sabem usar <strong>armas simples</strong> e <strong>armas leves</strong>.</li>
+      </ul>
+
+      <h3>Armaduras</h3>
+      <ul>
+        <li>Sabem usar <strong>armaduras leves</strong>, mas <strong>não escudos</strong>.</li>
+      </ul>
     </section>
 
     <section class="section-card">
       <h2>Bônus de Trilha Principal</h2>
       <ul>
-          EM DESENVOLVIMENTO
+        <li>Você pode fazer <strong>2 interações no ambiente</strong> em 1 turno de exploração.</li>
+        <li>Você é melhor do que outros em <strong>despistar inimigos</strong> ou <strong>fugir do combate</strong> (o Mestre leva isso em consideração).</li>
+        <li>Começa o jogo com <strong>2 Talentos adicionais</strong>.</li>
       </ul>
     </section>
 
     <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+      <h2>Habilidades do Especialista</h2>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
+      <h3>Ágil de mente e corpo</h3>
+      <ul>
+        <li>Escolha um atributo: você recebe <strong>+1 nos Salvamentos</strong> desse atributo.</li>
+        <li>No <strong>4º</strong> e <strong>8º ranks</strong>, pode escolher outro atributo para receber o bônus.</li>
+      </ul>
+
+      <h3>Talentos</h3>
       <p>
-          EM DESENVOLVIMENTO
+        Talentos são o cerne da Trilha: especializações nas quais o personagem tem maestria.
+        Normalmente, possuir um Talento já indica vantagem automática naquela área.
       </p>
-      <div id="magias-trilha-especialista" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
+      <p>
+        Se o Mestre considerar necessário um teste, o Especialista tem <strong>2 em 6</strong> de sucesso
+        (+1 no 3º rank e a cada rank ímpar subsequente; no 9º rank, só falha se tirar 6 em ambos os d6).
+      </p>
+      <p>
+        A maioria dos Talentos é limitada por armas/armaduras que o Especialista sabe usar.
+        Talentos que ignoram essa regra são indicados em <em>itálico</em>.
+      </p>
+
+      <p><strong>No 1º rank, escolha 1 Talento:</strong></p>
+
+      <ol class="lista-tecnicas">
+        <li><strong>Acurácia:</strong> abre fechaduras e opera mecanismos com gazuas; +1 em SF contra armadilhas físicas (bônus cresce +1 no 3º rank e a cada 3 ranks).</li>
+        <li><strong>Passado Arcano:</strong> usa itens mágicos como pergaminhos/varinhas/runas como se tivesse a Trilha correspondente (rank equivalente).</li>
+        <li><strong>Sentidos Aguçados:</strong> interpreta sons/cheiros/temperatura com precisão; no 5º rank, identifica venenos/poções pelo cheiro.</li>
+        <li><strong>Decifrar:</strong> decifra textos mundanos/criptografados; no 5º rank, reduz ambiguidades.</li>
+        <li><strong>Escalar:</strong> escala superfícies sem equipamento; Movimento Especial +10’ no 5º rank (+20’ no 9º); +1 em SF contra quedas (cresce).</li>
+        <li><strong>Furtividade:</strong> some nas sombras e anda sem som; melhora no 5º e 9º rank; inimigos têm +2 de chance de surpresa contra você (até 5/6).</li>
+        <li><strong>Linguista:</strong> aprende um idioma extra; entende intenção de fala desconhecida; pode escolher várias vezes.</li>
+        <li><strong>Punga:</strong> furta/esconde objetos sem ser notado; chance depende do rank vs nível/HD do alvo.</li>
+        <li><strong>Sobressaltar:</strong> contra alvos surpreendidos em melee: +4 ataque e dano dobrado (triplica no 5º, quadruplica no 9º).</li>
+        <li><strong>Leitura Labial:</strong> lê lábios a distância média (longa no 4º; qualquer distância com visão clara no 9º).</li>
+        <li><strong>Rastrear:</strong> segue vestígios e obtém dados detalhados; penalidade menor de Movimento; sem penalidade no 5º.</li>
+        <li><strong>Viajante:</strong> escolhe um terreno Domínio; vantagens em viagem e guia aliados (4 + mod CAR, cresce).</li>
+        <li><strong>Armadilheiro:</strong> cria armadilhas bem disfarçadas; +2 dano por dado (+4 no 4º, +6 no 9º).</li>
+        <li><strong>Disfarce:</strong> muda aparência/voz com apetrechos; chance depende do rank vs nível/HD.</li>
+        <li><strong>Forjador:</strong> falsifica documentos/selos; no 5º rank basta conhecer bem o objeto.</li>
+        <li><strong>Tiro de Tocaia:</strong> contra alvos surpreendidos à distância: +4 ataque, dano dobrado (triplica no 5º, quadruplica no 9º).</li>
+        <li><strong>Ventriloquismo:</strong> projeta voz para outro lugar; chance depende do rank vs nível/HD.</li>
+        <li><strong>Acrobacias:</strong> cordas/rapel/escapadas; reduz dano de queda em 1d6 (2d6 no 5º, 3d6 no 9º).</li>
+        <li><strong>Reflexos Rápidos:</strong> sem armadura e Carga Leve: dobra mod DES na CA; +1 SF DES contra efeitos visíveis (cresce).</li>
+        <li><strong>Olhos de Gato:</strong> move metade e foca em outros sentidos; percebe entorno a 30’ (60’ no 5º); não usável em combate.</li>
+      </ol>
     </section>
   </main>
+
+  <div id="footer"></div>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

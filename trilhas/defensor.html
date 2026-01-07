@@ -8,93 +8,70 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
+<div id="header"></div>
+
+<main class="container">
+  <section class="section-card trilha-header">
+    <div class="trilha-icone-grande"></div>
+    <div>
+      <h1>Trilha: Defensor</h1>
+      <p>
+        Defensores são muralhas vivas: especialistas em se proteger e
+        proteger aliados, chamando a atenção dos inimigos e aguentando o impacto.
+      </p>
     </div>
+  </section>
 
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
+  <section class="section-card">
+    <h2>Características</h2>
 
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
+    <h3>Ataques</h3>
+    <ul><li>Adicionam <strong>metade do rank</strong> em ataques melee e à distância.</li></ul>
 
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
+    <h3>Armas</h3>
+    <ul><li>Sabem usar armas melee e arremesso (não projéteis).</li></ul>
 
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
+    <h3>Armaduras</h3>
+    <ul><li>Sabem usar qualquer armadura e escudos.</li></ul>
+  </section>
 
-  </header>
+  <section class="section-card">
+    <h2>Bônus de Trilha Principal</h2>
+    <ul>
+      <li>Dado de vida vira <strong>1d8</strong>.</li>
+      <li>Ao subir de nível, pode rerrolar DV se cair 1 ou 2.</li>
+      <li>É melhor em chamar a atenção dos inimigos (Mestre considera).</li>
+      <li>Começa com <strong>+1 Proteção</strong>.</li>
+    </ul>
+  </section>
 
-  <main class="container">
-    <section class="section-card trilha-header">
-      <div class="trilha-icone-grande"></div>
-      <div>
-        <h1>Trilha: Defensor</h1>
-        <p>
-          EM DESENVOLVIMENTO
-        </p>
-      </div>
-    </section>
+  <section class="section-card">
+    <h2>Habilidades do Defensor</h2>
 
-    <section class="section-card">
-      <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <ul>
+      <li>Recebem <strong>2 PV extras por rank</strong>.</li>
+    </ul>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
-      <ul>
-          EM DESENVOLVIMENTO
-      </ul>
-    </section>
+    <h3>Proteções</h3>
+    <p>No 1º rank, escolha 1 Proteção:</p>
 
-    <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
+    <ol class="lista-tecnicas">
+      <li><strong>Falange:</strong> bônus de escudos (exceto broquel) na CA e SF aumenta +1 (+2 no 5º).</li>
+      <li><strong>Resistência ao aço:</strong> com armadura pesada ganha RD 1; +1 RD no 4º e a cada 4 ranks. No 7º, vale contra elementos também.</li>
+      <li><strong>Irremovível:</strong> com armadura média/pesada, +1 SF FOR contra empurrões/derrubadas (cresce no 3º e a cada 3).</li>
+      <li><strong>Protetor:</strong> inimigos em melee com você sofrem -1 ataques contra aliados (-2 no 4º; -3 no 8º).</li>
+      <li><strong>Juggernaut:</strong> montado com armadura pesada: +1 CA para você e montaria (+2 no 5º), +1 SF contra ser derrubado (cresce), dano de lança de investida triplica; no 5º pode transferir metade do dano à montaria.</li>
+      <li><strong>Liderança:</strong> gasta a rodada coordenando aliados: +1 ataque ou CA até próxima rodada (+2 no 4º; +3 no 7º), podendo dividir.</li>
+      <li><strong>Segunda pele:</strong> armaduras ocupam 1 slot a menos (2 no 4º; 3 no 8º; mínimo 1 slot).</li>
+      <li><strong>Cabeça dura:</strong> chance de atordoar ao “quebrar elmo” é 1 menor (2 menor no 4º; 3 menor no 8º). No 5º, elmos dão +1 CA.</li>
+    </ol>
+  </section>
+</main>
 
-    <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-      <div id="magias-trilha-defensor" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
-    </section>
-  </main>
+<div id="footer"></div>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

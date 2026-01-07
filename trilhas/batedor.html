@@ -8,93 +8,171 @@
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="logo">
-      <a href="../index.html">Trilhas &amp; Tesouros</a>
-    </div>
-
-    <nav class="nav">
-      <ul class="nav-list">
-        <li><a href="../index.html">Início</a></li>
-
-        <li class="has-dropdown">
-          <a href="#">Regras ▾</a>
-          <ul class="dropdown">
-            <li><a href="../regras/sistema-basico.html">Sistema básico</a></li>
-            <li><a href="../regras/criacao-personagem.html">Criação de Personagem</a></li>
-            <li><a href="../regras/racas.html">Raças</a></li>
-            <li><a href="../regras/atributos.html">Atributos</a></li>
-            <li><a href="../regras/testes.html">Testes</a></li>
-            <li><a href="../regras/combate.html">Combate</a></li>
-            <li><a href="../regras/danos-condicoes.html">Danos e Condições</a></li>
-            <li><a href="../regras/evoluindo.html">Evoluindo</a></li>
-          </ul>
-        </li>
-
-        <li class="has-dropdown">
-          <a href="#">Trilhas ▾</a>
-          <ul class="dropdown">
-            <li><a href="../trilhas/combatente.html">Combatente</a></li>
-            <li><a href="../trilhas/batedor.html">Batedor</a></li>
-            <li><a href="../trilhas/especialista.html">Especialista</a></li>
-            <li><a href="../trilhas/arcanista.html">Arcanista</a></li>
-            <li><a href="../trilhas/xama.html">Xamã</a></li>
-            <li><a href="../trilhas/sacerdote.html">Sacerdote</a></li>
-            <li><a href="../trilhas/mestre-das-feras.html">Mestre das feras</a></li>
-            <li><a href="../trilhas/lorde-runico.html">Lorde Rúnico</a></li>
-            <li><a href="../trilhas/bardo.html">Bardo</a></li>
-            <li><a href="../trilhas/alquimista.html">Alquimista</a></li>
-            <li><a href="../trilhas/defensor.html">Defensor</a></li>
-            <li><a href="../trilhas/troca-peles.html">Troca-peles</a></li>
-          </ul>
-        </li>
-
-        <li><a href="../magias/index.html">Magias</a></li>
-        <li><a href="../sobre.html">Sobre</a></li>
-      </ul>
-    </nav>
-
-  </header>
+  <div id="header"></div>
 
   <main class="container">
+    <!-- Cabeçalho da trilha -->
     <section class="section-card trilha-header">
       <div class="trilha-icone-grande"></div>
       <div>
         <h1>Trilha: Batedor</h1>
         <p>
-          EM DESENVOLVIMENTO
+          Batedores são especializados em fazer reconhecimento do campo de batalha,
+          alertas aos perigos e estar sempre prontos para a ação. Por isso, normalmente
+          carregam pouco peso e usam armaduras leves,
+          além de serem mestres em armas de longo alcance.
         </p>
       </div>
     </section>
 
+    <!-- Características -->
     <section class="section-card">
       <h2>Características</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-    </section>
 
-    <section class="section-card">
-      <h2>Bônus de Trilha Principal</h2>
+      <h3>Ataques</h3>
       <ul>
-          EM DESENVOLVIMENTO
+        <li><strong>Ataques à distância:</strong> adicionam seu <strong>rank</strong>.</li>
+        <li><strong>Ataques melee:</strong> adicionam <strong>metade do rank</strong>.</li>
+      </ul>
+
+      <h3>Armas</h3>
+      <ul>
+        <li>Sabem usar <strong>qualquer tipo de arma</strong>, exceto armas de haste e lanças de cavalaria.</li>
+      </ul>
+
+      <h3>Armaduras</h3>
+      <ul>
+        <li>Sabem usar <strong>armaduras leves e médias</strong>, e também <strong>escudos</strong>.</li>
       </ul>
     </section>
 
+    <!-- Bônus de trilha principal -->
     <section class="section-card">
-      <h2>Habilidades</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
+      <h2>Bônus de Trilha Principal</h2>
+      <ul>
+        <li>
+          Você se sai melhor que os outros quando tenta um truque ou manobra de combate
+          <strong>à distância</strong>.
+        </li>
+        <li>
+          No <strong>4º rank</strong>, você passa a ter <strong>acertos críticos à distância</strong>
+          com rolagens de <strong>19 ou 20</strong> no dado (<strong>18–20</strong> a partir do 8º rank).
+        </li>
+        <li>
+          Em casos de empate na <strong>Iniciativa</strong>, você age primeiro.
+        </li>
+        <li>
+          Se possuir <strong>DES 15 ou mais</strong>, a chance de você ser surpreendido é
+          <strong>1 ponto menor</strong> (mínimo de 1 em 6).
+        </li>
+        <li>
+          Você começa o jogo com <strong>1 Façanha adicional</strong>.
+        </li>
+      </ul>
     </section>
 
+    <!-- Habilidades -->
     <section class="section-card">
-      <h2>Magias &amp; poderes da trilha</h2>
-      <p>
-          EM DESENVOLVIMENTO
-      </p>
-      <div id="magias-trilha-batedor" class="lista-magias-trilha">
-        <!-- magias da trilha serão inseridas aqui via JS -->
-      </div>
+      <h2>Habilidades do Batedor</h2>
+
+      <h3>Progressão</h3>
+      <ul>
+        <li>Recebem <strong>1 PV extra por rank</strong>.</li>
+        <li>No <strong>5º rank</strong>: podem fazer <strong>2 ataques por rodada</strong> (desde que todos sejam à distância).</li>
+        <li>No <strong>9º rank</strong>: podem fazer <strong>3 ataques por rodada</strong> (desde que todos sejam à distância).</li>
+      </ul>
+
+      <h3>Façanhas de Batedor</h3>
+      <p>No 1º rank, o Batedor pode escolher (ou rolar) uma das façanhas abaixo:</p>
+
+      <ol class="lista-tecnicas">
+        <li>
+          <strong>Maestria em Arma:</strong>
+          escolha um tipo específico de arma de projétil ou arremessada.
+          Você recebe <strong>+1 de dano</strong> com ela.
+          No <strong>3º rank</strong> (e a cada 3 ranks), esse bônus aumenta em +1.
+          A partir do <strong>5º rank</strong>, quando tiver um acerto crítico, role
+          um dado de dano adicional da arma.
+          <em>Pode ser escolhida mais de uma vez, para armas diferentes.</em>
+        </li>
+
+        <li>
+          <strong>Arremesso Duplo:</strong>
+          se estiver segurando uma arma de arremesso leve em cada mão, pode jogá-las
+          na mesma rodada contra o mesmo alvo ou alvos diferentes com <strong>-2 nos ataques</strong>.
+          No <strong>5º rank</strong>, a penalidade vira <strong>-1</strong>, e no 9º rank não há penalidade.
+          Você também pode arremessar a arma da mão inábil enquanto corre em direção ao inimigo
+          e ainda realizar um ataque melee na mesma rodada (com as mesmas penalidades).
+        </li>
+
+        <li>
+          <strong>Tiro Múltiplo:</strong>
+          usando arma de projétil (exceto bestas), pode se movimentar enquanto recarrega.
+          Além disso, pode usar um ataque para disparar <strong>2 projéteis</strong> contra o mesmo alvo:
+          <strong>-2 no ataque</strong> e <strong>+2 no dano</strong>.
+          No <strong>5º rank</strong>, pode disparar até <strong>3 projéteis</strong>:
+          <strong>-4 no ataque</strong> e <strong>+4 no dano</strong>.
+        </li>
+
+        <li>
+          <strong>Besteiro:</strong>
+          ao usar bestas ou armas com recarga demorada, você pode armá-las mais rápido:
+          <strong>1 movimento</strong> em vez de gastar a Ação inteira.
+          Seus tiros também diminuem a <strong>RD do alvo em 1</strong> (em <strong>2</strong> a partir do 5º rank).
+        </li>
+
+        <li>
+          <strong>Tiro Longo:</strong>
+          as penalidades por atirar/arremessar além da distância curta são
+          <strong>1 ponto menores</strong> (2 pontos menores a partir do 5º rank).
+          Também diminui penalidades por atirar enquanto engajado em melee:
+          <strong>-1</strong> na penalidade (-2 no 4º rank, -3 no 8º rank).
+        </li>
+
+        <li>
+          <strong>Passos Leves:</strong>
+          pode atravessar terreno normal sem deixar rastros, reduzindo seu Movimento Base em 10’.
+          No <strong>5º rank</strong>, pode se mover normalmente sem deixar rastros.
+        </li>
+
+        <li>
+          <strong>Passos Largos:</strong>
+          sem armadura ou com armadura leve, e em Carga Média ou menor,
+          aumenta seu Movimento Base em <strong>10’</strong> durante viagens pelos ermos.
+          No <strong>5º rank</strong>, esse bônus vale para todo tipo de Movimento (exceto Especial).
+        </li>
+
+        <li>
+          <strong>Mestre das Facas:</strong>
+          pode segurar várias armas pequenas arremessáveis (facas, dardos, etc.) em uma mão.
+          Ao atacar, pode arremessar todas de uma vez com <strong>-1 no ataque</strong>
+          e <strong>+1 de dano</strong> para cada arma adicional além da primeira.
+          Pode segurar 2 armas no início, 3 no 5º rank e 4 no 9º rank.
+        </li>
+
+        <li>
+          <strong>Tiro Preciso:</strong>
+          reduz chance de acertar um aliado ao atirar em inimigo engajado em melee para
+          <strong>25%</strong> (em vez de 50%).
+          No <strong>5º rank</strong>, não há mais chance de acertar aliado (exceto falha crítica).
+          Também diminui penalidades ao atirar montado para <strong>-2</strong>
+          (-1 no 4º rank, sem penalidade no 8º rank).
+        </li>
+
+        <li>
+          <strong>Sempre no Alvo:</strong>
+          se o alvo estiver sob cobertura, ela conta como <strong>1 categoria menor</strong>
+          nas penalidades (média vira pequena).
+          No <strong>5º rank</strong>, a cobertura passa a valer <strong>2 categorias menores</strong>.
+        </li>
+      </ol>
     </section>
   </main>
+
+  <div id="footer"></div>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>
