@@ -1,206 +1,246 @@
-// js/magias.js
-// Lê data/magias.json e preenche:
-// - a página Magias & Poderes (lista completa + filtros)
-// - as seções de magias em cada Trilha (div.lista-magias-trilha[data-trilha])
+/*
+  Trilhas & Tesouros — Magias/Poderes
 
-let TODAS_MAGIAS = [];
+  Como usar:
+  - Em páginas de lista (magias/*.html):
+      <section id="lista-magias" data-magias="../data/magias_feiticos.json,..."></section>
+    + inputs (opcionais):
+      #busca-magia, #filtro-trilha, #filtro-tipo, #filtro-circulo
 
-// Descobre o caminho base para chegar em /data/magias.json
-function getBasePath() {
-  const path = window.location.pathname;
+  - Em páginas de trilha (trilhas/*.html):
+      <div class="lista-magias-trilha" data-trilha="Arcanista" data-magias="../data/magias_feiticos.json"></div>
 
-  // Páginas em subpastas usam "../"
-  if (
-    path.includes("/trilhas/") ||
-    path.includes("/regras/") ||
-    path.includes("/magias/")
-  ) {
-    return "../";
+  Obs.: O JSON deve ser um array de objetos com pelo menos:
+    { nome, tipo, trilha, circulo_ou_grau, descricao }
+*/
+
+(function () {
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  function uniq(arr) {
+    return Array.from(new Set(arr));
   }
 
-  // Páginas na raiz (index.html, sobre.html, etc.)
-  return "";
-}
+  function toNumberMaybe(v) {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
 
-function criarCardMagia(magia) {
-  const artigo = document.createElement("article");
-  artigo.className = "magia-card";
+  function normalize(str) {
+    return (str || "").toString().trim();
+  }
 
-  const circulo =
-    magia.circulo_ou_grau !== undefined && magia.circulo_ou_grau !== null
-      ? magia.circulo_ou_grau
-      : "?";
+  function splitSources(value) {
+    if (!value) return [];
+    return value
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
 
-  artigo.innerHTML = `
-    <h3 class="magia-titulo">${magia.nome}</h3>
-    <p class="magia-meta">
-      <span class="magia-trilha">${magia.trilha || ""}</span>
-      &bull;
-      <span class="magia-tipo">${magia.tipo || ""}</span>
-      &bull;
-      <span class="magia-circulo">Círculo/Grau ${circulo}</span>
-    </p>
-    ${
-      magia.resumo
-        ? `<p class="magia-resumo">${magia.resumo}</p>`
-        : ""
+  async function fetchJson(url) {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) {
+      throw new Error(`Falha ao carregar ${url}: ${res.status}`);
     }
-    <details class="magia-detalhes">
-      <summary>Detalhes</summary>
-      <p><strong>Tradição:</strong> ${magia.tradicao || "-"}</p>
-      <p><strong>Alcance:</strong> ${magia.alcance || "-"}</p>
-      <p><strong>Duração:</strong> ${magia.duracao || "-"}</p>
-      <p><strong>Alvo:</strong> ${magia.alvo || "-"}</p>
-      ${
-        magia.descricao
-          ? `<p class="magia-descricao">${magia.descricao}</p>`
-          : ""
-      }
-    </details>
-  `;
+    return res.json();
+  }
 
-  return artigo;
-}
+  function sortEntries(a, b) {
+    const ta = normalize(a.tipo);
+    const tb = normalize(b.tipo);
+    if (ta !== tb) return ta.localeCompare(tb, "pt-BR");
 
-// Página de Magias & Poderes (lista geral + filtros)
-function popularPaginaMagias() {
-  const lista = document.getElementById("lista-magias");
-  if (!lista) return; // não estamos em magias/index.html
+    const trA = normalize(a.trilha);
+    const trB = normalize(b.trilha);
+    if (trA !== trB) return trA.localeCompare(trB, "pt-BR");
 
-  const buscaInput = document.getElementById("busca-magia");
-  const trilhaSelect = document.getElementById("filtro-trilha");
+    const ca = toNumberMaybe(a.circulo_ou_grau) ?? 0;
+    const cb = toNumberMaybe(b.circulo_ou_grau) ?? 0;
+    if (ca !== cb) return ca - cb;
 
-  function aplicaFiltros() {
-    const termo = (buscaInput && buscaInput.value
-      ? buscaInput.value.toLowerCase()
-      : ""
-    ).trim();
+    return normalize(a.nome).localeCompare(normalize(b.nome), "pt-BR");
+  }
 
-    const trilhaFiltro =
-      trilhaSelect && trilhaSelect.value
-        ? trilhaSelect.value
-        : "todas";
+  function makeCard(entry) {
+    const article = document.createElement("article");
+    article.className = "magia-card";
 
-    lista.innerHTML = "";
+    const header = document.createElement("div");
+    header.className = "magia-header";
 
-    let filtradas = TODAS_MAGIAS.slice();
+    const nome = document.createElement("div");
+    nome.className = "magia-nome";
+    nome.textContent = normalize(entry.nome);
 
-    if (trilhaFiltro !== "todas") {
-      filtradas = filtradas.filter(
-        (m) => (m.trilha || "").toLowerCase() === trilhaFiltro.toLowerCase()
-      );
-    }
+    const tag = document.createElement("div");
+    tag.className = "magia-trilha-tag";
+    tag.textContent = normalize(entry.trilha || entry.subtipo || "");
 
-    if (termo) {
-      filtradas = filtradas.filter((m) => {
-        const nome = (m.nome || "").toLowerCase();
-        const resumo = (m.resumo || "").toLowerCase();
-        const tipo = (m.tipo || "").toLowerCase();
-        return (
-          nome.includes(termo) ||
-          resumo.includes(termo) ||
-          tipo.includes(termo)
-        );
-      });
-    }
+    header.appendChild(nome);
+    if (tag.textContent) header.appendChild(tag);
 
-    // Ordena por trilha, círculo e nome
-    filtradas.sort((a, b) => {
-      const trilhaA = (a.trilha || "").localeCompare(b.trilha || "");
-      if (trilhaA !== 0) return trilhaA;
+    const meta = document.createElement("div");
+    meta.className = "magia-meta";
 
-      const circA = a.circulo_ou_grau || 0;
-      const circB = b.circulo_ou_grau || 0;
-      if (circA !== circB) return circA - circB;
+    const tipo = normalize(entry.tipo);
+    const circ = entry.circulo_ou_grau !== undefined && entry.circulo_ou_grau !== null ? String(entry.circulo_ou_grau) : "";
+    const parts = [];
+    if (tipo) parts.push(`Tipo: ${tipo}`);
+    if (circ) parts.push(`Círculo/Grau: ${circ}`);
+    if (normalize(entry.raridade)) parts.push(`Raridade: ${normalize(entry.raridade)}`);
+    if (normalize(entry.sigla)) parts.push(`Runa: ${normalize(entry.sigla)}`);
+    meta.textContent = parts.join(" • ");
 
-      return (a.nome || "").localeCompare(b.nome || "");
-    });
+    const details = document.createElement("details");
+    details.className = "magia-details";
 
-    if (filtradas.length === 0) {
-      const vazio = document.createElement("p");
-      vazio.className = "magia-vazia";
-      vazio.textContent = "Nenhuma magia encontrada com esses filtros.";
-      lista.appendChild(vazio);
+    const summary = document.createElement("summary");
+    summary.textContent = "Detalhes";
+
+    const desc = document.createElement("div");
+    desc.className = "magia-descricao";
+    desc.textContent = normalize(entry.descricao);
+
+    details.appendChild(summary);
+    details.appendChild(desc);
+
+    article.appendChild(header);
+    if (meta.textContent) article.appendChild(meta);
+    if (desc.textContent) article.appendChild(details);
+
+    return article;
+  }
+
+  function renderList(container, items) {
+    container.innerHTML = "";
+    if (!items.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "Nenhum resultado encontrado.";
+      container.appendChild(empty);
       return;
     }
+    items.forEach((m) => container.appendChild(makeCard(m)));
+  }
 
-    filtradas.forEach((magia) => {
-      lista.appendChild(criarCardMagia(magia));
+  function populateCircles(select, items) {
+    if (!select) return;
+    const current = select.value;
+    const circles = uniq(
+      items
+        .map((m) => m.circulo_ou_grau)
+        .filter((v) => v !== undefined && v !== null && String(v).trim() !== "")
+        .map((v) => String(v))
+    ).sort((a, b) => (Number(a) || 0) - (Number(b) || 0));
+
+    // Keep the first option ("Todos") and rebuild the rest
+    const first = select.querySelector("option");
+    select.innerHTML = "";
+    if (first) select.appendChild(first);
+    circles.forEach((c) => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      select.appendChild(opt);
+    });
+    // restore selection if possible
+    if (current && circles.includes(current)) select.value = current;
+  }
+
+  function applyFilters(allItems, controls) {
+    const q = normalize(controls.q?.value).toLowerCase();
+    const trilha = normalize(controls.trilha?.value);
+    const tipo = normalize(controls.tipo?.value);
+    const circulo = normalize(controls.circulo?.value);
+
+    return allItems.filter((m) => {
+      const nome = normalize(m.nome).toLowerCase();
+      if (q && !nome.includes(q)) return false;
+      if (trilha && normalize(m.trilha) !== trilha) return false;
+      if (tipo && normalize(m.tipo) !== tipo) return false;
+      if (circulo && String(m.circulo_ou_grau) !== circulo) return false;
+      return true;
     });
   }
 
-  if (buscaInput) {
-    buscaInput.addEventListener("input", aplicaFiltros);
-  }
-  if (trilhaSelect) {
-    trilhaSelect.addEventListener("change", aplicaFiltros);
-  }
-
-  aplicaFiltros();
-}
-
-// Seções de magias em cada página de Trilha
-function popularListasPorTrilha() {
-  const containers = document.querySelectorAll(
-    ".lista-magias-trilha[data-trilha]"
-  );
-  if (!containers.length) return;
-
-  containers.forEach((container) => {
-    const trilha = container.getAttribute("data-trilha");
-    if (!trilha) return;
-
-    let magiasTrilha = TODAS_MAGIAS.filter(
-      (m) => (m.trilha || "").toLowerCase() === trilha.toLowerCase()
+  async function loadAllMagiasFromPage() {
+    // Collect every data-magias used on the page
+    const sources = uniq(
+      $$('[data-magias]')
+        .flatMap((el) => splitSources(el.dataset.magias))
+        .filter(Boolean)
     );
 
-    // Ordena cronologicamente por círculo e depois por nome
-    magiasTrilha.sort((a, b) => {
-      const circA = a.circulo_ou_grau || 0;
-      const circB = b.circulo_ou_grau || 0;
-      if (circA !== circB) return circA - circB;
-      return (a.nome || "").localeCompare(b.nome || "");
-    });
-
-    container.innerHTML = "";
-
-    if (!magiasTrilha.length) {
-      const vazio = document.createElement("p");
-      vazio.className = "magia-vazia";
-      vazio.textContent =
-        "Nenhuma magia cadastrada ainda para esta trilha.";
-      container.appendChild(vazio);
-      return;
+    // Backward-compatible default
+    if (!sources.length) {
+      const defaultEl = $("#lista-magias");
+      if (defaultEl) sources.push("../data/magias.json");
     }
 
-    magiasTrilha.forEach((magia) => {
-      container.appendChild(criarCardMagia(magia));
+    const loaded = [];
+    for (const url of sources) {
+      try {
+        const data = await fetchJson(url);
+        if (Array.isArray(data)) {
+          data.forEach((m) => loaded.push({ ...m, __source: url }));
+        }
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+
+    return loaded.sort(sortEntries);
+  }
+
+  function renderMagiasPage(allItems) {
+    const container = $("#lista-magias");
+    if (!container) return;
+
+    const controls = {
+      q: $("#busca-magia"),
+      trilha: $("#filtro-trilha"),
+      tipo: $("#filtro-tipo"),
+      circulo: $("#filtro-circulo"),
+    };
+
+    function update() {
+      const filtered = applyFilters(allItems, controls).sort(sortEntries);
+      // circle options depend on current trilha/tipo filters to stay relevant
+      const subsetForCircles = applyFilters(allItems, { ...controls, q: { value: "" }, circulo: { value: "" } });
+      populateCircles(controls.circulo, subsetForCircles);
+      renderList(container, filtered);
+    }
+
+    [controls.q, controls.trilha, controls.tipo, controls.circulo].forEach((el) => {
+      if (!el) return;
+      el.addEventListener("input", update);
+      el.addEventListener("change", update);
     });
+
+    populateCircles(controls.circulo, allItems);
+    update();
+  }
+
+  function renderTrilhaSections(allItems) {
+    const containers = $$(".lista-magias-trilha");
+    if (!containers.length) return;
+
+    containers.forEach((el) => {
+      const trilha = normalize(el.dataset.trilha);
+      const sources = splitSources(el.dataset.magias);
+      let items = allItems;
+      if (sources.length) items = items.filter((m) => sources.includes(m.__source));
+      if (trilha) items = items.filter((m) => normalize(m.trilha) === trilha);
+      items = items.sort(sortEntries);
+      renderList(el, items);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const allItems = await loadAllMagiasFromPage();
+    if (!allItems.length) return;
+    renderMagiasPage(allItems);
+    renderTrilhaSections(allItems);
   });
-}
-
-// Carregamento inicial
-document.addEventListener("DOMContentLoaded", function () {
-  const basePath = getBasePath();
-  const url = basePath + "data/magias.json";
-
-  fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Erro ao carregar magias.json: " + response.status);
-      }
-      return response.json();
-    })
-    .then((dados) => {
-      if (!Array.isArray(dados)) {
-        throw new Error("Formato inválido de magias.json (esperado array).");
-      }
-      TODAS_MAGIAS = dados;
-
-      popularPaginaMagias();
-      popularListasPorTrilha();
-    })
-    .catch((erro) => {
-      console.error(erro);
-    });
-});
+})();

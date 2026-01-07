@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trilhas &amp; Tesouros - Músicas</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div id="header"></div>
+
+  <main class="container">
+    <section class="section-card">
+      <h1>Músicas</h1>
+      <p>Músicas de Bardo.</p>
+
+      <div class="filtros-magias">
+        <label>
+          Buscar por nome:
+          <input type="text" id="busca-magia" placeholder="Digite o nome..." />
+        </label>
+
+        
+
+        
+
+        <label>
+          Filtrar por Categoria:
+          <select id="filtro-circulo">
+            <option value="">Todos</option>
+          </select>
+        </label>
+      </div>
+
+      <section id="lista-magias" class="lista-magias" data-magias="../data/magias_musicas.json">
+        <!-- Itens serão renderizados via JS -->
+      </section>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="../js/magias.js"></script>
+  <script src="../js/include.js"></script>
+  <script>
+    loadLayout("../");
+  </script>
+</body>
+</html>

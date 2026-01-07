@@ -1,0 +1,154 @@
+[
+  {
+    "id": "ritual-1-raizes-enredantes",
+    "nome": "Raízes Enredantes",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: 60’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 rodada\nDescrição: do solo brotam vinhas que transformam a área em terreno difícil. Criaturas na área fazem SF de FOR; em falha, ficam Imobilizadas (podem repetir o SF no fim de cada rodada). Requisito: plantas e raízes próximas ou solo fértil.\nDados extras: cada +1 Dado aumenta a área em +10’x10’ ou impõe -2 à SF (escolha a cada Dado)."
+  },
+  {
+    "id": "ritual-1-susurro-do-vento",
+    "nome": "Susurro do vento",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Ar\nDuração: até o recebimento da mensagem\nAlcance: 1 milha\nAlvo: 1 criatura conhecida (nome ou rosto conhecido)\nTempo de conjuração: 1 rodada\nDescrição: sua mensagem (até 5 palavras) viaja nos ventos até o alvo; somente ele ouve em sussurros. Questões de clima extremo ou paredes espessas podem distorcer.\nDados extras: cada +1 Dado aumenta o alcance em +1 milha ou permite +5 palavras"
+  },
+  {
+    "id": "ritual-1-seiva-restauradora",
+    "nome": "Seiva restauradora",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: resina morna fecha feridas superficiais: o alvo recupera 1d6 PV’s\nDados extras: cada +1 Dado adiciona +1d6 PV ou remove 1 veneno ou doença não-mágica."
+  },
+  {
+    "id": "ritual-1-moldar-agua",
+    "nome": "Moldar Água",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Água\nDuração: 1 turno / dado\nAlcance: 30’\nAlvo: 1 m³ de água\nTempo de conjuração: 1 rodada\nDescrição: move, congela (crosta fina), ou cria correntes fracas. Não cria água do nada. Requisito: água presente.\nDados extras: +1 m³ por Dado ou fortalece um dos efeitos (congelamento mais resistente, corrente mais forte, etc.)."
+  },
+  {
+    "id": "ritual-1-brasa-ancestral",
+    "nome": "Brasa Ancestral",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Fogo\nDuração: instantânea\nAlcance: 40’\nAlvo: 1 criatura ou 1 objeto\nTempo de conjuração: 1 rodada\nDescrição: lança uma brasa etérea que causa 1d6 fogo e pode acender objetos secos. SF de DES reduz o dano à metade.\nRequisito: chama ou brasas por perto.\nDados extras: cada +1 Dado adiciona +1d6 ou salta para um novo alvo a até 10’ do anterior."
+  },
+  {
+    "id": "ritual-1-manto-de-formigas",
+    "nome": "Manto de Formigas",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Terra\nDuração: 1 turno / dado\nAlcance: 90’\nAlvo: área de 20’x20’\nTempo de conjuração: 2 rodadas\nDescrição: Você entoa um cântico e derrama mel / frutas esmagadas sobre o chão, convocando um enxame que cobre a área com mil mordidas inquietas.\nCriaturas que entrarem na área ou começarem o turno nela sofrem 1d4 de dano e fazem SF de FOR; em falha, ficam lentas (-10’ de Mov.) e -2 nos ataques até o fim do próximo turno (podem gastar 1 ação para espantar as formigas e remover esse efeito).\nRequisito: presença de solo vivo/insetos ou isca adequada.\nDados extras: cada +1 Dado adiciona +10’x10’ de área, ou +1d4 de dano das formigas, ou até 2 criaturas aliadas são ignoradas pelas formigas (escolha por dado)"
+  },
+  {
+    "id": "ritual-1-pele-de-casca",
+    "nome": "Pele de Casca",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: a pele fica áspera como casca, o alvo recebe +2 CA.\nDados extras: +2 CA por dado extra ou a armadura cria espinhos, causando 1d4 pontos de dano por Dado extra em quem atacar o alvo em melee. Escolha por dado."
+  },
+  {
+    "id": "ritual-1-passos-sem-rastros",
+    "nome": "Passos sem rastros",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 hora / dado\nAlcance: Pessoal\nAlvo: o Xamã e mais 2 criaturas em volta\nTempo de conjuração: 1 rodada\nDescrição: barulho reduzido, a flora coopera com a passagem do grupo e eles deixam poucos vestígios de sua passagem. Penalidades para outras criaturas ouvir e rastrear.\nDados extras: +2 criatura por dado extra"
+  },
+  {
+    "id": "ritual-1-olhos-de-corvo",
+    "nome": "Olhos de Corvo",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Ar\nDuração: 1 hora / dado\nAlcance: 1 milha\nAlvo: 1 ave selvagem\nTempo de conjuração: 1 turno\nDescrição: você vê e ouve pelos sentidos da ave; enquanto durar o efeito, fica Cego/Surdo do próprio corpo.\nDados extras: +1 milha por Dado extra"
+  },
+  {
+    "id": "ritual-1-voz-das-bestas",
+    "nome": "Voz das Bestas",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Terra\nDuração: 1 turno / dado\nAlcance: 30’\nAlvo: Animais Silvestres\nTempo de conjuração: 1 rodada\nDescrição: você comunica ideias simples a animais e os acalma. Animais muito hostis fazem SM de VON."
+  },
+  {
+    "id": "ritual-1-pedra-vigia",
+    "nome": "Pedra Vigia",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 8 horas\nAlcance: toque\nAlvo: uma pedra\nTempo de conjuração: 1 turno\nDescrição: consagra um totem-alarme: quando uma criatura hostil cruza um raio de 20’, você ouve um toque de alerta em sua mente\nDados extras: +1 Dado, +10’ de raio ou permite que 1 aliado também ouça o alarme,"
+  },
+  {
+    "id": "ritual-1-dardo-de-espinho",
+    "nome": "Dardo de Espinho",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: 60’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: espinhos voam e se cravam envenenando o alvo. O veneno causa 1d4 de dano + 1d4 no próximo turno. SF de CON para evitar o dano do veneno.\nRequisito: espinhos/galhos rígidos.\nDados extras: +1 Dado para cada +1 criatura atingida ou para dar -2 no SF para resistir ao veneno"
+  },
+  {
+    "id": "ritual-1-correia-de-vinha",
+    "nome": "Correia de Vinha",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura até tamanho Grande\nTempo de conjuração: 1 rodada\nDescrição: o chicote se enrola no alvo, causando 1d4 de dano e se enrolando nele. O alvo pode fazer um SF de DES para evitar o dano e o efeito (criaturas Grandes possuem +2 no teste de SF).\nRequisito: plantas próximas ou solo fértil.\nDados extras: cada +1 Dado dá +1d4 de dano ou impõe -2 no teste de SF."
+  },
+  {
+    "id": "ritual-1-pulmoes-de-truta",
+    "nome": "Pulmões de Truta",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Água\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: o alvo pode respirar debaixo d’água e ganha deslocamento de natação igual ao de caminhada.\nRequisito: contato com água (córrego, odre, lago, cantil, etc)\nDados extras: cada +1 Dado concede +1 alvo;ou também permite enxergar sob a água 60’ com clareza."
+  },
+  {
+    "id": "ritual-1-camuflagem-selvagem",
+    "nome": "Camuflagem Selvagem",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: lama, folhas e cinza ocultam o alvo: ele tem vantagem em furtividade em ambientes naturais e pode se esconder com cobertura leve. Recebe Cobertura Leve (Média se permanecer imóvel) e, em casos de surpresa, as chances aumentam em 2 em 6 (máx. de 5 em 6).\nRequisito: matéria vegetal disponível.\nDados extras: cada +1 Dado concede +1 criatura adicional."
+  },
+  {
+    "id": "ritual-1-eco-dos-ancestrais",
+    "nome": "Eco dos Ancestrais",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Espíritos\nDuração: instantânea (consulta)\nAlcance: 30’\nAlvo: um lugar antigo, objeto significativo, cadáver recente (até 1 mês) ou árvore anciã\nTempo de conjuração: 1 turno\nDescrição: você consulta o espírito do lugar/objeto e recebe 1 resposta breve (palavra, imagem, sensação) sobre um evento recente marcante ou 1 pergunta de sim/não. Em locais profanados, pode exigir oferenda. As respostas podem se referir à coisas que aconteceram até 1 ano.\nDados extras: cada +1 Dado concede +1 pergunta ou amplia o intervalo temporal para +1 ano."
+  },
+  {
+    "id": "ritual-2-veu-ancestral",
+    "nome": "Véu Ancestral",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Espírito\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: um manto de cinzas rituais apaga a presença espiritual daquela criatura. Ela deixa de existir no plano espiritual durante a duração da magia. Magias que detectam presença espiritual / espíritos não funcionam. Caso ela morra durante a duração da magia seu espírito não é enviado ao mundo espiritual, e fica vagando.\nAlém disso impõe -1 em SM de VON por Dado , e mortos-vivos incorpóreos (fantasmas, espíritos, etc) recebem -1 em todos os testes, por Dado\nDados extras: afeta 1 criatura adicional por Dado extra"
+  },
+  {
+    "id": "ritual-2-circulo-de-cogumelos",
+    "nome": "Círculo de Cogumelos",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Terra\nDuração: 2 rodadas\nAlcance: 30’\nAlvo: área de 20’x20’\nTempo de conjuração: 2 rodadas\nDescrição: um anel de fungos ergue um santuário natural. Aliados dentro recebem +2 em Salvamentos contra veneno. Além disso, se uma criatura aliada terminar uma rodada dentro da área, recupera 1d3 PV’s. Inimigos que entrarem fazem SF de CON; em falha, ficam com tontura leve (-1 nos ataques) até saírem.\nRequisito: solo úmido/musgo ou esporos.\nDados extras: cada +1 Dado adicional dá +10’x10’ de área, ou aumenta a duração em 1 rodada, ou aumenta a penalidade da tontura em -1."
+  },
+  {
+    "id": "ritual-2-marca-totemica",
+    "nome": "Marca Totêmica",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Espírito / Animal\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: você traça, com cinza e óleo, o selo do seu totem sobre o aliado. Você pode espelhar o poder do totem para o aliado, por um período de tempo.\n1. Javali: +2 pv temporário\n2. Lobo: +1 ataque melee quando não estiver atacando sozinho.\n3. Urso: +1 de dano melee.\n4. Condor: Consegue enxergar duas vezes melhor que um humano comum, mesmo na penumbra ou sob a luz das estrelas.\n5. Corvo: pode compreender um idioma (como o Talento de Especialista Linguista) com uma chance de 2 em 6.\n6. Leopardo: surpreende os outros com 1 chance em 6 maior (máx. de 5 em 6).\n7. Cobra: +2 em SF contra venenos.\n8. Truta: consegue respirar embaixo d’água por 1 turno por rank.\n9. Crocodilo: RD 1 contra ataques físicos.\n10. Macaco-aranha: recebe 1 ponto a menos de dano por dado em casos de queda.\nDados extras: cada +1 Dado extra concede +1 criatura adicional"
+  }
+]

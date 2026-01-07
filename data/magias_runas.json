@@ -1,0 +1,191 @@
+[
+  {
+    "id": "runa-maiores-runa-do-aco-ineficaz",
+    "nome": "Runa do Aço Ineficaz",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "MANN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe RD 1 contra ataques físicos por 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma armadura de metal. Cada armadura somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-vida-maritima",
+    "nome": "Runa da Vida Marítima",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "LAGU",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: enquanto portar a runa, o personagem pode respirar e se movimentar normalmente embaixo d’água. Este efeito dura 1 hora.\n-Local de recarga: mergulhada em um corpo d’água.\n-Especial: pode ser inscrita permanentemente em um elmo ou joia. Cada elmo ou joia somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-ajuda-ao-corpo",
+    "nome": "Runa da Ajuda ao Corpo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "BEDRC",
+    "descricao": "-Custa de Ativação: 2 PV’s\n-Efeito: uma pessoa afligida por uma doença ou veneno que receba essa runa ativada em mãos poderá refazer seu SF para se recuperar da mazela. Ela possui um bônus nesse teste igual à metade do rank em Lorde Rúnico de quem ativou a runa.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-do-gigante-e-do-anao",
+    "nome": "Runa do Gigante e do Anão",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "THORN",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem muda de tamanho. Se ela estiver voltada para o leste no momento da ativação, ele se torna um gigante, dobrando de tamanho (causa o dobro de dano com ataques físicos). Se ela estiver voltada para o oeste, ele se torna um anão, ficando com a metade do tamanho (e causando metade do dano com ataques físicos). Este efeito dura 1 turno. Alvos involuntários podem fazer um SF de CON para não sofrerem o efeito.\n-Local de recarga: sob a luz do meio dia ou da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-da-besta",
+    "nome": "Runa da Besta",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "EOLH",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao tocar a runa ativada em um animal silvestre, é possível ao portador da mesma conversar com o animal por 1 hora.\n-Local de recarga: sob a luz do luar.\n-Especial: pode ser inscrita permanentemente em uma joia em forma de coleira e colocada no animal. O animal passa a poder entender e falar o idioma natal do personagem que criou a joia."
+  },
+  {
+    "id": "runa-maiores-runa-da-liberdade",
+    "nome": "Runa da Liberdade",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "GUEOFU",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: esta runa pode ser ativada para destrancar qualquer fechadura, porta ou grilhão que encoste.\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em alguma porta ou cadeado que encontre. Depois disso, ele despeja seu sangue em cima dela (2 PV’s) e transfere o poder da runa que carrega consigo. Com isso, essa porta ou cadeado estará magicamente lacrada. Só poderá ser aberta com o uso da runa GUEOFU ou pela magia Tranca Arcana."
+  },
+  {
+    "id": "runa-maiores-runa-da-captura",
+    "nome": "Runa da Captura",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ETHEL",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem poderá desviar qualquer projétil arremessado contra ele (adagas, lanças, flechas, virotes, etc.). Ele recebe um bônus de +8 contra qualquer ataque à distância feito contra ele. Se o ataque errar, ele pode escolher agarrar o objeto (contanto que esteja com uma mão vazia). Esse bônus dura 1 rodada para cada rank em Lorde Rúnico do personagem que ativou a runa.\n-Local de recarga: ao ar livre, quando estiver soprando ventos capazes de levantar folhas.\n-Especial: Gastando 2 PV’s adicionais, o personagem pode acionar essa runa em resposta a um ataque à distância que recebeu.\nIR\nRuna do Conhecimento\n-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa passa a enxergar todas as coisas pelo que elas realmente são. Coisas invisíveis passam a ser visíveis; fantasmas e ilusões passam a ser reconhecíveis; disfarces, mágicos ou não, deixam de funcionar; portas secretas magicamente escondidas se revelam; e até mesmo vítimas de polimorfia ou transformadas em pedra se mostram como seriam na verdade. Dura 1 hora.\n-Local de recarga: sob a luz da lua da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-da-cura-merecida",
+    "nome": "Runa da Cura Merecida",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "SIGEL",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: o personagem que tenha essa runa ativada encostada em um ferimento recente o verá sendo curado. Ele recupera 2d4+2 PV’s, mas somente são recuperados PV’s perdidos por ferimentos recebidos em combate, e somente os que aconteceram dentro da última hora.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-do-discurso-justo",
+    "nome": "Runa do Discurso Justo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ANSUR",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: o portador da runa saberá quando alguém estiver falando mentiras para ele, enquanto estiver portando a runa ativada. Esse efeito dura por 1 hora. Ele também pode gastar 2 PV’s e passar 1 turno inscrevendo a runa, com seu sangue, em alguma parte do corpo de outra pessoa. Depois disso, ele passa a carga da runa que carrega para a nova inscrição em sangue, e a pessoa se sentirá magicamente obrigada a falar a verdade de todas as perguntas que lhe fizerem no período de 30 minutos.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-da-doenca",
+    "nome": "Runa da Doença",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "DAG",
+    "descricao": "-Custo de ativação: 3 PV´s\n-Efeito: ao ativar essa runa, o Lorde Rúnico deve nomear um ser vivo à vista. Esse ser vivo deve passar em um SF de CON ou ficará doente, recebendo 1 ponto de Fadiga. O máximo de pontos de Fadiga que ele pode infligir é igual à metade do seu rank em Lorde Rúnico (arredondado para cima). Os pontos de Fadiga são recuperados na proporção de 1 por hora.\n-Local de recarga: em um lugar de total escuridão, junto com vários ossos.\n-Especial: o Lorde Rúnico pode criar uma joia amaldiçoada permanentemente com esta runa. Quem colocar a joia ficará muito doente, perdendo 1d3 pontos de CON e de FOR por semana que usar a joia. Depois de colocada, ela só poderá ser removida com a magia Remover Maldição. Cada joia só pode conter 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-do-encantamento",
+    "nome": "Runa do Encantamento",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "FEOH",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: ao ativar essa runa, o Lorde Rúnico deve nomear um ser inteligente à vista. Esse ser deve passar em um SM de VON ou ficará encantado pelo Lorde. Ele o tratará como se estivesse apaixonado ou como se o Lorde fosse seu melhor amigo. Ele deve agir de acordo, mas qualquer ato de violência feito pelo Lorde Rúnico contra o alvo o faz despertar do transe. O efeito dura 1 hora por rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: imerso em um perfume de boa qualidade.\n-Especial: o Lorde Rúnico pode criar uma joia amaldiçoada permanentemente com esta runa. Quem colocar a joia ficará extremamente apaixonado pelo Lorde e procurará fazer tudo que ele comandar. Depois de colocada, ela só poderá ser removida com a magia Remover Maldição. Cada joia só pode conter 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-do-escudo",
+    "nome": "Runa do Escudo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "TYR",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe +1 em todas os seus SF’s ou SM’s (ele escolhe na hora da ativação). Este efeito dura 1 rodada por rank do Lorde Rúnico que ativar a runa. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: pode ser inscrita permanentemente em uma armadura de metal, escudo ou joia. Cada armadura ou joia somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-extincao",
+    "nome": "Runa da Extinção",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "HAEGALLH",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: esta runa pode ser usada para apagar o fogo, a luz ou as vozes. Após ativada, ela pode apagar o fogo de um lugar de qualquer tamanho até o de um incêndio em uma construção média. Ela também pode ser usada para “apagar” a luz em um ambiente, deixando tudo magicamente escuro em uma área de até 60x60 pés. Também pode ser usada para que uma área do mesmo tamanho não tenha som, ou seja, nenhum som pode ser produzido ou pode entrar na área. Nos últimos dois casos, o efeito dura um número de rodadas igual ao rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: dentro de um corpo de água corrente ou sob a luz da lua da meia noite.\nUR\nRuna do Braço Forte\n-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem passa a infringir mais dano com a arma que estiver portando (+1 por dado de dano da arma). A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. O efeito dura 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa WYNN)."
+  },
+  {
+    "id": "runa-maiores-runa-da-fortuna-dourada",
+    "nome": "Runa da Fortuna Dourada",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "JERA",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao ativar essa runa, ela brilha com uma luz dourada como a de uma tocha, por 1 hora + 1 turno por rank do Lorde Rúnico que a ativar. Também pode ser usada para dissipar escuridões mágicas de qualquer tipo.\n-Local de recarga: sob a luz do sol do meio dia.\n-Especial: pode ser inscrita permanentemente em uma arma, escudo ou joia. O item passará a emitir essa luz constantemente. Cada arma, escudo ou joia somente comporta 1 runa inscrita.\nIS\nRuna do Hidromel dos Deuses\n-Custo de ativação: 1 PV\n-Efeito: quando ativada, esta runa purifica qualquer líquido em que for mergulhada. O personagem é capaz de purificar, por ativação, o equivalente a um odre de mais ou menos 2 litros.\n-Local de recarga: imersa em hidromel ou cerveja.\n-Especial: pode ser inscrita permanentemente em um chifre ou caneco. Uma vez por dia, qualquer líquido que seja colocado dentro do recipiente será purificado. Se for colocado hidromel ou cerveja, entornar toda a bebida recuperará até 2 pontos de Fadiga."
+  },
+  {
+    "id": "runa-maiores-runa-das-longas-viagens",
+    "nome": "Runa das Longas Viagens",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "EOH",
+    "descricao": "-Custo de ativação: 3 PV´s\n-Efeito: ao ativar essa runa no início de uma jornada pelos ermos ou pelo mar, ela proporcionará uma viagem mais segura para o grupo que estiver com o Lorde Rúnico. Diminui-se a chance de encontros aleatórios em dois passos (ou seja, de 1 em 1d10 por período, passa a ser 1 em 1d12, etc.). Este efeito dura até o próximo teste de encontro aleatório nos ermos (ou 1 dia).\n-Local de recarga: enterrada em uma estrada ou imersa no mar."
+  },
+  {
+    "id": "runa-maiores-runa-da-morte",
+    "nome": "Runa da Morte",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "PEORTH",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: encostando a runa ativada no cadáver de uma pessoa morta, é possível conversar com ela. Enquanto a runa estiver ativa e em contato com o cadáver, o espírito da pessoa responderá as perguntas (mas ele não é obrigado a ser sincero). O efeito dura até 1 turno (10 minutos).\n-Local de recarga: sob a luz da lua da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em algum cadáver. Depois disso, ele despeja seu sangue em cima dele (3 PV’s) e transfere o poder da runa que carrega consigo. Com isso, esse cadáver passa a ficar animado, seguindo o Lorde Rúnico por até 1 hora. Porém, a cada turno, há 1 chance em 6 do cadáver se rebelar contra o Lorde e atacá-lo."
+  },
+  {
+    "id": "runa-maiores-runa-da-mudanca",
+    "nome": "Runa da Mudança",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "RAD",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: ao ativar a runa, o portador dela pode se transportar para outro lugar, sumindo e aparecendo na nova posição. Deve ser um lugar que ele possa ver, e que esteja a até 60 pés de sua localização atual. Se gastar 2 PV’s adicionais, ele pode fazer isso instantaneamente, como uma reação a um ataque, por exemplo.\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em algum chão minimamente estável. Depois disso, ele despeja seu sangue em cima dela (3 PV’s) e transfere o poder da runa que carrega consigo. Dentro de 1 hora para cada rank do Lorde Rúnico, ele poderá ativá-la novamente (gastando 2 PV’s extras se quiser fazer de maneira instantânea) e então aparecerá neste local marcado. O local deve estar dentro de uma distância de até 200 pés + 20 pés por rank."
+  },
+  {
+    "id": "runa-maiores-runa-da-ninfa-do-gelo",
+    "nome": "Runa da Ninfa do Gelo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "NYD",
+    "descricao": "-Custo de ativação: 4 PV’s\n-Efeito: ao ativar a runa, o portador pode congelar um corpo d’água em que toque com as duas mãos. Ele pode congelar uma porção de água de 30x30x30 pés por rank em Lorde Rúnico. Essa parte congelada pode ser dura como um iceberg, e pode ter a superfície lisa e escorregadia. O efeito dura até que o portador o cancele com o estalar dos dedos ou até o gelo derreter naturalmente.\n-Local de recarga: dentro do gelo ou sob a luz da lua da meia noite de uma noite bem fria."
+  },
+  {
+    "id": "runa-maiores-runa-da-sorte",
+    "nome": "Runa da Sorte",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ING",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa pode ativá-la para refazer qualquer rolagem de dados, ou obrigar alguém que esteja em seu campo de visão a refazer qualquer rolagem de dados.\n-Local de recarga: sob a luz do meio dia ou da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-do-triunfo",
+    "nome": "Runa do Triunfo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "WYNN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe +1 em seus ataques com armas. O efeito dura 1 turno. A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa UR)."
+  },
+  {
+    "id": "runa-maiores-runa-da-visao",
+    "nome": "Runa da Visão",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "KEN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: ao ativar essa runa e manter ela em uma de suas mãos, o portador pode tocar com a outra mão em um objeto ou pessoa e ter uma visão do que aconteceu em seu passado recente. O tempo que ele pode ver depende do seu rank em Lorde Rúnico (1 semana para cada rank para seres vivos, 1 mês para cada rank para objetos inanimados).\n-Local de recarga: sob a luz do sol do meio dia.\nInscrevendo Runas\n*Golem animado com Runas na testa ???"
+  }
+]

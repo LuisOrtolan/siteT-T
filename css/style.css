@@ -374,6 +374,66 @@ body {
   margin-top: 0.45rem;
   font-size: 0.9rem;
   color: var(--text-main);
+  white-space: pre-wrap;
+}
+
+.magia-details summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 0.35rem;
+}
+
+.cards-magias-tipos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.card-link {
+  display: block;
+  padding: 0.9rem 1rem;
+  border: 1px solid #1a1c26;
+  border-radius: 0.9rem;
+  background: rgba(9, 10, 16, 0.6);
+  color: var(--text-main);
+  text-decoration: none;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+
+.card-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(167, 128, 255, 0.6);
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  margin: 0.9rem 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #1a1c26;
+  padding: 0.55rem 0.65rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+.table th {
+  background: rgba(9, 10, 16, 0.75);
+  color: var(--text-main);
+}
+
+.table td {
+  color: var(--text-main);
 }
 
 /* Footer */

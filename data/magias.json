@@ -1,0 +1,1278 @@
+[
+  {
+    "id": "feitico-1-dardo-arcano",
+    "nome": "Dardo Arcano",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: 100’\nDuração: instantânea\nAlvo/Área: 1 ou mais criaturas à escolha (linha de visão)\nEfeito: cria projéteis de força que atingem automaticamente. Cada dardo causa 1d4+1 de dano de impacto. Você pode distribuir os dardos entre alvos diferentes.\nEscalonamento:\nPor rank do conjurador: começa com 1 dardo no 1º nível; +1 dardo a cada 2 ranks (3º, 5º, 7º, 9º), até máx. 5 dardos."
+  },
+  {
+    "id": "feitico-1-luz",
+    "nome": "Luz",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 hora\nAlvo/Área: objeto ou local visível\nEfeito: um ponto emite luz brilhante em 30’ e penumbra em +30’\nEscalonamento:\n+1 círculo: +10’ de luz brilhante e +10’ de penumbra ou duração +1 hora (escolha a cada círculo)."
+  },
+  {
+    "id": "feitico-1-sono",
+    "nome": "Sono",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Encantamento\nConjuração: 1 ação\nAlcance: 120’\nDuração: 1 turno (10 min) por rank\nAlvo/Área: área de 20’ por 20’\nEfeito: adormece criaturas na área até um limite de DV. Comece pelas criaturas com menor DV e vá somando até chegar ao total. Criaturas adormecidas caem; só acordando ao levar dano ou se alguém gastar uma ação para sacudi-las.\nTotal de DV afetados: 2d8 DV’s ou 1 criatura específica de até 4 DV’s\nEscalonamento :\npara cada 2 círculos acima do 1º, aumenta 1d4 DV’s ou afeta uma criatura de 1 DV superior"
+  },
+  {
+    "id": "feitico-1-armadura-arcana",
+    "nome": "Armadura Arcana",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Abjuração\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nEfeito: campos de força envolvem o alvo, concedendo +4 na CA. O bônus da Armadura Arcana não se acumula com armaduras físicas,itens mágicos ou outro efeito de armadura mágica.\nEscalonamento\npara cada círculo acima do 1º, +1 de CA"
+  },
+  {
+    "id": "feitico-1-maos-flamejantes",
+    "nome": "Mãos Flamejantes",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: pessoal\nDuração: instantânea\nAlvo/Área: cone de 20’ à sua frente\nEfeito: línguas de fogo varrem o cone, causando 2d4 de dano de fogo (SF de DES para metade). Objetos inflamáveis podem pegar fogo.\nEscalonamento\nPara cada círculo acima, aumente o cone em 10’"
+  },
+  {
+    "id": "feitico-1-encantar-pessoa",
+    "nome": "Encantar Pessoa",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Encatamento\nConjuração: 1 ação\nAlcance: toque\nDuração: Permanente\nAlvo/Área: 1 humanoide\nEfeito: alvo fica enfeitiçado por você: trata você como aliado e aceita pedidos razoáveis que não o coloquem em perigo evidente (SM de VON anula). Se você ou seus aliados ferirem o alvo, o efeito termina. (O alvo também pode repetir o SM depois de cada dia ou quando lhe for pedido algo que vai contra seus princípios.) Ao término, ele sabe que foi influenciado.\nEscalonamento\npara cada círculo acima do 1º, +1 alvo."
+  },
+  {
+    "id": "feitico-1-raio-gelido",
+    "nome": "Raio Gélido",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: 60’\nDuração: instantânea\nAlvo/Área: 1 humanoide\nEfeito: um jato de frio causa 1d6 de dano de gelo (e Lentidão (-10’ de Mov.) pelo mesmo número de rodadas). Alvo pode passar em SF de DES para (negar o dano e o efeito de Lentidão).\nEscalonamento\nPor slot superior: +1d4 de dano por círculo acima do 1º; a partir de 4º+, a Lentidão passa a -20’ m. A partir do 8, -30’."
+  },
+  {
+    "id": "feitico-1-nevoa-ocultante",
+    "nome": "Névoa Ocultante",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 100’\nDuração: 1 turno por rank\nAlvo/Área: área de 20’x20’\nEfeito: cria névoa densa que fornece obscurecimento pesado: criaturas dentro ficam ocultas. Elas recebem Cobertura Média contra ataques à distância, ataques melee possuem -2, e possíveis testes de supresa que sejam feitos para percebê-las recebem mais 2 em 6 (máx. de 5 em 6). Como uma ação, você pode mover a névoa até 30’ enquanto mantiver a concentração. Vento moderado a dissipa em 1d4 rodadas; vento forte, em 1 rodada.\nEscalonamento\nPor slot superior: +10’x10’ de raio por círculo acima"
+  },
+  {
+    "id": "feitico-1-disco-flutuante",
+    "nome": "Disco Flutuante",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 10’\nDuração: 1 hora por rank\nAlvo/Área: disco de 1,5 m de diâmetro que flutua a 0,5 m do chão\nEfeito: o disco segue você, carregando até 20 slots de carga (ou uma pessoa). Se ficar a mais do que 20’ de você, a magia termina e a carga pousa com segurança no chão. Pode atravessar água calma mantendo a altura.\nEscalonamento\nPara cada círculo acima, ele pode carregar mais 10 slots de carga."
+  },
+  {
+    "id": "feitico-1-fio-de-prata",
+    "nome": "Fio de Prata",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nAlvo/Área: 1 criatura\nEfeito: um tênue fio de sorte prateada se enlaça ao alvo. Enquanto durar, ele possui 1 carga de Sorte. Após ver um resultado de d20 (ataque, SM, qualquer teste) ou contra ele (um ataque inimigo) e antes da resolução da jogada, pode gastar a carga para re-rolar (ou forçar o atacante a re-rolar) e deve ficar com o novo resultado."
+  },
+  {
+    "id": "feitico-1-detectar-magia-ler-magias",
+    "nome": "Detectar Magia / Ler magias",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: pessoal\nDuração:  1 turno (+1 por rank de Arcanista)\nAlvo/Área: Área de 30’ x 30’ (ou uma escritura)\nEfeito: O alvo detecta magias em lugares, objetos ou indivíduos. Esses itens brilham para ele com uma luz diferenciada pela duração da magia. Também pode ser usada para ler as inscrições mágicas de algum lugar (pergaminho, grimório, portas seladas, etc…), independente do idioma. Uma vez lido e compreendido, não é necessário utilizar a magia novamente para o texto em questão."
+  },
+  {
+    "id": "feitico-1-compreender-idiomas",
+    "nome": "Compreender Idiomas",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nAlvo/Área: você\nEfeito: você entende o significado literal de qualquer fala que ouvir e pode ler textos simples tocando-os.\nEscalonamento\nPor slot superior: permitir +1 criatura tocada compartilhar o efeito (por círculo acima do 1º)."
+  },
+  {
+    "id": "feitico-1-como-uma-pluma",
+    "nome": "Como uma pluma",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Transmutação\nConjuração: 1 ação\nAlcance: 60’\nDuração: 1 turno, ou até atingir o solo novamente\nAlvo/Área: 1 criatura/objeto por rank\nEfeito: os alvos caem como penas: controlam levemente a descida e não sofrem dano de queda.\nEscalonamento\nPor slot superior: +60’ por slot acima. Se conjurada como 2º círculo, pode ser conjurada como reação."
+  },
+  {
+    "id": "feitico-1-graxa",
+    "nome": "Graxa",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 60’\nDuração: 1 turno por rank\nAlvo/Área: até 10’ x 10’\nEfeito:  Cria-se graxa na área ou local. O local fica escorregadio. Pode-se ter ideias de usar a graxa pra outras coisas também - tipo lubrificar portas emperradas. Criaturas na área ao conjurar, e as que entrarem, fazem SM ou caem.\nEscalonamento\nPor slot superior: aumente a área em +10’x10’"
+  },
+  {
+    "id": "feitico-1-imagem-ilusoria",
+    "nome": "Imagem Ilusória",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Ilusão\nConjuração: 1 ação\nAlcance: 120’\nDuração: 1 turno por rank\nAlvo/Área: cubo de 15’ (imagem)\nEfeito: cria uma imagem sem som/cheiro que pode ser movida 30’ por ação enquanto você mantiver a concentração. Não causa dano nem obstrução física.\nEscalonamento\nPor slot superior: Pode adicionar efeitos sonoros simples ou cheiros se conjurada como 2º círculo (As duas coisas se for como 3º círculo)"
+  },
+  {
+    "id": "feitico-1-armadilha-arcana",
+    "nome": "Armadilha Arcana",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Abjuração\nConjuração: 1 turno\nAlcance: toque\nDuração: 1 hora por rank\nAlvo/Área: círculo de 1,5 m de raio traçado no chão (ou fio)\nEfeito: a primeira criatura que entrar no círculo faz SM de FOR ou fica imobilizada, pairando no ar a 0,5m do chão. No fim de cada turno, pode repetir a SM para se libertar. Criaturas grandes possuem +4 no teste."
+  },
+  {
+    "id": "feitico-1-salto",
+    "nome": "Salto",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Transmutação\nConjuração: 1 ação\nAlcance: Toque\nDuração: 1 turno por rank\nAlvo/Área: 1 criatura\nEfeito: o alvo duplica suas distâncias de salto em altura e em distância e reduz o dano de queda em 2d6 durante a duração da magia\nEscalonamento\nPor slot superior: No 3º círculo, triplica a distância e diminui o dano em 3d6. No 5º círculo, quadruplica e diminui o dano em 4d6."
+  },
+  {
+    "id": "ritual-1-raizes-enredantes",
+    "nome": "Raízes Enredantes",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: 60’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 rodada\nDescrição: do solo brotam vinhas que transformam a área em terreno difícil. Criaturas na área fazem SF de FOR; em falha, ficam Imobilizadas (podem repetir o SF no fim de cada rodada). Requisito: plantas e raízes próximas ou solo fértil.\nDados extras: cada +1 Dado aumenta a área em +10’x10’ ou impõe -2 à SF (escolha a cada Dado)."
+  },
+  {
+    "id": "ritual-1-susurro-do-vento",
+    "nome": "Susurro do vento",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Ar\nDuração: até o recebimento da mensagem\nAlcance: 1 milha\nAlvo: 1 criatura conhecida (nome ou rosto conhecido)\nTempo de conjuração: 1 rodada\nDescrição: sua mensagem (até 5 palavras) viaja nos ventos até o alvo; somente ele ouve em sussurros. Questões de clima extremo ou paredes espessas podem distorcer.\nDados extras: cada +1 Dado aumenta o alcance em +1 milha ou permite +5 palavras"
+  },
+  {
+    "id": "ritual-1-seiva-restauradora",
+    "nome": "Seiva restauradora",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: resina morna fecha feridas superficiais: o alvo recupera 1d6 PV’s\nDados extras: cada +1 Dado adiciona +1d6 PV ou remove 1 veneno ou doença não-mágica."
+  },
+  {
+    "id": "ritual-1-moldar-agua",
+    "nome": "Moldar Água",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Água\nDuração: 1 turno / dado\nAlcance: 30’\nAlvo: 1 m³ de água\nTempo de conjuração: 1 rodada\nDescrição: move, congela (crosta fina), ou cria correntes fracas. Não cria água do nada. Requisito: água presente.\nDados extras: +1 m³ por Dado ou fortalece um dos efeitos (congelamento mais resistente, corrente mais forte, etc.)."
+  },
+  {
+    "id": "ritual-1-brasa-ancestral",
+    "nome": "Brasa Ancestral",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Fogo\nDuração: instantânea\nAlcance: 40’\nAlvo: 1 criatura ou 1 objeto\nTempo de conjuração: 1 rodada\nDescrição: lança uma brasa etérea que causa 1d6 fogo e pode acender objetos secos. SF de DES reduz o dano à metade.\nRequisito: chama ou brasas por perto.\nDados extras: cada +1 Dado adiciona +1d6 ou salta para um novo alvo a até 10’ do anterior."
+  },
+  {
+    "id": "ritual-1-manto-de-formigas",
+    "nome": "Manto de Formigas",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Terra\nDuração: 1 turno / dado\nAlcance: 90’\nAlvo: área de 20’x20’\nTempo de conjuração: 2 rodadas\nDescrição: Você entoa um cântico e derrama mel / frutas esmagadas sobre o chão, convocando um enxame que cobre a área com mil mordidas inquietas.\nCriaturas que entrarem na área ou começarem o turno nela sofrem 1d4 de dano e fazem SF de FOR; em falha, ficam lentas (-10’ de Mov.) e -2 nos ataques até o fim do próximo turno (podem gastar 1 ação para espantar as formigas e remover esse efeito).\nRequisito: presença de solo vivo/insetos ou isca adequada.\nDados extras: cada +1 Dado adiciona +10’x10’ de área, ou +1d4 de dano das formigas, ou até 2 criaturas aliadas são ignoradas pelas formigas (escolha por dado)"
+  },
+  {
+    "id": "ritual-1-pele-de-casca",
+    "nome": "Pele de Casca",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: a pele fica áspera como casca, o alvo recebe +2 CA.\nDados extras: +2 CA por dado extra ou a armadura cria espinhos, causando 1d4 pontos de dano por Dado extra em quem atacar o alvo em melee. Escolha por dado."
+  },
+  {
+    "id": "ritual-1-passos-sem-rastros",
+    "nome": "Passos sem rastros",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 hora / dado\nAlcance: Pessoal\nAlvo: o Xamã e mais 2 criaturas em volta\nTempo de conjuração: 1 rodada\nDescrição: barulho reduzido, a flora coopera com a passagem do grupo e eles deixam poucos vestígios de sua passagem. Penalidades para outras criaturas ouvir e rastrear.\nDados extras: +2 criatura por dado extra"
+  },
+  {
+    "id": "ritual-1-olhos-de-corvo",
+    "nome": "Olhos de Corvo",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Ar\nDuração: 1 hora / dado\nAlcance: 1 milha\nAlvo: 1 ave selvagem\nTempo de conjuração: 1 turno\nDescrição: você vê e ouve pelos sentidos da ave; enquanto durar o efeito, fica Cego/Surdo do próprio corpo.\nDados extras: +1 milha por Dado extra"
+  },
+  {
+    "id": "ritual-1-voz-das-bestas",
+    "nome": "Voz das Bestas",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Animal / Terra\nDuração: 1 turno / dado\nAlcance: 30’\nAlvo: Animais Silvestres\nTempo de conjuração: 1 rodada\nDescrição: você comunica ideias simples a animais e os acalma. Animais muito hostis fazem SM de VON."
+  },
+  {
+    "id": "ritual-1-pedra-vigia",
+    "nome": "Pedra Vigia",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 8 horas\nAlcance: toque\nAlvo: uma pedra\nTempo de conjuração: 1 turno\nDescrição: consagra um totem-alarme: quando uma criatura hostil cruza um raio de 20’, você ouve um toque de alerta em sua mente\nDados extras: +1 Dado, +10’ de raio ou permite que 1 aliado também ouça o alarme,"
+  },
+  {
+    "id": "ritual-1-dardo-de-espinho",
+    "nome": "Dardo de Espinho",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: 60’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: espinhos voam e se cravam envenenando o alvo. O veneno causa 1d4 de dano + 1d4 no próximo turno. SF de CON para evitar o dano do veneno.\nRequisito: espinhos/galhos rígidos.\nDados extras: +1 Dado para cada +1 criatura atingida ou para dar -2 no SF para resistir ao veneno"
+  },
+  {
+    "id": "ritual-1-correia-de-vinha",
+    "nome": "Correia de Vinha",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura até tamanho Grande\nTempo de conjuração: 1 rodada\nDescrição: o chicote se enrola no alvo, causando 1d4 de dano e se enrolando nele. O alvo pode fazer um SF de DES para evitar o dano e o efeito (criaturas Grandes possuem +2 no teste de SF).\nRequisito: plantas próximas ou solo fértil.\nDados extras: cada +1 Dado dá +1d4 de dano ou impõe -2 no teste de SF."
+  },
+  {
+    "id": "ritual-1-pulmoes-de-truta",
+    "nome": "Pulmões de Truta",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Água\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: o alvo pode respirar debaixo d’água e ganha deslocamento de natação igual ao de caminhada.\nRequisito: contato com água (córrego, odre, lago, cantil, etc)\nDados extras: cada +1 Dado concede +1 alvo;ou também permite enxergar sob a água 60’ com clareza."
+  },
+  {
+    "id": "ritual-1-camuflagem-selvagem",
+    "nome": "Camuflagem Selvagem",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Terra\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: lama, folhas e cinza ocultam o alvo: ele tem vantagem em furtividade em ambientes naturais e pode se esconder com cobertura leve. Recebe Cobertura Leve (Média se permanecer imóvel) e, em casos de surpresa, as chances aumentam em 2 em 6 (máx. de 5 em 6).\nRequisito: matéria vegetal disponível.\nDados extras: cada +1 Dado concede +1 criatura adicional."
+  },
+  {
+    "id": "ritual-1-eco-dos-ancestrais",
+    "nome": "Eco dos Ancestrais",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 1,
+    "descricao": "Elemento: Espíritos\nDuração: instantânea (consulta)\nAlcance: 30’\nAlvo: um lugar antigo, objeto significativo, cadáver recente (até 1 mês) ou árvore anciã\nTempo de conjuração: 1 turno\nDescrição: você consulta o espírito do lugar/objeto e recebe 1 resposta breve (palavra, imagem, sensação) sobre um evento recente marcante ou 1 pergunta de sim/não. Em locais profanados, pode exigir oferenda. As respostas podem se referir à coisas que aconteceram até 1 ano.\nDados extras: cada +1 Dado concede +1 pergunta ou amplia o intervalo temporal para +1 ano."
+  },
+  {
+    "id": "ritual-2-veu-ancestral",
+    "nome": "Véu Ancestral",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Espírito\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: um manto de cinzas rituais apaga a presença espiritual daquela criatura. Ela deixa de existir no plano espiritual durante a duração da magia. Magias que detectam presença espiritual / espíritos não funcionam. Caso ela morra durante a duração da magia seu espírito não é enviado ao mundo espiritual, e fica vagando.\nAlém disso impõe -1 em SM de VON por Dado , e mortos-vivos incorpóreos (fantasmas, espíritos, etc) recebem -1 em todos os testes, por Dado\nDados extras: afeta 1 criatura adicional por Dado extra"
+  },
+  {
+    "id": "ritual-2-circulo-de-cogumelos",
+    "nome": "Círculo de Cogumelos",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Terra\nDuração: 2 rodadas\nAlcance: 30’\nAlvo: área de 20’x20’\nTempo de conjuração: 2 rodadas\nDescrição: um anel de fungos ergue um santuário natural. Aliados dentro recebem +2 em Salvamentos contra veneno. Além disso, se uma criatura aliada terminar uma rodada dentro da área, recupera 1d3 PV’s. Inimigos que entrarem fazem SF de CON; em falha, ficam com tontura leve (-1 nos ataques) até saírem.\nRequisito: solo úmido/musgo ou esporos.\nDados extras: cada +1 Dado adicional dá +10’x10’ de área, ou aumenta a duração em 1 rodada, ou aumenta a penalidade da tontura em -1."
+  },
+  {
+    "id": "ritual-2-marca-totemica",
+    "nome": "Marca Totêmica",
+    "tipo": "Ritual",
+    "trilha": "Xamã",
+    "circulo_ou_grau": 2,
+    "descricao": "Elemento: Espírito / Animal\nDuração: 1 turno / dado\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição: você traça, com cinza e óleo, o selo do seu totem sobre o aliado. Você pode espelhar o poder do totem para o aliado, por um período de tempo.\n1. Javali: +2 pv temporário\n2. Lobo: +1 ataque melee quando não estiver atacando sozinho.\n3. Urso: +1 de dano melee.\n4. Condor: Consegue enxergar duas vezes melhor que um humano comum, mesmo na penumbra ou sob a luz das estrelas.\n5. Corvo: pode compreender um idioma (como o Talento de Especialista Linguista) com uma chance de 2 em 6.\n6. Leopardo: surpreende os outros com 1 chance em 6 maior (máx. de 5 em 6).\n7. Cobra: +2 em SF contra venenos.\n8. Truta: consegue respirar embaixo d’água por 1 turno por rank.\n9. Crocodilo: RD 1 contra ataques físicos.\n10. Macaco-aranha: recebe 1 ponto a menos de dano por dado em casos de queda.\nDados extras: cada +1 Dado extra concede +1 criatura adicional"
+  },
+  {
+    "id": "milagre-1-imposicao-das-maos",
+    "nome": "Imposição das Mãos",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Vida\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: canaliza graça restauradora. Cura 1d6 PV\nPD extras: cada +1 PD adiciona +1d6 PV ou, em vez de curar, permite que o alvo refaça um Salvamento para se curar de um veneno ou doença."
+  },
+  {
+    "id": "milagre-1-bencao",
+    "nome": "Bênção",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Proteção, Guerra\nDuração: 1 turno\nAlcance: 40’\nAlvo: até 3 criaturas à escolha que possam ouvir suas palavras\nTempo de conjuração: 1 rodada\nDescrição do milagre: palavras sagradas fortalecem os fiéis: +1 nos ataques e +1 em Salvamentos enquanto durar.\nPD extras: cada +1 PD concede +1 alvo ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-1-santuario",
+    "nome": "Santuário",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Paz, Proteção\nDuração: 1 rodada / rank\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um véu de clemência envolve o alvo. Criaturas que tentarem atacá-lo ou hostilizá-lo de alguma forma fazem SM de VON; em falha, devem escolher outro alvo. Se o protegido atacar ou conjurar uma magia ofensiva, o efeito termina.\nPD extras: cada +1 PD concede +1 alvo adicional."
+  },
+  {
+    "id": "milagre-1-exorcizar",
+    "nome": "Exorcizar",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Exorcismo\nDuração: 1 turno por rank\nAlcance: 30’ de raio (emanando do sacerdote)\nAlvo: mortos-vivos, demônios e criaturas inferiores no raio\nTempo de conjuração: 1 rodada\nDescrição do milagre:  Repele os profanos. 2d6 HD’s dessas criaturas no raio ficam aterrorizados e se afastam do sacerdote o mais rápido possível, sem se aproximar voluntariamente enquanto durar. Escolha as criaturas de forma crescente de HD’s, e trate criaturas com menos de 1 HD como sendo 1 HD). Se não conseguirem se afastar, se encolherão em um canto e tentarão apenas se defender, recebendo -4 em todos os testes. Criaturas com mais HD’s que o rank do Sacerdote podem fazer um SM de VON para resistir. Criaturas com 4 HD’s a menos que o rank do Sacerdote são destruídas; e as com 4 HD’s a mais são imunes.\nPD extras: cada +2 PD aumenta o raio em +10’ ou aumenta +1d4 HD’s."
+  },
+  {
+    "id": "milagre-1-criar-agua-benta",
+    "nome": "Criar Água Benta",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Purificação\nDuração: instantânea (o item dura até a próxima lua nova)\nAlcance: toque\nAlvo: água limpa em recipientes\nTempo de conjuração: 1 hora (preces e unção)\nDescrição do milagre: consagra 1 frasco (uma dose) de água benta. Arremessada, causa 1d8 a mortos-vivos/demônios/aberrações profanas. Pode purificar objetos/símbolos em ritos. Requisito: símbolo sagrado, sal/óleo (custo de XXX PO, relacionado aos custos para o ritual)\nPD extras: cada +1 PD cria +1 frasco"
+  },
+  {
+    "id": "milagre-1-sentir-profanacao",
+    "nome": "Sentir Profanação",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Ordem\nDuração: 1 turno\nAlcance: pessoal (aura 60’ de raio)\nAlvo:\nTempo de conjuração: 1 turno\nDescrição do milagre: percebe presenças profanas (mortos-vivos, maldições, lugares profanados) e santuários consagrados na aura. Como uma ação, foca uma fonte para intuir força (fraca/média/forte) e natureza (morto vivo, demônio, maldição, etc.). Barreira espessa e chumbo podem obscurecer.\nPD extras: cada +1 PD concede +10’ de raio ou +1 turno de duração. Também pode gastar 1 PD extra para marcar uma fonte percebida por 1 hora, sentindo sua direção até 1 milha."
+  },
+  {
+    "id": "milagre-1-chama-sagrada",
+    "nome": "Chama Sagrada",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz\nDuração: instantânea\nAlcance: 60’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: uma coluna de luz desce sobre o alvo, causando 1d6 radiante (SF de DES para metade). Mortos-vivos/demônios (recebem 1d10 de dano). Ignora Coberturas que não sejam totais.\nPD extras: cada +1 PD adiciona +1 dado de dano."
+  },
+  {
+    "id": "milagre-1-escudo-da-fe",
+    "nome": "Escudo da Fé",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Proteção, Ordem\nDuração: 1 turno / rank\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: luz sagrada orbita o alvo, concedendo +2 CA e +1 em SM contra encantamento/medo.\nPD extras: cada +1 PD concede +1 alvo, +1 turno de duração, ou aumenta ambos os bônus em +1."
+  },
+  {
+    "id": "milagre-1-comando",
+    "nome": "Comando",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Ordem\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura que compreenda seu idioma\nTempo de conjuração: 1 rodada\nDescrição do milagre: pronuncia uma única ordem (“Pare!” “Largue!” “Caia!” “Fuja!” “Ajoelhe!”) que o alvo deve obedecer. O alvo pode fazer um SM de VON para resistir. Se a ordem for contra os princípios primais da criatura ou fazer com que ela coloque sua vida em risco imediato (ex.: pular de um penhasco), ela é bem sucedida automaticamente no SM. Criaturas com baixa inteligência ou que não entendam seu idioma são imunes.\nPD extras: cada +1 PD concede +1 alvo"
+  },
+  {
+    "id": "milagre-1-rito-de-repouso",
+    "nome": "Rito de Repouso",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Morte, Paz\nDuração: permanente\nAlcance: toque\nAlvo: 1 cadáver\nTempo de conjuração: 1 turno (preces e unção)\nDescrição do milagre: impede decomposição, possessão e animação do corpo como morto-vivo. Tentativas de necromancia contra o corpo falham.\nPD extras: cada +1 PD permite fazer o ritual em mais 1 cadáver."
+  },
+  {
+    "id": "milagre-1-chicote-da-dor",
+    "nome": "Chicote da Dor",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Dor, Guerra\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um estalo invisível rasga os nervos do alvo: 1d6 dano psíquico e o alvo sofre -1 nos testes até o fim da próxima rodada. SF de CON para sofrer metade do dano e não ter as penalidades.\nPD extras: cada +1 PD adiciona +1d6, permite +1 alvo adicional, ou aumenta as penalidades em -1."
+  },
+  {
+    "id": "milagre-1-trevas-profanas",
+    "nome": "Trevas Profanas",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 turno / rank\nAlcance: 60’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 rodada\nDescrição do milagre: um manto de sombras abafa a luz: luz não-mágica é extinta e luz mágica é reduzida à metade do alcance. Criaturas portando seu símbolo (ou do mesmo culto) enxergam como penumbra dentro da área.\n PD extras: cada +1 PD +10’ de raio ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-1-toque-de-putrefacao",
+    "nome": "Toque de Putrefação",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Putrefação\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: a pele do alvo necrosa ao contato: 1d8 necrótico. Se falhar em um SF de CON, o alvo não pode recuperar PV’s até o fim da próxima rodada.\nPD extras: cada +1 PD, +1d8 de dano ou estende o efeito de não poder curar por +1 rodada."
+  },
+  {
+    "id": "milagre-1-profanacao-menor",
+    "nome": "Profanação Menor",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão, Putrefação\nDuração: 1 turno\nAlcance: 30’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 turno\nDescrição do milagre: corrompe o solo. Mortos-vivos na área recebem +1 nos ataques e Salvamentos, e contam como 2 HD’s a mais para serem afastados; criaturas vivas sofrem -2 em SM contra medo dentro da área.\nPD extras: cada +1 PD dá +10’x10’ de área ou +1 turno de duração"
+  },
+  {
+    "id": "milagre-1-pacto-de-sangue",
+    "nome": "Pacto de Sangue",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Dor, Sangue, Guerra\nDuração: 1 turno / rank\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um corte ritual sangra poder. O alvo sofre 1d3 dano (não-prevenível por RD) e recebe +1 nos ataques e +1 no dano no turno.\nPD extras: cada +2 PD aumenta os bônus em +1 e faz o alvo sofrer 1d3 de dano adicional. Com 2 PD extras, o dano do corte pode ser ignorado (o sacrifício é simbólico)"
+  },
+  {
+    "id": "milagre-1-miasma-pestilento",
+    "nome": "Miasma Pestilento",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Putrefação\nDuração: 1 turno / rank\nAlcance: 30’\nAlvo: nuvem de 20’x20’ de área\nTempo de conjuração: 1 rodada\nDescrição do milagre: vapores fétidos enchem a área. Criaturas que entram ou começam o turno na nuvem fazem SF de CON; em falha, sofrem penalidades (-1 em ataques e -10’ de movimento) até sair. A nuvem serve como Camuflagem Leve. A nuvem pode ser dissipada por ventos fortes.\nPD extras: cada +1 PD, +10’x10’ de raio ou aumenta as penalidades em -1."
+  },
+  {
+    "id": "milagre-1-grilhoes-de-sombra",
+    "nome": "Grilhões de Sombra",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 rodada / rank\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: correntes umbráticas emergem dos cantos escuros e imobilizam o alvo. SE a criatura passa em um SF de FOR, apenas fica lento (-10’ Mov.) até o fim da próxima rodada. Criaturas maiores que Média possuem +4 no teste.\nPD extras: +1 PD para +10’ de alcance ou para afetar uma criatura adicional.\nProteção contra o mal\nAspecto: Proteção\nDuração: 1 turno\nAlcance: 30’\nAlvo/Área: 1 criatura\nDescrição do milagre: o alvo recebe +2 em SM contra encantamentos, medo e possessão. Mortos-vivos, demônios, espíritos e aberrações recebem -4 em ataques contra o alvo. O alvo não pode ser possuído/encantado por essas criaturas.\nPD extras: cada +1 PD, +1 alvo, ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-2-olhos-da-umbra",
+    "nome": "Olhos da Umbra",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 hora\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: as pupilas se dilatam até o breu: o alvo ganha Visão no Escuro 60’.\nPD extras: cada +1 PD concede +1 criatura ou +1 hora de duração."
+  },
+  {
+    "id": "milagre-2-refugio-consagrado",
+    "nome": "Refúgio Consagrado",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Luz, Proteção\nDuração: 1 turno\nAlcance: pessoal\nAlvo: círculo de 10’ de raio centrado no sacerdote\nTempo de conjuração: 1 turno\nDescrição do milagre: o chão se torna solo sagrado. Aliados dentro recebem +2 em SM contra medo e recuperam 1d3 PV’s por turno. Mortos-vivos/demônios não podem entrar a menos que passem em uma SM de VON; se entrarem, sofrem 1d3 de dano por rodada e sua movimentação é reduzida em 10’\nPD extras: cada +1 PD dá +10’ de raio ou aumenta +1 turno de duração.."
+  },
+  {
+    "id": "milagre-2-purificar-alimentos-e-bebidas",
+    "nome": "Purificar Alimentos e Bebidas",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Purificação\nDuração: instantânea\nAlcance: toque\nAlvo: 1 refeição ou 1 odre\nTempo de conjuração: 1 turno\nDescrição do milagre: remove contaminações comuns, toxinas leves e parasitas de comida/água, tornando-as potáveis. Não restaura itens tomados por maldições (a menos que indicado em PD extras).\nPD extras: para cada 1 PD extra, pode purificar uma refeição ou 1 odre a mais. Também pode gastar 1 PD extra para anular venenos ali presentes; ou para suspender por 24h um efeito profano ligado ao alimento (não remove permanentemente maldição)."
+  },
+  {
+    "id": "musica-1-as-armas",
+    "nome": "Às Armas",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nO Bardo e seus aliados recebem um bônus de +1 em seus ataques e danos. Pode aumentar o bônus para +2 com Dif. 16, e +3 com Dif. 22.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-impericia",
+    "nome": "Imperícia",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs inimigos do Bardo recebem uma penalidade de -1 em seus ataques e danos. Pode aumentar a penalidade para -2 com Dif. 16, e -3 com Dif. 22.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-ferro-nao-ferira",
+    "nome": "Ferro não Ferirá",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12\nO Bardo e seus aliados recebem um bônus de +1 na CA. Pode aumentar o bônus para +2 com Dif. 18, e +3 com Dif. 24.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-imprudencia",
+    "nome": "Imprudência",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12\nOs inimigos do Bardo recebem uma penalidade de -1 na CA. Pode aumentar a penalidade para -2 com Dif. 18, e -3 com Dif. 24.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-fascinacao",
+    "nome": "Fascinação",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 14\nUma criatura inteligente (de até 4 HD) à escolha do Bardo fica fascinada por sua performance. Enquanto ele manter a Balada, ela não poderá fazer nada além de admirar o Bardo. Qualquer ação hostil tomada contra ela quebra o efeito na hora. Pode afetar uma criatura de até 8 HD com Dif. 20.\nAlvo: 1 criatura inteligente capaz de entender a performance."
+  },
+  {
+    "id": "musica-1-canto-dos-passaros-matinais",
+    "nome": "Canto dos Pássaros Matinais",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 8\nCriaturas que escutem essa Balada são acordadas imediatamente, e enquanto a Balada continuar sendo mantida, não poderão dormir (seja por meios mágicos ou naturais).\nAlvos: todos que a escutem."
+  },
+  {
+    "id": "musica-1-curiosidade-do-gato",
+    "nome": "Curiosidade do Gato",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nAs criaturas que estejam escondidas de qualquer forma sentirão uma curiosidade imensa sobre o Bardo e um desejo imenso de se mostrar para ele. Elas sairão de seus esconderijos e se tornarão visíveis (mesmo se estiverem escondidas ou invisíveis por meios mágicos). Enquanto a Balada estiver sendo mantida, essas criaturas não poderão se esconder do Bardo.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-chorus",
+    "nome": "Chorus",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar apenas inimigos)\nAs criaturas inteligentes ao redor do Bardo passam a cantar a Balada junto com ele, não podendo falar nada além disso (ou seja, não conseguirão recitar magias). Alvos com HD 5 ou mais podem fazer um SM de VON para não serem afetados.\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-la-resistance",
+    "nome": "La Resistance",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs Bardo e seus aliados recebem um bônus de +1 em seus Salvamentos e testes de Moral. Pode aumentar o bônus para +2 com Dif. 16, e +3 com Dif. 22.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-sorte-sofrida",
+    "nome": "Sorte Sofrida",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs inimigos do Bardo recebem uma penalidade de -1 em seus Salvamentos e Testes de Moral. Pode aumentar a penalidade para -2 com Dif. 16, e -3 com Dif. 22.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-cancao-de-jamiro-o-kwai",
+    "nome": "Canção de Jamiro, o Kwai",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas inteligentes em volta do Bardo passam a dançar incontrolavelmente, não podendo fazer nada além disso por um número de rodadas igual ao número de Baladas mantidas anteriormente. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-lullaby",
+    "nome": "Lullaby",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas em volta do Bardo caem em um sono profundo, mágico, por um número de rodadas igual ao número de Baladas mantidas anteriormente. Durante esse tempo, não acordarão de maneira alguma. Depois desse tempo, continuarão dormindo por 1 hora, mas de maneira natural, podendo ser acordados normalmente por outra pessoa ou por barulhos altos. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-vibratio",
+    "nome": "Vibratio",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 14\nObjetos que podem ser quebrados com vibração sonora ao redor do Bardo são estilhaçados. Bons exemplos são vidro fino, cerâmica, etc. Pequenas chamas, como as de velas, também são apagadas. Além disso, para cada Balada sendo mantida anteriormente, o Bardo pode escolher um material de metal ou madeira para estilhaçar ou uma chama maior (como a de uma tocha ou fogueira) para extinguir. Ele pode escolher armas e armaduras de oponentes dessa maneira, mas a criatura que a estiver portando tem direito a um SF de DES para proteger o objeto da onda sonora. Ela recebe uma penalidade no teste igual ao número de Baladas mantidas anteriormente.\nAlvos: todos os objetos de vidro fino e cerâmica; mais um “especial” para cada Balada."
+  },
+  {
+    "id": "musica-2-amigo-estou-aqui",
+    "nome": "Amigo Estou Aqui",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 14\nUma criatura inteligente que o Bardo escolha passa a fazer o que ele mandar. Ele verá o Bardo como um amigo fiel ou amante, e obedecerá suas instruções. Mas perceba que ele não fará nada suicida ou que certamente o levará à morte, mas protegerá o Bardo da melhor maneira que puder. (Ex.: ele não se jogará de um poço ou tentará matar um rei em seu castelo, mas poderá se interpor contra 3 Ogros enquanto o Bardo foge). O efeito dura 1 turno por Balada mantida anteriormente. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 1 criatura inteligente que entenda o Bardo."
+  },
+  {
+    "id": "musica-2-medo-da-morte",
+    "nome": "Medo da Morte",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas em volta do Bardo se encolhem ou fogem com medo dentro de seus corações. Alvos que falhem em um teste de SM de VON (com uma penalidade igual ao número de Baladas mantidas anteriormente), fogem desesperadamente do local. Se não tiverem para onde fugir, largarão tudo que estiverem segurando e se encolherão de medo em um canto. Alvos que passem no teste, ficaram com medo e hesitantes, recebendo -2 em todos os testes por um número de rodadas igual ao número de Baladas mantidas anteriormente.\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro). Não funciona em mortos-vivos."
+  },
+  {
+    "id": "musica-2-boom",
+    "nome": "Boom!",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 10\nO Bardo manda ondas sonoras poderosíssimas pelo ar, que ferem aqueles que são atingidos por ela. Normalmente, ele escolhe um alvo, mas pode escolher um alvo adicional que esteja na mesma direção para cada +4 na Dificuldade. Os alvos recebem 1d6 de dano por Balada mantida anteriormente e são arremessados 5’ para trás para cada Balada (podem fazer um SF de DES para receberem apenas metade do dano e não serem arremessados).\nAlvos: ver acima."
+  },
+  {
+    "id": "musica-3-hino-de-hammelin",
+    "nome": "Hino de Hammelin",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "O Bardo pode passar 30 minutos tocando em um local. Com isso, ele convocará todas as criaturas pequenas que existem naquele local para virem à sua volta (ele deve escolher um tipo de criatura quando começa a tocar o Hino). Exemplos de criaturas são ratos, pequenos pássaros, esquilos, abelhas, etc.). Leva mais 10 min. Para que as criaturas próximas (até 360 pés do Bardo) se aproximem. Depois de juntas, elas seguirão o Bardo onde ele for enquanto ele mantiver o Hino tocando. Criaturas mágicas podem fazer um SM de VON para resistir ao efeito. Ele pode manter o efeito por 1 hora por rank na Trilha. A partir do 5º rank, o Bardo pode pedir pequenos favores às criaturas, que o entenderão."
+  },
+  {
+    "id": "musica-3-nostalgia",
+    "nome": "Nostalgia",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Enquanto toca esse Hino, as pessoas ao redor do bardo são tomadas por um enorme sentimento de saudades de casa ou dos tempos idos. Seus corações e mentes são apaziguados. Após 10 minutos ouvindo esta melodia, nenhuma intenção violenta acomete os ouvintes. Ninguém pode realizar nenhum ataque ou outra ação de violência contra outros seres vivos. O Bardo pode manter esse efeito por um número de turnos igual ao seu rank na Trilha, enquanto performa o Hino."
+  },
+  {
+    "id": "musica-3-caminho-de-casa",
+    "nome": "Caminho de Casa",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante uma viagem, o Hino do Bardo pode fazer com que os fardos pareçam mais leves e a estrada, mais curta. Durante um percurso, enquanto estiver performando este Hino, aumente a velocidade de viagem do grupo em um passo. O Bardo pode manter este efeito por 1 hora por rank na Trilha."
+  },
+  {
+    "id": "musica-3-requiem",
+    "nome": "Requiem",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Este Hino, que é uma elegia, tem o efeito de dar aos mortos o descanso merecido. Durante um funeral de uma criatura, se o Bardo tocar este Hino por pelo menos 20 minutos, tal criatura nunca poderá posteriormente ser transformada em um morto-vivo, por nenhuma maneira.\nAlém disso, qualquer morto-vivo que tenha HD igual ou menor que o rank de Trilha do Bardo do personagem, que esteja próximo ao Bardo (até 30 pés) e ouça a elegia por 20 minutos ou mais, se desfará em um monte de cinzas."
+  },
+  {
+    "id": "musica-3-fonte-de-renovacao",
+    "nome": "Fonte de Renovação",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante um acampamento, antes do descanso diário, se o Bardo tocar esse Hino por pelo menos 30 minutos, todos os ouvintes podem recuperar 1 nível de Fadiga (2 níveis a partir do 5º rank)."
+  },
+  {
+    "id": "musica-3-apenas-um-arranhao",
+    "nome": "Apenas um Arranhão",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante um acampamento, antes do descanso diário, se o Bardo tocar esse Hino por pelo menos 30 minutos, todos os ouvintes recuperam 1d6 PV”s adicionais aos que recuperariam normalmente com o descanso (2d6 PV’s a partir do 5º rank)."
+  },
+  {
+    "id": "musica-3-voz-de-ouro",
+    "nome": "Voz de Ouro",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "O Bardo pode fascinar uma plateia com este Hino. Após performar por pelo menos 10 minutos, todos os ouvintes passam a admirar o Bardo. Ele recebe um bônus de +2 em qualquer teste de Reação que as criaturas façam a respeito dele (+4 a partir do 5º rank). Elas também mantém a atenção centrada no Bardo, não dando muita importância para o que acontece à sua volta."
+  },
+  {
+    "id": "musica-3-lingua-dos-deuses",
+    "nome": "Língua dos Deuses",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Através de sua música, após 1 hora de performance, o Bardo é capaz de afetar até mesmo o clima. O quanto ele tem poder sobre as forças da natureza depende do seu rank na Trilha. Fica a cargo do Mestre e dos jogadores pensarem nisso, mas uma boa métrica é de:\nRanks 1 a 3: pode fazer pequenas alterações, como amenizar um pouco o frio ou o calor, diminuir um pouco a força dos ventos. Tudo a ponto de deixar mais fácil resistir a possíveis níveis de Fadiga que imponham.\nRanks 4 a 6: já pode alterar mais as condições, transformando chuvas fortes em fracas, aumentar ou diminuir o calor e o frio a ponto de exigir (ou deixar de exigir) roupas e proteções adequadas.\nRanks 7 a 9: já pode alterar mesmo as condições, transformando um clima quente em frio e vice-versa. Chuvas podem se tornar garoas e em tempos limpos podem aparecer nuvens carregadas. Chuvas podem se tornar granizos. Mas nunca um lugar de clima frio se tornará quente (exemplo: uma geleira não será quente; um deserto não congelará, etc.) e ele não pode “criar” efeitos do nada.\nRank 10+: aqui as mudanças podem ser mais radicais, realmente criando climas nos lugares. Pode invocar tempestades, fazer nevar no deserto, surgir um tufão, etc.\nO Mestre pode pedir um Teste de Performance com uma dificuldade de acordo para determinadas situações."
+  },
+  {
+    "id": "runa-maiores-runa-do-aco-ineficaz",
+    "nome": "Runa do Aço Ineficaz",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "MANN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe RD 1 contra ataques físicos por 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma armadura de metal. Cada armadura somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-vida-maritima",
+    "nome": "Runa da Vida Marítima",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "LAGU",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: enquanto portar a runa, o personagem pode respirar e se movimentar normalmente embaixo d’água. Este efeito dura 1 hora.\n-Local de recarga: mergulhada em um corpo d’água.\n-Especial: pode ser inscrita permanentemente em um elmo ou joia. Cada elmo ou joia somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-ajuda-ao-corpo",
+    "nome": "Runa da Ajuda ao Corpo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "BEDRC",
+    "descricao": "-Custa de Ativação: 2 PV’s\n-Efeito: uma pessoa afligida por uma doença ou veneno que receba essa runa ativada em mãos poderá refazer seu SF para se recuperar da mazela. Ela possui um bônus nesse teste igual à metade do rank em Lorde Rúnico de quem ativou a runa.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-do-gigante-e-do-anao",
+    "nome": "Runa do Gigante e do Anão",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "THORN",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem muda de tamanho. Se ela estiver voltada para o leste no momento da ativação, ele se torna um gigante, dobrando de tamanho (causa o dobro de dano com ataques físicos). Se ela estiver voltada para o oeste, ele se torna um anão, ficando com a metade do tamanho (e causando metade do dano com ataques físicos). Este efeito dura 1 turno. Alvos involuntários podem fazer um SF de CON para não sofrerem o efeito.\n-Local de recarga: sob a luz do meio dia ou da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-da-besta",
+    "nome": "Runa da Besta",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "EOLH",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao tocar a runa ativada em um animal silvestre, é possível ao portador da mesma conversar com o animal por 1 hora.\n-Local de recarga: sob a luz do luar.\n-Especial: pode ser inscrita permanentemente em uma joia em forma de coleira e colocada no animal. O animal passa a poder entender e falar o idioma natal do personagem que criou a joia."
+  },
+  {
+    "id": "runa-maiores-runa-da-liberdade",
+    "nome": "Runa da Liberdade",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "GUEOFU",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: esta runa pode ser ativada para destrancar qualquer fechadura, porta ou grilhão que encoste.\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em alguma porta ou cadeado que encontre. Depois disso, ele despeja seu sangue em cima dela (2 PV’s) e transfere o poder da runa que carrega consigo. Com isso, essa porta ou cadeado estará magicamente lacrada. Só poderá ser aberta com o uso da runa GUEOFU ou pela magia Tranca Arcana."
+  },
+  {
+    "id": "runa-maiores-runa-da-captura",
+    "nome": "Runa da Captura",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ETHEL",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem poderá desviar qualquer projétil arremessado contra ele (adagas, lanças, flechas, virotes, etc.). Ele recebe um bônus de +8 contra qualquer ataque à distância feito contra ele. Se o ataque errar, ele pode escolher agarrar o objeto (contanto que esteja com uma mão vazia). Esse bônus dura 1 rodada para cada rank em Lorde Rúnico do personagem que ativou a runa.\n-Local de recarga: ao ar livre, quando estiver soprando ventos capazes de levantar folhas.\n-Especial: Gastando 2 PV’s adicionais, o personagem pode acionar essa runa em resposta a um ataque à distância que recebeu.\nIR\nRuna do Conhecimento\n-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa passa a enxergar todas as coisas pelo que elas realmente são. Coisas invisíveis passam a ser visíveis; fantasmas e ilusões passam a ser reconhecíveis; disfarces, mágicos ou não, deixam de funcionar; portas secretas magicamente escondidas se revelam; e até mesmo vítimas de polimorfia ou transformadas em pedra se mostram como seriam na verdade. Dura 1 hora.\n-Local de recarga: sob a luz da lua da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-da-cura-merecida",
+    "nome": "Runa da Cura Merecida",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "SIGEL",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: o personagem que tenha essa runa ativada encostada em um ferimento recente o verá sendo curado. Ele recupera 2d4+2 PV’s, mas somente são recuperados PV’s perdidos por ferimentos recebidos em combate, e somente os que aconteceram dentro da última hora.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-do-discurso-justo",
+    "nome": "Runa do Discurso Justo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ANSUR",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: o portador da runa saberá quando alguém estiver falando mentiras para ele, enquanto estiver portando a runa ativada. Esse efeito dura por 1 hora. Ele também pode gastar 2 PV’s e passar 1 turno inscrevendo a runa, com seu sangue, em alguma parte do corpo de outra pessoa. Depois disso, ele passa a carga da runa que carrega para a nova inscrição em sangue, e a pessoa se sentirá magicamente obrigada a falar a verdade de todas as perguntas que lhe fizerem no período de 30 minutos.\n-Local de recarga: sob a luz do sol do meio dia."
+  },
+  {
+    "id": "runa-maiores-runa-da-doenca",
+    "nome": "Runa da Doença",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "DAG",
+    "descricao": "-Custo de ativação: 3 PV´s\n-Efeito: ao ativar essa runa, o Lorde Rúnico deve nomear um ser vivo à vista. Esse ser vivo deve passar em um SF de CON ou ficará doente, recebendo 1 ponto de Fadiga. O máximo de pontos de Fadiga que ele pode infligir é igual à metade do seu rank em Lorde Rúnico (arredondado para cima). Os pontos de Fadiga são recuperados na proporção de 1 por hora.\n-Local de recarga: em um lugar de total escuridão, junto com vários ossos.\n-Especial: o Lorde Rúnico pode criar uma joia amaldiçoada permanentemente com esta runa. Quem colocar a joia ficará muito doente, perdendo 1d3 pontos de CON e de FOR por semana que usar a joia. Depois de colocada, ela só poderá ser removida com a magia Remover Maldição. Cada joia só pode conter 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-do-encantamento",
+    "nome": "Runa do Encantamento",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "FEOH",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: ao ativar essa runa, o Lorde Rúnico deve nomear um ser inteligente à vista. Esse ser deve passar em um SM de VON ou ficará encantado pelo Lorde. Ele o tratará como se estivesse apaixonado ou como se o Lorde fosse seu melhor amigo. Ele deve agir de acordo, mas qualquer ato de violência feito pelo Lorde Rúnico contra o alvo o faz despertar do transe. O efeito dura 1 hora por rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: imerso em um perfume de boa qualidade.\n-Especial: o Lorde Rúnico pode criar uma joia amaldiçoada permanentemente com esta runa. Quem colocar a joia ficará extremamente apaixonado pelo Lorde e procurará fazer tudo que ele comandar. Depois de colocada, ela só poderá ser removida com a magia Remover Maldição. Cada joia só pode conter 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-do-escudo",
+    "nome": "Runa do Escudo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "TYR",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe +1 em todas os seus SF’s ou SM’s (ele escolhe na hora da ativação). Este efeito dura 1 rodada por rank do Lorde Rúnico que ativar a runa. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: pode ser inscrita permanentemente em uma armadura de metal, escudo ou joia. Cada armadura ou joia somente comporta 1 runa inscrita."
+  },
+  {
+    "id": "runa-maiores-runa-da-extincao",
+    "nome": "Runa da Extinção",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "HAEGALLH",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: esta runa pode ser usada para apagar o fogo, a luz ou as vozes. Após ativada, ela pode apagar o fogo de um lugar de qualquer tamanho até o de um incêndio em uma construção média. Ela também pode ser usada para “apagar” a luz em um ambiente, deixando tudo magicamente escuro em uma área de até 60x60 pés. Também pode ser usada para que uma área do mesmo tamanho não tenha som, ou seja, nenhum som pode ser produzido ou pode entrar na área. Nos últimos dois casos, o efeito dura um número de rodadas igual ao rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: dentro de um corpo de água corrente ou sob a luz da lua da meia noite.\nUR\nRuna do Braço Forte\n-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem passa a infringir mais dano com a arma que estiver portando (+1 por dado de dano da arma). A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. O efeito dura 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa WYNN)."
+  },
+  {
+    "id": "runa-maiores-runa-da-fortuna-dourada",
+    "nome": "Runa da Fortuna Dourada",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "JERA",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao ativar essa runa, ela brilha com uma luz dourada como a de uma tocha, por 1 hora + 1 turno por rank do Lorde Rúnico que a ativar. Também pode ser usada para dissipar escuridões mágicas de qualquer tipo.\n-Local de recarga: sob a luz do sol do meio dia.\n-Especial: pode ser inscrita permanentemente em uma arma, escudo ou joia. O item passará a emitir essa luz constantemente. Cada arma, escudo ou joia somente comporta 1 runa inscrita.\nIS\nRuna do Hidromel dos Deuses\n-Custo de ativação: 1 PV\n-Efeito: quando ativada, esta runa purifica qualquer líquido em que for mergulhada. O personagem é capaz de purificar, por ativação, o equivalente a um odre de mais ou menos 2 litros.\n-Local de recarga: imersa em hidromel ou cerveja.\n-Especial: pode ser inscrita permanentemente em um chifre ou caneco. Uma vez por dia, qualquer líquido que seja colocado dentro do recipiente será purificado. Se for colocado hidromel ou cerveja, entornar toda a bebida recuperará até 2 pontos de Fadiga."
+  },
+  {
+    "id": "runa-maiores-runa-das-longas-viagens",
+    "nome": "Runa das Longas Viagens",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "EOH",
+    "descricao": "-Custo de ativação: 3 PV´s\n-Efeito: ao ativar essa runa no início de uma jornada pelos ermos ou pelo mar, ela proporcionará uma viagem mais segura para o grupo que estiver com o Lorde Rúnico. Diminui-se a chance de encontros aleatórios em dois passos (ou seja, de 1 em 1d10 por período, passa a ser 1 em 1d12, etc.). Este efeito dura até o próximo teste de encontro aleatório nos ermos (ou 1 dia).\n-Local de recarga: enterrada em uma estrada ou imersa no mar."
+  },
+  {
+    "id": "runa-maiores-runa-da-morte",
+    "nome": "Runa da Morte",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "PEORTH",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: encostando a runa ativada no cadáver de uma pessoa morta, é possível conversar com ela. Enquanto a runa estiver ativa e em contato com o cadáver, o espírito da pessoa responderá as perguntas (mas ele não é obrigado a ser sincero). O efeito dura até 1 turno (10 minutos).\n-Local de recarga: sob a luz da lua da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em algum cadáver. Depois disso, ele despeja seu sangue em cima dele (3 PV’s) e transfere o poder da runa que carrega consigo. Com isso, esse cadáver passa a ficar animado, seguindo o Lorde Rúnico por até 1 hora. Porém, a cada turno, há 1 chance em 6 do cadáver se rebelar contra o Lorde e atacá-lo."
+  },
+  {
+    "id": "runa-maiores-runa-da-mudanca",
+    "nome": "Runa da Mudança",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "RAD",
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: ao ativar a runa, o portador dela pode se transportar para outro lugar, sumindo e aparecendo na nova posição. Deve ser um lugar que ele possa ver, e que esteja a até 60 pés de sua localização atual. Se gastar 2 PV’s adicionais, ele pode fazer isso instantaneamente, como uma reação a um ataque, por exemplo.\n-Local de recarga: sob a luz do meio dia ou da meia noite.\n-Especial: o Lorde Rúnico pode passar 1 turno talhando essa runa em algum chão minimamente estável. Depois disso, ele despeja seu sangue em cima dela (3 PV’s) e transfere o poder da runa que carrega consigo. Dentro de 1 hora para cada rank do Lorde Rúnico, ele poderá ativá-la novamente (gastando 2 PV’s extras se quiser fazer de maneira instantânea) e então aparecerá neste local marcado. O local deve estar dentro de uma distância de até 200 pés + 20 pés por rank."
+  },
+  {
+    "id": "runa-maiores-runa-da-ninfa-do-gelo",
+    "nome": "Runa da Ninfa do Gelo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "NYD",
+    "descricao": "-Custo de ativação: 4 PV’s\n-Efeito: ao ativar a runa, o portador pode congelar um corpo d’água em que toque com as duas mãos. Ele pode congelar uma porção de água de 30x30x30 pés por rank em Lorde Rúnico. Essa parte congelada pode ser dura como um iceberg, e pode ter a superfície lisa e escorregadia. O efeito dura até que o portador o cancele com o estalar dos dedos ou até o gelo derreter naturalmente.\n-Local de recarga: dentro do gelo ou sob a luz da lua da meia noite de uma noite bem fria."
+  },
+  {
+    "id": "runa-maiores-runa-da-sorte",
+    "nome": "Runa da Sorte",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "ING",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa pode ativá-la para refazer qualquer rolagem de dados, ou obrigar alguém que esteja em seu campo de visão a refazer qualquer rolagem de dados.\n-Local de recarga: sob a luz do meio dia ou da meia noite."
+  },
+  {
+    "id": "runa-maiores-runa-do-triunfo",
+    "nome": "Runa do Triunfo",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "WYNN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem recebe +1 em seus ataques com armas. O efeito dura 1 turno. A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa UR)."
+  },
+  {
+    "id": "runa-maiores-runa-da-visao",
+    "nome": "Runa da Visão",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "KEN",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: ao ativar essa runa e manter ela em uma de suas mãos, o portador pode tocar com a outra mão em um objeto ou pessoa e ter uma visão do que aconteceu em seu passado recente. O tempo que ele pode ver depende do seu rank em Lorde Rúnico (1 semana para cada rank para seres vivos, 1 mês para cada rank para objetos inanimados).\n-Local de recarga: sob a luz do sol do meio dia.\nInscrevendo Runas\n*Golem animado com Runas na testa ???"
+  },
+  {
+    "id": "veneno-ingestao-o-alvo-de-consumir-beber-comer-o-veneno-que-agira-a-partir-de-seu-estomago",
+    "nome": "Ingestão: o alvo de consumir (beber/comer) o veneno, que agirá a partir de seu estômago.",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": ""
+  },
+  {
+    "id": "veneno-ferimento-normalmente-aplicado-em-armas-ou-municao-e-age-quando-entra-na-corrente-sanguinea-atraves-do-ferimento-pode-revestir-ate-3-flechas-virotes-no-caso-de-armas-serve-para-dois-ataques-bem-sucedidos-a-primeira-vez-que-ela-ferir-um-alvo-o-veneno-tem-seu-efeito-normal-na-segunda-vez-tem-metade-do-efeito-efeitos-que-nao-sao-de-dano-passam-a-ser-4-nos-salvamentos-na-segunda-vez",
+    "nome": "Ferimento: normalmente aplicado em armas ou munição,e  age quando entra na corrente sanguínea através do ferimento. Pode revestir até 3 flechas/virotes. No caso de armas, serve para dois ataques bem sucedidos (a primeira vez que ela ferir um alvo, o veneno tem seu efeito normal. Na segunda vez tem metade do efeito. Efeitos que não são de dano passam a ser +4 nos Salvamentos na segunda vez).",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": ""
+  },
+  {
+    "id": "veneno-inalacao-o-alvo-deve-respirar-o-veneno-para-que-este-tenha-efeito-normalmente-sao-pos-ou-um-tipo-de-fumaca",
+    "nome": "Inalação: O alvo deve respirar o veneno para que este tenha efeito. Normalmente são pós ou um tipo de fumaça.",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": ""
+  },
+  {
+    "id": "veneno-contato-apenas-colocar-o-veneno-em-contato-com-a-pele-do-alvo-ja-e-o-suficiente-para-que-esse-tenha-efeito",
+    "nome": "Contato: Apenas colocar o veneno em contato com a pele do alvo já é o suficiente para que esse tenha efeito.",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Fórmulas Alquímicas\nComuns\nSão mais fáceis de achar, usados por Alquimistas principiantes, e que podem ser encontrados e comprados em lojas especializadas."
+  },
+  {
+    "id": "veneno-pocao-de-restauracao-lagrima-do-sol-nascente",
+    "nome": "Poção de restauração (“Lágrima do Sol Nascente”)",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo de base: 250 PO\nUso: poção a ser ingerida.\nEfeito: recupera 1d6 PV’s, ou cura Paralisia."
+  },
+  {
+    "id": "veneno-nevoa-da-negociacao-nevoa-do-primeiro-suspiro",
+    "nome": "Névoa da negociação (“Névoa do Primeiro Suspiro”)",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 350 PO\nUso: libera fumaça em uma área de 60’x60’ que dura 2d3 turnos.\nEfeito: criaturas inteligentes dentro da área recebem +2 em seus testes de Reação para fazerem acordos."
+  },
+  {
+    "id": "veneno-pocao-da-verdade-licor-das-7-palavras",
+    "nome": "Poção da verdade (“Licor das 7 Palavras”)",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: poção a ser ingerida.\nEfeito: a pessoa que beber essa poção não conseguirá mentir e deverá responder honestamente às perguntas que lhe forem feitas durante 30 minutos."
+  },
+  {
+    "id": "veneno-oleo-de-escalada",
+    "nome": "Óleo de escalada",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: óleo a ser passado nas mãos e nos pés.\nEfeito: pode se prender às superfícies como uma aranha ou lagartixa, se deslocando normalmente por paredes sem risco de queda por 2d3 turnos."
+  },
+  {
+    "id": "veneno-oleo-de-acuracia",
+    "nome": "Óleo de acurácia",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: óleo a ser passado em uma arma (ou 3 munições).\nEfeito: ataques com a arma besuntada possuem +1 para acertar por 2d3 rodadas."
+  },
+  {
+    "id": "veneno-pocao-de-ver-no-escuro",
+    "nome": "Poção de ver no escuro",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo bade: 350 PO\nUso: poção a ser ingerida.\nEfeito: o usuário passa a conseguir enxergar na escuridão total por 1 hora."
+  },
+  {
+    "id": "veneno-bomba-de-luz",
+    "nome": "Bomba de luz",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: frasco a ser arremessado.\nEfeito: Um forte clarão de luz surge em uma área de 20’x20’. Todos dentro dela devem passar em um SF de DES ou ficarão cegos por 1d3 rodadas."
+  },
+  {
+    "id": "veneno-fogo-alquimico",
+    "nome": "Fogo alquímico",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: frasco a ser arremessado.\nEfeito: o alvo atingido por essa granada recebem 1d6 de dano. Objetos altamente inflamáveis podem pegar fogo."
+  },
+  {
+    "id": "veneno-oleo-de-corrosao",
+    "nome": "Óleo de corrosão",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: óleo a ser aplicado em metais.\nEfeito: um óleo altamente corrosivo para metais, que os corrói. Entra em ação depois de 1d4 rodadas de sua aplicação."
+  },
+  {
+    "id": "veneno-pocao-do-heroismo",
+    "nome": "Poção do heroísmo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: poção a ser ingerida.\nEfeito: o usuário recebem +2 em seus Salvamentos e Testes de Moral por 2d3 turno, ou cura um efeito de Medo."
+  },
+  {
+    "id": "veneno-bomba-grude",
+    "nome": "Bomba-grude",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 250 PO\nUso: frasco a ser arremessado.\nEfeito: uma área de 20’x20’ fica coberta com uma cola grudenta. Todos nela devem passar em uma SF de FOR para não ficarem presos. Mesmo se passarem, ainda se tênis eu Mov. diminuído em um passo."
+  },
+  {
+    "id": "veneno-pocao-de-respirar-agua",
+    "nome": "Poção de respirar água",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 350 PO\nUso: poção a ser ingerida.\nEfeito: o usuário pode respirar e se movimentar debaixo d'água normalmente por 1 hora."
+  },
+  {
+    "id": "veneno-antitoxima",
+    "nome": "Antitoxima",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 350 PO\nUso: poção a ser ingerida.\nEfeito: anula o efeito de qualquer veneno no organismo do usuário."
+  },
+  {
+    "id": "veneno-balsamo-de-arma-pomada-de-vitriol",
+    "nome": "Bálsamo de arma (“Pomada de Vitriol”)",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 300 PO\nUso: bálsamo para se passar na arma.\nEfeito: ao passar o bálsamo na arma, ele cura o último ferimento que ela provocou. Independentemente da distância entre a arma e a pessoa ferida, ela recupera 2d4 PV’s, além de estancar qualquer possível sangramento e curar infecções que o ferimento tenha provocado.\nIncomuns\nMais difíceis de achar. Normalmente, só são encontrados à venda em grandes cidades e metrópoles; porém é mais comum que o Alquimista os ache ou produza por si só."
+  },
+  {
+    "id": "veneno-pocao-do-amor",
+    "nome": "Poção do amor",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 600 PO\nUso: poção a ser ingerida\nEfeito: após beber a poção, o usuário ficará enfeitiçado pelo primeiro humanoide que ver, estando perdidamente apaixonado por ele. Qualquer ação violenta por parte desse humanoide quebra o efeito. O usuário pode fazer um SM de VON para negar o efeito quando ingerir a poção, e depois uma vez a cada dia subsequente (recebem +4 nesse teste se o humanoide for de um sexo oposto à sua orientação sexual)."
+  },
+  {
+    "id": "veneno-pocao-da-invisibilidade",
+    "nome": "Poção da invisibilidade",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 600 PO\nUso: poção a ser ingerida.\nEfeito: o usuário fica completamente invisível por 2d6 turnos (ou até fazer um ataque ou conjurar uma magia)."
+  },
+  {
+    "id": "veneno-pocao-de-levitacao",
+    "nome": "Poção de levitação",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 500 PO\nUso: poção a ser ingerida.\nEfeito: o usuário passa a levitar a até 2m da superfície. Ele precisa ter uma superfície embaixo dele, porém, enquanto a poção estiver em efeito, ele suavemente flutua para baixo ao invés de cair. Dura 2d3 turnos."
+  },
+  {
+    "id": "veneno-pocao-da-forca-de-gigante",
+    "nome": "Poção da força de gigante",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 800 PO\nUso: poção a ser ingerida.\nEfeito: aumenta a força do personagem, também aumentando o dano de ataques melee e armas arremessadas em +2 por 2d3 rodadas."
+  },
+  {
+    "id": "veneno-pocao-de-crescimento",
+    "nome": "Poção de crescimento",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 800 PO\nUso: poção a ser ingerida.\nEfeito: o usuário dobra de tamanho por 2d3 turnos. Isso lhe dá +2 no mod. de FOR e faz com que ele possa carregar +5 slots."
+  },
+  {
+    "id": "veneno-pocao-de-encolhimento",
+    "nome": "Poção de encolhimento",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 800 PO\nUso: poção a ser ingerida.\nEfeito: o usuário fica do tamanho de um palmo por 2d3 turnos. Um SF de CON pode negar o efeito."
+  },
+  {
+    "id": "veneno-unguento-da-cura",
+    "nome": "Unguento da cura",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 500 PO\nUso: pomada a ser passada em ferimentos ou em um pano quente sobre a testa.\nEfeito: cura 2d6+2 PV’s, ou 1 nível de Fadiga."
+  },
+  {
+    "id": "veneno-pomada-da-pele-em-aco",
+    "nome": "Pomada da pele em aço",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 600 PO\nUso: unguento passado sobre o corpo da pessoa.\nEfeito: confere RD 1 contra danos físicos por 1 hora."
+  },
+  {
+    "id": "veneno-explosao-de-fogo",
+    "nome": "Explosão de fogo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 500 PO\nUso: frasco a ser arremessado.\nEfeito: atinge uma área de 20’x20’, criando uma explosão que causa 3d6 de dano a todos na área e faz com que eles peguem fogo (SF de DES para metade do dano e não pegar fogo). Criaturas pegando fogo recebem 1d4 de dano por rodada, durante 1d4 rodadas (ou até o fogo apagar)."
+  },
+  {
+    "id": "veneno-bomba-de-gelo",
+    "nome": "Bomba de gelo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 600 PO\nUso: frasco a ser arremessado.\nEfeito: o alvo atingido recebe 3d6 de dano e fica congelado por 1d3 rodadas (SF de DES para metade do dano e não ficar congelado)"
+  },
+  {
+    "id": "veneno-pocao-de-resistencia-a-elemento",
+    "nome": "Poção de resistência a elemento",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 600 PO\nUso: poção a ser ingerida.\nEfeito: o usuário fica imune à um dos 4 elementos (fogo, gelo/água, ar/raio, terra/ácido). Existe uma poção para cada um dos elementos. Dura 1 hora."
+  },
+  {
+    "id": "veneno-po-do-sono",
+    "nome": "Pó do sono",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 500 PO\nUso: frasco a ser arremessado que libera fumaça em uma área de 30’x30’.\nEfeito: todas as criaturas dentro da área devem passar em um SM de VON ou cairão num sono profundo por 1d3 turnos."
+  },
+  {
+    "id": "veneno-pocao-de-halito-de-dragao",
+    "nome": "Poção de hálito de dragão",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 400 PO\nUso: poção a ser ingerida.\nEfeito: o personagem pode soltar pequenas baforadas de dragão por 1d4 rodadas, usando sua ação. Ele causa 2d6 de dano em todos à sua frente (SF de DES para metade do dano).\nRaras\nNão são encontrados à venda. O Alquimista só tem acesso encontrando-as em suas aventuras."
+  },
+  {
+    "id": "veneno-pocao-de-voo",
+    "nome": "Poção de voo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 1000 PO\nUso: poção a ser ingerida.\nEfeito: permite ao usuário voar com perfeição de manobra e sem limite de altura por 2d3 turno."
+  },
+  {
+    "id": "veneno-pocao-da-grande-restauracao",
+    "nome": "Poção da grande restauração",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 1100 PO\nUso: poção a ser ingerida.\nEfeito: restaura 4d6 +4 PV’s, ou cura Paralisia, Doenças ou Venenos"
+  },
+  {
+    "id": "veneno-pocao-da-juventude",
+    "nome": "Poção da juventude",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 6000 PO\nUso: poção a ser ingerida.\nEfeito: rejuvenesce o usuário em 10 anos permanentemente. Ele pode fazer um SF de CON para resistir ao efeito."
+  },
+  {
+    "id": "veneno-pocao-da-velhice",
+    "nome": "Poção da velhice",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 6000 PO\nUso: poção a ser ingerida.\nEfeito: envelhece o usuário em 10 anos permanentemente. Ele pode fazer um SF de CON para resistir ao efeito."
+  },
+  {
+    "id": "veneno-pocao-da-velocidade",
+    "nome": "Poção da velocidade",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 1000 PO\nUso: poção a ser ingerida.\nEfeito: o personagem passa a se mover com o dobro de sua velocidade. Além disso, pode fazer uma ação adicional por rodada (menos conjurar magias). Dura 2d3 rodadas."
+  },
+  {
+    "id": "veneno-pocao-da-mudanca-de-sexo",
+    "nome": "Poção da mudança de sexo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 2500 PO\nUso: poção a ser ingerida.\nEfeito: o personagem muda de sexo biologicamente, de maneira permanente. Ele pode fazer um SF de CON para negar o efeito."
+  },
+  {
+    "id": "veneno-fumaca-da-transposicao",
+    "nome": "Fumaça da transposição",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 2500 PO\nUso: fumaça liberada em uma pequena área que deve ser inalada por duas criaturas.\nEfeito: as duas criaturas mudam de corpo entre si. Elas ficam nesse estado por 1d3 dias. Qualquer uma delas pode fazer um SM de VON para negar o efeito. Se houver mais do que duas criaturas na área da fumaça, ela também não surte efeito."
+  },
+  {
+    "id": "veneno-pedra-trovao",
+    "nome": "Pedra-trovão",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 800 PO\nUso: objeto a ser arremessado.\nEfeito: atinge uma área de 20’x20’, liberando um som estridente e raios em todas as direções. Todos na área devem recebem 4d6 de dano e ficam surdos por 1d4 rodadas (SF de DES para metade do dano e negar a surdez)."
+  },
+  {
+    "id": "veneno-pocao-de-mudanca-de-forma",
+    "nome": "Poção de mudança de forma",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 2000 PO\nUso: poção a ser ingerida.\nEfeito: o personagem pode mudar de forma. Além da poção, ele precisa de uma parte do corpo de quem ou do que ele quer se transformar (um fio de cabelo, uma unha, a presa ou pena do animal). O efeito dura por 1d3 dias. Ele pode fazer um SF de CON para negar o efeito."
+  },
+  {
+    "id": "veneno-oleo-de-chumbo-em-ouro",
+    "nome": "Óleo de chumbo em ouro",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 5000 PO\nUso: óleo a ser passado no metal em questão.\nEfeito: passando este óleo em um metal não precioso, ele o transforma em ouro permanentemente. É capaz de transformar uma quantidade de metal equivalente a mais ou menos 10’x10’x10’."
+  },
+  {
+    "id": "veneno-pocao-da-petrificacao",
+    "nome": "Poção da petrificação",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 5000 PO\nUso: poção a ser ingerida.\nEfeito: quem ingerir essa poção se transformará permanentemente em pedra. Pode fazer um SF de CON para resistir ao efeito."
+  },
+  {
+    "id": "veneno-unguento-da-pedra-em-lama",
+    "nome": "Unguento da pedra em lama",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Custo base: 3500 PO\nUso: unguento a ser passado na pedra\nEfeito: transforma a pedra besuntada em lama mole. É possível passar em uma área de 20’x20’x20’. Se aplicado em alguém petrificado, este volta ao normal.\nCriando novas Fórmulas\nO Alquimista pode criar novas Fórmulas alquímicas em seu laboratório, estudando Ingredientes especiais e combinando-os para conseguir os mais variados efeitos.\nQuando o faz, é importante pensar em cada Ingrediente como uma Essência para a Fórmula. Cada essência é simplificada em uma palavra. Então, ao criar uma Fórmula, o personagem está juntando palavras que podem significar um certo efeito desejado (quanto maior seu rank na Trilha, mais essências ele pode combinar).\nO Alquimista pode tanto saber a essência/palavra dos Ingredientes que ele está combinando, a fim de criar algo específico, quanto também pode combinar Ingredientes que ele não sabe a essência, e contar com a sorte para ver o resultado final (e também descobrir a essência daqueles elementos).\nDe qualquer modo, sempre que o fizer, há um risco. A primeira vez que cria um Fórmula, o personagem deve fazer uma rolagem de 1d20+seu rank e consultar a tabela de Criação de Fórmulas para ver se algo deu errado.\nO jogador e o Mestre devem conversar sobre os Ingredientes e sobre o efeito final da Fórmula desejada, assim como determinar a raridade da mesma. Abaixo seguem alguns exemplos de Ingredientes e suas respectivas essências/palavras; mas os jogadores devem se sentir livres para criarem mais."
+  },
+  {
+    "id": "veneno-efeitos-ficam-a-cargo-do-jogador-e-do-mestre-mas-uma-boa-metrica-para-os-efeitos-e-a-seguinte",
+    "nome": "Efeitos: ficam a cargo do jogador e do Mestre, mas uma boa métrica para os efeitos é a seguinte:",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Dano/PV’s: incrementos de 1d6\nÁrea: 1 alvo, ou área 20’x20’\nDuração: 1d6 rodadas / 2d3 turnos / 1 hora\nCusto base: Comuns (250+50 por ingrediente extra), Incomuns (500+100 por ingrediente extra), Raras (1500 + 500 por ingrediente extra)\nExemplo: o jogador quer criar uma fórmula de poção que deixa quem a ingerir cego e mudo por um tempo. Ele e o Mestre conversam e chegam no seguinte consenso:\nEssências: Visão + Audição + Vulnerabilidade/Negativo\nRaridade: Incomum\nCusto base: 600 PO\nUso: poção a ser ingerida.\nEfeito: quem ingerir essa poção ficará cego e surdo por 2d3 turnos. Ele pode fazer um SF de CON para negar o efeito.\nE então pensam em um nome bacana: “Bile da Cobra-cega do Rio Styx”.\nAprendendo novas Fórmulas e Venenos\nPara descobrir quais Essências existem em determinado ingrediente, o Alquimista precisa fazer testes com o mesmo e estudá-lo. Para isso, ele precisa de um laboratório e deve gastar um tempo e dinheiro de acordo com a raridade do ingrediente."
+  },
+  {
+    "id": "veneno-comuns-200-por-essencia-1-semana-de-estudo",
+    "nome": "Comuns: 200 por Essência - 1 semana de estudo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": ""
+  },
+  {
+    "id": "veneno-incomuns-400-por-essencia-2-semanas-de-estudo",
+    "nome": "Incomuns: 400 por Essência - 2 semanas de estudo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": ""
+  },
+  {
+    "id": "veneno-raros-800-por-essencia-4-semanas-de-estudo",
+    "nome": "Raros: 800 por Essência - 4 semanas de estudo",
+    "tipo": "Veneno",
+    "trilha": "Alquimista",
+    "circulo_ou_grau": "Raros",
+    "raridade": "Raro",
+    "descricao": "Perceba que a raridade de um ingrediente fica a cargo de Mestre, e que um mesmo ingrediente pode ter mais de uma Essência, podendo ser usado de formas diversas. Quando o personagem descobre uma Essência, ele aprende a canalizar aquela essência específica nas misturas que fizer, e sabe se existem outras ou não que ainda possa aprender.\nPara desenvolver uma nova Fórmula, dobre o valor e tempo gastos na fabricação normal da poção. Depois, role na tabela de Criação de Fórmulas. Depois disso, quando for criá-la novamente, os custos e tempo passam a ser normais."
+  }
+]

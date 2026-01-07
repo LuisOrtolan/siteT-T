@@ -1,0 +1,138 @@
+[
+  {
+    "id": "feitico-1-dardo-arcano",
+    "nome": "Dardo Arcano",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: 100’\nDuração: instantânea\nAlvo/Área: 1 ou mais criaturas à escolha (linha de visão)\nEfeito: cria projéteis de força que atingem automaticamente. Cada dardo causa 1d4+1 de dano de impacto. Você pode distribuir os dardos entre alvos diferentes.\nEscalonamento:\nPor rank do conjurador: começa com 1 dardo no 1º nível; +1 dardo a cada 2 ranks (3º, 5º, 7º, 9º), até máx. 5 dardos."
+  },
+  {
+    "id": "feitico-1-luz",
+    "nome": "Luz",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 hora\nAlvo/Área: objeto ou local visível\nEfeito: um ponto emite luz brilhante em 30’ e penumbra em +30’\nEscalonamento:\n+1 círculo: +10’ de luz brilhante e +10’ de penumbra ou duração +1 hora (escolha a cada círculo)."
+  },
+  {
+    "id": "feitico-1-sono",
+    "nome": "Sono",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Encantamento\nConjuração: 1 ação\nAlcance: 120’\nDuração: 1 turno (10 min) por rank\nAlvo/Área: área de 20’ por 20’\nEfeito: adormece criaturas na área até um limite de DV. Comece pelas criaturas com menor DV e vá somando até chegar ao total. Criaturas adormecidas caem; só acordando ao levar dano ou se alguém gastar uma ação para sacudi-las.\nTotal de DV afetados: 2d8 DV’s ou 1 criatura específica de até 4 DV’s\nEscalonamento :\npara cada 2 círculos acima do 1º, aumenta 1d4 DV’s ou afeta uma criatura de 1 DV superior"
+  },
+  {
+    "id": "feitico-1-armadura-arcana",
+    "nome": "Armadura Arcana",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Abjuração\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nEfeito: campos de força envolvem o alvo, concedendo +4 na CA. O bônus da Armadura Arcana não se acumula com armaduras físicas,itens mágicos ou outro efeito de armadura mágica.\nEscalonamento\npara cada círculo acima do 1º, +1 de CA"
+  },
+  {
+    "id": "feitico-1-maos-flamejantes",
+    "nome": "Mãos Flamejantes",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: pessoal\nDuração: instantânea\nAlvo/Área: cone de 20’ à sua frente\nEfeito: línguas de fogo varrem o cone, causando 2d4 de dano de fogo (SF de DES para metade). Objetos inflamáveis podem pegar fogo.\nEscalonamento\nPara cada círculo acima, aumente o cone em 10’"
+  },
+  {
+    "id": "feitico-1-encantar-pessoa",
+    "nome": "Encantar Pessoa",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Encatamento\nConjuração: 1 ação\nAlcance: toque\nDuração: Permanente\nAlvo/Área: 1 humanoide\nEfeito: alvo fica enfeitiçado por você: trata você como aliado e aceita pedidos razoáveis que não o coloquem em perigo evidente (SM de VON anula). Se você ou seus aliados ferirem o alvo, o efeito termina. (O alvo também pode repetir o SM depois de cada dia ou quando lhe for pedido algo que vai contra seus princípios.) Ao término, ele sabe que foi influenciado.\nEscalonamento\npara cada círculo acima do 1º, +1 alvo."
+  },
+  {
+    "id": "feitico-1-raio-gelido",
+    "nome": "Raio Gélido",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Evocação\nConjuração: 1 ação\nAlcance: 60’\nDuração: instantânea\nAlvo/Área: 1 humanoide\nEfeito: um jato de frio causa 1d6 de dano de gelo (e Lentidão (-10’ de Mov.) pelo mesmo número de rodadas). Alvo pode passar em SF de DES para (negar o dano e o efeito de Lentidão).\nEscalonamento\nPor slot superior: +1d4 de dano por círculo acima do 1º; a partir de 4º+, a Lentidão passa a -20’ m. A partir do 8, -30’."
+  },
+  {
+    "id": "feitico-1-nevoa-ocultante",
+    "nome": "Névoa Ocultante",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 100’\nDuração: 1 turno por rank\nAlvo/Área: área de 20’x20’\nEfeito: cria névoa densa que fornece obscurecimento pesado: criaturas dentro ficam ocultas. Elas recebem Cobertura Média contra ataques à distância, ataques melee possuem -2, e possíveis testes de supresa que sejam feitos para percebê-las recebem mais 2 em 6 (máx. de 5 em 6). Como uma ação, você pode mover a névoa até 30’ enquanto mantiver a concentração. Vento moderado a dissipa em 1d4 rodadas; vento forte, em 1 rodada.\nEscalonamento\nPor slot superior: +10’x10’ de raio por círculo acima"
+  },
+  {
+    "id": "feitico-1-disco-flutuante",
+    "nome": "Disco Flutuante",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 10’\nDuração: 1 hora por rank\nAlvo/Área: disco de 1,5 m de diâmetro que flutua a 0,5 m do chão\nEfeito: o disco segue você, carregando até 20 slots de carga (ou uma pessoa). Se ficar a mais do que 20’ de você, a magia termina e a carga pousa com segurança no chão. Pode atravessar água calma mantendo a altura.\nEscalonamento\nPara cada círculo acima, ele pode carregar mais 10 slots de carga."
+  },
+  {
+    "id": "feitico-1-fio-de-prata",
+    "nome": "Fio de Prata",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nAlvo/Área: 1 criatura\nEfeito: um tênue fio de sorte prateada se enlaça ao alvo. Enquanto durar, ele possui 1 carga de Sorte. Após ver um resultado de d20 (ataque, SM, qualquer teste) ou contra ele (um ataque inimigo) e antes da resolução da jogada, pode gastar a carga para re-rolar (ou forçar o atacante a re-rolar) e deve ficar com o novo resultado."
+  },
+  {
+    "id": "feitico-1-detectar-magia-ler-magias",
+    "nome": "Detectar Magia / Ler magias",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: pessoal\nDuração:  1 turno (+1 por rank de Arcanista)\nAlvo/Área: Área de 30’ x 30’ (ou uma escritura)\nEfeito: O alvo detecta magias em lugares, objetos ou indivíduos. Esses itens brilham para ele com uma luz diferenciada pela duração da magia. Também pode ser usada para ler as inscrições mágicas de algum lugar (pergaminho, grimório, portas seladas, etc…), independente do idioma. Uma vez lido e compreendido, não é necessário utilizar a magia novamente para o texto em questão."
+  },
+  {
+    "id": "feitico-1-compreender-idiomas",
+    "nome": "Compreender Idiomas",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Adivinhação\nConjuração: 1 ação\nAlcance: toque\nDuração: 1 turno por rank\nAlvo/Área: você\nEfeito: você entende o significado literal de qualquer fala que ouvir e pode ler textos simples tocando-os.\nEscalonamento\nPor slot superior: permitir +1 criatura tocada compartilhar o efeito (por círculo acima do 1º)."
+  },
+  {
+    "id": "feitico-1-como-uma-pluma",
+    "nome": "Como uma pluma",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Transmutação\nConjuração: 1 ação\nAlcance: 60’\nDuração: 1 turno, ou até atingir o solo novamente\nAlvo/Área: 1 criatura/objeto por rank\nEfeito: os alvos caem como penas: controlam levemente a descida e não sofrem dano de queda.\nEscalonamento\nPor slot superior: +60’ por slot acima. Se conjurada como 2º círculo, pode ser conjurada como reação."
+  },
+  {
+    "id": "feitico-1-graxa",
+    "nome": "Graxa",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Conjuração\nConjuração: 1 ação\nAlcance: 60’\nDuração: 1 turno por rank\nAlvo/Área: até 10’ x 10’\nEfeito:  Cria-se graxa na área ou local. O local fica escorregadio. Pode-se ter ideias de usar a graxa pra outras coisas também - tipo lubrificar portas emperradas. Criaturas na área ao conjurar, e as que entrarem, fazem SM ou caem.\nEscalonamento\nPor slot superior: aumente a área em +10’x10’"
+  },
+  {
+    "id": "feitico-1-imagem-ilusoria",
+    "nome": "Imagem Ilusória",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Ilusão\nConjuração: 1 ação\nAlcance: 120’\nDuração: 1 turno por rank\nAlvo/Área: cubo de 15’ (imagem)\nEfeito: cria uma imagem sem som/cheiro que pode ser movida 30’ por ação enquanto você mantiver a concentração. Não causa dano nem obstrução física.\nEscalonamento\nPor slot superior: Pode adicionar efeitos sonoros simples ou cheiros se conjurada como 2º círculo (As duas coisas se for como 3º círculo)"
+  },
+  {
+    "id": "feitico-1-armadilha-arcana",
+    "nome": "Armadilha Arcana",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Abjuração\nConjuração: 1 turno\nAlcance: toque\nDuração: 1 hora por rank\nAlvo/Área: círculo de 1,5 m de raio traçado no chão (ou fio)\nEfeito: a primeira criatura que entrar no círculo faz SM de FOR ou fica imobilizada, pairando no ar a 0,5m do chão. No fim de cada turno, pode repetir a SM para se libertar. Criaturas grandes possuem +4 no teste."
+  },
+  {
+    "id": "feitico-1-salto",
+    "nome": "Salto",
+    "tipo": "Feitiço",
+    "trilha": "Arcanista",
+    "circulo_ou_grau": 1,
+    "descricao": "Escola: Transmutação\nConjuração: 1 ação\nAlcance: Toque\nDuração: 1 turno por rank\nAlvo/Área: 1 criatura\nEfeito: o alvo duplica suas distâncias de salto em altura e em distância e reduz o dano de queda em 2d6 durante a duração da magia\nEscalonamento\nPor slot superior: No 3º círculo, triplica a distância e diminui o dano em 3d6. No 5º círculo, quadruplica e diminui o dano em 4d6."
+  }
+]

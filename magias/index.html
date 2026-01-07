@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trilhas &amp; Tesouros - Magias &amp; Poderes</title>
+  <title>Trilhas &amp; Tesouros - Poderes Místicos</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body>
@@ -12,16 +12,28 @@
 
   <main class="container">
     <section class="section-card">
-      <h1>Magias &amp; Poderes</h1>
-      <p>
-        Use os filtros abaixo para encontrar feitiços, músicas, milagres, rituais e outros
-        poderes rapidamente durante o jogo.
-      </p>
+      <h1>Poderes Místicos</h1>
+      <p>Navegue pelos tipos de poderes abaixo — ou use a busca geral para encontrar rapidamente durante o jogo.</p>
+      
+<div class="cards-magias-tipos">
+  <a class="card-link" href="feiticos.html">Feitiços (Arcanista)</a>
+  <a class="card-link" href="rituais.html">Rituais (Xamã)</a>
+  <a class="card-link" href="milagres.html">Milagres (Sacerdote)</a>
+  <a class="card-link" href="musicas.html">Músicas (Bardo)</a>
+  <a class="card-link" href="runas.html">Runas (Lorde Rúnico)</a>
+  <a class="card-link" href="alquimia-venenos.html">Alquimias &amp; Venenos (Alquimista)</a>
+</div>
+
+    </section>
+
+    <section class="section-card">
+      <h2>Busca geral</h2>
+      <p>Use os filtros abaixo para encontrar feitiços, músicas, milagres, rituais, runas, alquimias e venenos.</p>
 
       <div class="filtros-magias">
         <label>
           Buscar por nome:
-          <input type="text" id="busca-magia" placeholder="Digite o nome da magia..." />
+          <input type="text" id="busca-magia" placeholder="Digite o nome..." />
         </label>
 
         <label>
@@ -34,25 +46,33 @@
             <option value="Lorde Rúnico">Lorde Rúnico</option>
             <option value="Bardo">Bardo</option>
             <option value="Alquimista">Alquimista</option>
-            <option value="Troca-peles">Troca-peles</option>
           </select>
         </label>
 
         <label>
-          Filtrar por círculo/grau:
+          Filtrar por tipo:
+          <select id="filtro-tipo">
+            <option value="">Todos</option>
+            <option value="Feitiço">Feitiço</option>
+            <option value="Ritual">Ritual</option>
+            <option value="Milagre">Milagre</option>
+            <option value="Música">Música</option>
+            <option value="Runa">Runa</option>
+            <option value="Alquimia">Alquimia</option>
+            <option value="Veneno">Veneno</option>
+          </select>
+        </label>
+
+        <label>
+          Filtrar por Círculo/Grau:
           <select id="filtro-circulo">
             <option value="">Todos</option>
-            <option value="1">1º</option>
-            <option value="2">2º</option>
-            <option value="3">3º</option>
-            <option value="4">4º</option>
-            <option value="5">5º</option>
           </select>
         </label>
       </div>
 
-      <section id="lista-magias" class="lista-magias">
-        <!-- Magias serão renderizadas aqui via JS -->
+      <section id="lista-magias" class="lista-magias" data-magias="../data/magias_feiticos.json,../data/magias_rituais.json,../data/magias_milagres.json,../data/magias_musicas.json,../data/magias_runas.json,../data/magias_alquimia_venenos.json">
+        <!-- Render via JS -->
       </section>
     </section>
   </main>

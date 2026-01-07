@@ -1,0 +1,218 @@
+[
+  {
+    "id": "musica-1-as-armas",
+    "nome": "Às Armas",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nO Bardo e seus aliados recebem um bônus de +1 em seus ataques e danos. Pode aumentar o bônus para +2 com Dif. 16, e +3 com Dif. 22.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-impericia",
+    "nome": "Imperícia",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs inimigos do Bardo recebem uma penalidade de -1 em seus ataques e danos. Pode aumentar a penalidade para -2 com Dif. 16, e -3 com Dif. 22.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-ferro-nao-ferira",
+    "nome": "Ferro não Ferirá",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12\nO Bardo e seus aliados recebem um bônus de +1 na CA. Pode aumentar o bônus para +2 com Dif. 18, e +3 com Dif. 24.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-imprudencia",
+    "nome": "Imprudência",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12\nOs inimigos do Bardo recebem uma penalidade de -1 na CA. Pode aumentar a penalidade para -2 com Dif. 18, e -3 com Dif. 24.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-fascinacao",
+    "nome": "Fascinação",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 14\nUma criatura inteligente (de até 4 HD) à escolha do Bardo fica fascinada por sua performance. Enquanto ele manter a Balada, ela não poderá fazer nada além de admirar o Bardo. Qualquer ação hostil tomada contra ela quebra o efeito na hora. Pode afetar uma criatura de até 8 HD com Dif. 20.\nAlvo: 1 criatura inteligente capaz de entender a performance."
+  },
+  {
+    "id": "musica-1-canto-dos-passaros-matinais",
+    "nome": "Canto dos Pássaros Matinais",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 8\nCriaturas que escutem essa Balada são acordadas imediatamente, e enquanto a Balada continuar sendo mantida, não poderão dormir (seja por meios mágicos ou naturais).\nAlvos: todos que a escutem."
+  },
+  {
+    "id": "musica-1-curiosidade-do-gato",
+    "nome": "Curiosidade do Gato",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nAs criaturas que estejam escondidas de qualquer forma sentirão uma curiosidade imensa sobre o Bardo e um desejo imenso de se mostrar para ele. Elas sairão de seus esconderijos e se tornarão visíveis (mesmo se estiverem escondidas ou invisíveis por meios mágicos). Enquanto a Balada estiver sendo mantida, essas criaturas não poderão se esconder do Bardo.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-chorus",
+    "nome": "Chorus",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar apenas inimigos)\nAs criaturas inteligentes ao redor do Bardo passam a cantar a Balada junto com ele, não podendo falar nada além disso (ou seja, não conseguirão recitar magias). Alvos com HD 5 ou mais podem fazer um SM de VON para não serem afetados.\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-1-la-resistance",
+    "nome": "La Resistance",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs Bardo e seus aliados recebem um bônus de +1 em seus Salvamentos e testes de Moral. Pode aumentar o bônus para +2 com Dif. 16, e +3 com Dif. 22.\nAlvos: 4 +mod. de CAR, à escolha do Bardo."
+  },
+  {
+    "id": "musica-1-sorte-sofrida",
+    "nome": "Sorte Sofrida",
+    "tipo": "Música",
+    "subtipo": "Balada",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Baladas",
+    "descricao": "Dificuldade 10\nOs inimigos do Bardo recebem uma penalidade de -1 em seus Salvamentos e Testes de Moral. Pode aumentar a penalidade para -2 com Dif. 16, e -3 com Dif. 22.\nAlvos: 4 +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-cancao-de-jamiro-o-kwai",
+    "nome": "Canção de Jamiro, o Kwai",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas inteligentes em volta do Bardo passam a dançar incontrolavelmente, não podendo fazer nada além disso por um número de rodadas igual ao número de Baladas mantidas anteriormente. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-lullaby",
+    "nome": "Lullaby",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas em volta do Bardo caem em um sono profundo, mágico, por um número de rodadas igual ao número de Baladas mantidas anteriormente. Durante esse tempo, não acordarão de maneira alguma. Depois desse tempo, continuarão dormindo por 1 hora, mas de maneira natural, podendo ser acordados normalmente por outra pessoa ou por barulhos altos. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro)."
+  },
+  {
+    "id": "musica-2-vibratio",
+    "nome": "Vibratio",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 14\nObjetos que podem ser quebrados com vibração sonora ao redor do Bardo são estilhaçados. Bons exemplos são vidro fino, cerâmica, etc. Pequenas chamas, como as de velas, também são apagadas. Além disso, para cada Balada sendo mantida anteriormente, o Bardo pode escolher um material de metal ou madeira para estilhaçar ou uma chama maior (como a de uma tocha ou fogueira) para extinguir. Ele pode escolher armas e armaduras de oponentes dessa maneira, mas a criatura que a estiver portando tem direito a um SF de DES para proteger o objeto da onda sonora. Ela recebe uma penalidade no teste igual ao número de Baladas mantidas anteriormente.\nAlvos: todos os objetos de vidro fino e cerâmica; mais um “especial” para cada Balada."
+  },
+  {
+    "id": "musica-2-amigo-estou-aqui",
+    "nome": "Amigo Estou Aqui",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 14\nUma criatura inteligente que o Bardo escolha passa a fazer o que ele mandar. Ele verá o Bardo como um amigo fiel ou amante, e obedecerá suas instruções. Mas perceba que ele não fará nada suicida ou que certamente o levará à morte, mas protegerá o Bardo da melhor maneira que puder. (Ex.: ele não se jogará de um poço ou tentará matar um rei em seu castelo, mas poderá se interpor contra 3 Ogros enquanto o Bardo foge). O efeito dura 1 turno por Balada mantida anteriormente. Alvos com HD 5 ou mais podem fazer um SM de VON para resistir ao efeito (com uma penalidade igual ao número de Baladas mantidas anteriormente).\nAlvos: 1 criatura inteligente que entenda o Bardo."
+  },
+  {
+    "id": "musica-2-medo-da-morte",
+    "nome": "Medo da Morte",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 12 (15, se quiser afetar somente inimigos)\nAs criaturas em volta do Bardo se encolhem ou fogem com medo dentro de seus corações. Alvos que falhem em um teste de SM de VON (com uma penalidade igual ao número de Baladas mantidas anteriormente), fogem desesperadamente do local. Se não tiverem para onde fugir, largarão tudo que estiverem segurando e se encolherão de medo em um canto. Alvos que passem no teste, ficaram com medo e hesitantes, recebendo -2 em todos os testes por um número de rodadas igual ao número de Baladas mantidas anteriormente.\nAlvos: 8 (ou 4 inimigos) +mod. de CAR (aleatório, mas aqueles que possuem menor HD primeiro). Não funciona em mortos-vivos."
+  },
+  {
+    "id": "musica-2-boom",
+    "nome": "Boom!",
+    "tipo": "Música",
+    "subtipo": "Coda",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Codas",
+    "descricao": "Dificuldade 10\nO Bardo manda ondas sonoras poderosíssimas pelo ar, que ferem aqueles que são atingidos por ela. Normalmente, ele escolhe um alvo, mas pode escolher um alvo adicional que esteja na mesma direção para cada +4 na Dificuldade. Os alvos recebem 1d6 de dano por Balada mantida anteriormente e são arremessados 5’ para trás para cada Balada (podem fazer um SF de DES para receberem apenas metade do dano e não serem arremessados).\nAlvos: ver acima."
+  },
+  {
+    "id": "musica-3-hino-de-hammelin",
+    "nome": "Hino de Hammelin",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "O Bardo pode passar 30 minutos tocando em um local. Com isso, ele convocará todas as criaturas pequenas que existem naquele local para virem à sua volta (ele deve escolher um tipo de criatura quando começa a tocar o Hino). Exemplos de criaturas são ratos, pequenos pássaros, esquilos, abelhas, etc.). Leva mais 10 min. Para que as criaturas próximas (até 360 pés do Bardo) se aproximem. Depois de juntas, elas seguirão o Bardo onde ele for enquanto ele mantiver o Hino tocando. Criaturas mágicas podem fazer um SM de VON para resistir ao efeito. Ele pode manter o efeito por 1 hora por rank na Trilha. A partir do 5º rank, o Bardo pode pedir pequenos favores às criaturas, que o entenderão."
+  },
+  {
+    "id": "musica-3-nostalgia",
+    "nome": "Nostalgia",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Enquanto toca esse Hino, as pessoas ao redor do bardo são tomadas por um enorme sentimento de saudades de casa ou dos tempos idos. Seus corações e mentes são apaziguados. Após 10 minutos ouvindo esta melodia, nenhuma intenção violenta acomete os ouvintes. Ninguém pode realizar nenhum ataque ou outra ação de violência contra outros seres vivos. O Bardo pode manter esse efeito por um número de turnos igual ao seu rank na Trilha, enquanto performa o Hino."
+  },
+  {
+    "id": "musica-3-caminho-de-casa",
+    "nome": "Caminho de Casa",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante uma viagem, o Hino do Bardo pode fazer com que os fardos pareçam mais leves e a estrada, mais curta. Durante um percurso, enquanto estiver performando este Hino, aumente a velocidade de viagem do grupo em um passo. O Bardo pode manter este efeito por 1 hora por rank na Trilha."
+  },
+  {
+    "id": "musica-3-requiem",
+    "nome": "Requiem",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Este Hino, que é uma elegia, tem o efeito de dar aos mortos o descanso merecido. Durante um funeral de uma criatura, se o Bardo tocar este Hino por pelo menos 20 minutos, tal criatura nunca poderá posteriormente ser transformada em um morto-vivo, por nenhuma maneira.\nAlém disso, qualquer morto-vivo que tenha HD igual ou menor que o rank de Trilha do Bardo do personagem, que esteja próximo ao Bardo (até 30 pés) e ouça a elegia por 20 minutos ou mais, se desfará em um monte de cinzas."
+  },
+  {
+    "id": "musica-3-fonte-de-renovacao",
+    "nome": "Fonte de Renovação",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante um acampamento, antes do descanso diário, se o Bardo tocar esse Hino por pelo menos 30 minutos, todos os ouvintes podem recuperar 1 nível de Fadiga (2 níveis a partir do 5º rank)."
+  },
+  {
+    "id": "musica-3-apenas-um-arranhao",
+    "nome": "Apenas um Arranhão",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Durante um acampamento, antes do descanso diário, se o Bardo tocar esse Hino por pelo menos 30 minutos, todos os ouvintes recuperam 1d6 PV”s adicionais aos que recuperariam normalmente com o descanso (2d6 PV’s a partir do 5º rank)."
+  },
+  {
+    "id": "musica-3-voz-de-ouro",
+    "nome": "Voz de Ouro",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "O Bardo pode fascinar uma plateia com este Hino. Após performar por pelo menos 10 minutos, todos os ouvintes passam a admirar o Bardo. Ele recebe um bônus de +2 em qualquer teste de Reação que as criaturas façam a respeito dele (+4 a partir do 5º rank). Elas também mantém a atenção centrada no Bardo, não dando muita importância para o que acontece à sua volta."
+  },
+  {
+    "id": "musica-3-lingua-dos-deuses",
+    "nome": "Língua dos Deuses",
+    "tipo": "Música",
+    "subtipo": "Hino",
+    "trilha": "Bardo",
+    "circulo_ou_grau": "Hinos",
+    "descricao": "Através de sua música, após 1 hora de performance, o Bardo é capaz de afetar até mesmo o clima. O quanto ele tem poder sobre as forças da natureza depende do seu rank na Trilha. Fica a cargo do Mestre e dos jogadores pensarem nisso, mas uma boa métrica é de:\nRanks 1 a 3: pode fazer pequenas alterações, como amenizar um pouco o frio ou o calor, diminuir um pouco a força dos ventos. Tudo a ponto de deixar mais fácil resistir a possíveis níveis de Fadiga que imponham.\nRanks 4 a 6: já pode alterar mais as condições, transformando chuvas fortes em fracas, aumentar ou diminuir o calor e o frio a ponto de exigir (ou deixar de exigir) roupas e proteções adequadas.\nRanks 7 a 9: já pode alterar mesmo as condições, transformando um clima quente em frio e vice-versa. Chuvas podem se tornar garoas e em tempos limpos podem aparecer nuvens carregadas. Chuvas podem se tornar granizos. Mas nunca um lugar de clima frio se tornará quente (exemplo: uma geleira não será quente; um deserto não congelará, etc.) e ele não pode “criar” efeitos do nada.\nRank 10+: aqui as mudanças podem ser mais radicais, realmente criando climas nos lugares. Pode invocar tempestades, fazer nevar no deserto, surgir um tufão, etc.\nO Mestre pode pedir um Teste de Performance com uma dificuldade de acordo para determinadas situações."
+  }
+]

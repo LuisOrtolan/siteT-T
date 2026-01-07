@@ -1,0 +1,162 @@
+[
+  {
+    "id": "milagre-1-imposicao-das-maos",
+    "nome": "Imposição das Mãos",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Vida\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: canaliza graça restauradora. Cura 1d6 PV\nPD extras: cada +1 PD adiciona +1d6 PV ou, em vez de curar, permite que o alvo refaça um Salvamento para se curar de um veneno ou doença."
+  },
+  {
+    "id": "milagre-1-bencao",
+    "nome": "Bênção",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Proteção, Guerra\nDuração: 1 turno\nAlcance: 40’\nAlvo: até 3 criaturas à escolha que possam ouvir suas palavras\nTempo de conjuração: 1 rodada\nDescrição do milagre: palavras sagradas fortalecem os fiéis: +1 nos ataques e +1 em Salvamentos enquanto durar.\nPD extras: cada +1 PD concede +1 alvo ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-1-santuario",
+    "nome": "Santuário",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Paz, Proteção\nDuração: 1 rodada / rank\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um véu de clemência envolve o alvo. Criaturas que tentarem atacá-lo ou hostilizá-lo de alguma forma fazem SM de VON; em falha, devem escolher outro alvo. Se o protegido atacar ou conjurar uma magia ofensiva, o efeito termina.\nPD extras: cada +1 PD concede +1 alvo adicional."
+  },
+  {
+    "id": "milagre-1-exorcizar",
+    "nome": "Exorcizar",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Exorcismo\nDuração: 1 turno por rank\nAlcance: 30’ de raio (emanando do sacerdote)\nAlvo: mortos-vivos, demônios e criaturas inferiores no raio\nTempo de conjuração: 1 rodada\nDescrição do milagre:  Repele os profanos. 2d6 HD’s dessas criaturas no raio ficam aterrorizados e se afastam do sacerdote o mais rápido possível, sem se aproximar voluntariamente enquanto durar. Escolha as criaturas de forma crescente de HD’s, e trate criaturas com menos de 1 HD como sendo 1 HD). Se não conseguirem se afastar, se encolherão em um canto e tentarão apenas se defender, recebendo -4 em todos os testes. Criaturas com mais HD’s que o rank do Sacerdote podem fazer um SM de VON para resistir. Criaturas com 4 HD’s a menos que o rank do Sacerdote são destruídas; e as com 4 HD’s a mais são imunes.\nPD extras: cada +2 PD aumenta o raio em +10’ ou aumenta +1d4 HD’s."
+  },
+  {
+    "id": "milagre-1-criar-agua-benta",
+    "nome": "Criar Água Benta",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Purificação\nDuração: instantânea (o item dura até a próxima lua nova)\nAlcance: toque\nAlvo: água limpa em recipientes\nTempo de conjuração: 1 hora (preces e unção)\nDescrição do milagre: consagra 1 frasco (uma dose) de água benta. Arremessada, causa 1d8 a mortos-vivos/demônios/aberrações profanas. Pode purificar objetos/símbolos em ritos. Requisito: símbolo sagrado, sal/óleo (custo de XXX PO, relacionado aos custos para o ritual)\nPD extras: cada +1 PD cria +1 frasco"
+  },
+  {
+    "id": "milagre-1-sentir-profanacao",
+    "nome": "Sentir Profanação",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz, Ordem\nDuração: 1 turno\nAlcance: pessoal (aura 60’ de raio)\nAlvo:\nTempo de conjuração: 1 turno\nDescrição do milagre: percebe presenças profanas (mortos-vivos, maldições, lugares profanados) e santuários consagrados na aura. Como uma ação, foca uma fonte para intuir força (fraca/média/forte) e natureza (morto vivo, demônio, maldição, etc.). Barreira espessa e chumbo podem obscurecer.\nPD extras: cada +1 PD concede +10’ de raio ou +1 turno de duração. Também pode gastar 1 PD extra para marcar uma fonte percebida por 1 hora, sentindo sua direção até 1 milha."
+  },
+  {
+    "id": "milagre-1-chama-sagrada",
+    "nome": "Chama Sagrada",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Luz\nDuração: instantânea\nAlcance: 60’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: uma coluna de luz desce sobre o alvo, causando 1d6 radiante (SF de DES para metade). Mortos-vivos/demônios (recebem 1d10 de dano). Ignora Coberturas que não sejam totais.\nPD extras: cada +1 PD adiciona +1 dado de dano."
+  },
+  {
+    "id": "milagre-1-escudo-da-fe",
+    "nome": "Escudo da Fé",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Proteção, Ordem\nDuração: 1 turno / rank\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: luz sagrada orbita o alvo, concedendo +2 CA e +1 em SM contra encantamento/medo.\nPD extras: cada +1 PD concede +1 alvo, +1 turno de duração, ou aumenta ambos os bônus em +1."
+  },
+  {
+    "id": "milagre-1-comando",
+    "nome": "Comando",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Ordem\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura que compreenda seu idioma\nTempo de conjuração: 1 rodada\nDescrição do milagre: pronuncia uma única ordem (“Pare!” “Largue!” “Caia!” “Fuja!” “Ajoelhe!”) que o alvo deve obedecer. O alvo pode fazer um SM de VON para resistir. Se a ordem for contra os princípios primais da criatura ou fazer com que ela coloque sua vida em risco imediato (ex.: pular de um penhasco), ela é bem sucedida automaticamente no SM. Criaturas com baixa inteligência ou que não entendam seu idioma são imunes.\nPD extras: cada +1 PD concede +1 alvo"
+  },
+  {
+    "id": "milagre-1-rito-de-repouso",
+    "nome": "Rito de Repouso",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Morte, Paz\nDuração: permanente\nAlcance: toque\nAlvo: 1 cadáver\nTempo de conjuração: 1 turno (preces e unção)\nDescrição do milagre: impede decomposição, possessão e animação do corpo como morto-vivo. Tentativas de necromancia contra o corpo falham.\nPD extras: cada +1 PD permite fazer o ritual em mais 1 cadáver."
+  },
+  {
+    "id": "milagre-1-chicote-da-dor",
+    "nome": "Chicote da Dor",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Dor, Guerra\nDuração: instantânea\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um estalo invisível rasga os nervos do alvo: 1d6 dano psíquico e o alvo sofre -1 nos testes até o fim da próxima rodada. SF de CON para sofrer metade do dano e não ter as penalidades.\nPD extras: cada +1 PD adiciona +1d6, permite +1 alvo adicional, ou aumenta as penalidades em -1."
+  },
+  {
+    "id": "milagre-1-trevas-profanas",
+    "nome": "Trevas Profanas",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 turno / rank\nAlcance: 60’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 rodada\nDescrição do milagre: um manto de sombras abafa a luz: luz não-mágica é extinta e luz mágica é reduzida à metade do alcance. Criaturas portando seu símbolo (ou do mesmo culto) enxergam como penumbra dentro da área.\n PD extras: cada +1 PD +10’ de raio ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-1-toque-de-putrefacao",
+    "nome": "Toque de Putrefação",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Putrefação\nDuração: instantânea\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: a pele do alvo necrosa ao contato: 1d8 necrótico. Se falhar em um SF de CON, o alvo não pode recuperar PV’s até o fim da próxima rodada.\nPD extras: cada +1 PD, +1d8 de dano ou estende o efeito de não poder curar por +1 rodada."
+  },
+  {
+    "id": "milagre-1-profanacao-menor",
+    "nome": "Profanação Menor",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão, Putrefação\nDuração: 1 turno\nAlcance: 30’\nAlvo: área de 20’x20’\nTempo de conjuração: 1 turno\nDescrição do milagre: corrompe o solo. Mortos-vivos na área recebem +1 nos ataques e Salvamentos, e contam como 2 HD’s a mais para serem afastados; criaturas vivas sofrem -2 em SM contra medo dentro da área.\nPD extras: cada +1 PD dá +10’x10’ de área ou +1 turno de duração"
+  },
+  {
+    "id": "milagre-1-pacto-de-sangue",
+    "nome": "Pacto de Sangue",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Dor, Sangue, Guerra\nDuração: 1 turno / rank\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: um corte ritual sangra poder. O alvo sofre 1d3 dano (não-prevenível por RD) e recebe +1 nos ataques e +1 no dano no turno.\nPD extras: cada +2 PD aumenta os bônus em +1 e faz o alvo sofrer 1d3 de dano adicional. Com 2 PD extras, o dano do corte pode ser ignorado (o sacrifício é simbólico)"
+  },
+  {
+    "id": "milagre-1-miasma-pestilento",
+    "nome": "Miasma Pestilento",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Putrefação\nDuração: 1 turno / rank\nAlcance: 30’\nAlvo: nuvem de 20’x20’ de área\nTempo de conjuração: 1 rodada\nDescrição do milagre: vapores fétidos enchem a área. Criaturas que entram ou começam o turno na nuvem fazem SF de CON; em falha, sofrem penalidades (-1 em ataques e -10’ de movimento) até sair. A nuvem serve como Camuflagem Leve. A nuvem pode ser dissipada por ventos fortes.\nPD extras: cada +1 PD, +10’x10’ de raio ou aumenta as penalidades em -1."
+  },
+  {
+    "id": "milagre-1-grilhoes-de-sombra",
+    "nome": "Grilhões de Sombra",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 1,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 rodada / rank\nAlcance: 30’\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: correntes umbráticas emergem dos cantos escuros e imobilizam o alvo. SE a criatura passa em um SF de FOR, apenas fica lento (-10’ Mov.) até o fim da próxima rodada. Criaturas maiores que Média possuem +4 no teste.\nPD extras: +1 PD para +10’ de alcance ou para afetar uma criatura adicional.\nProteção contra o mal\nAspecto: Proteção\nDuração: 1 turno\nAlcance: 30’\nAlvo/Área: 1 criatura\nDescrição do milagre: o alvo recebe +2 em SM contra encantamentos, medo e possessão. Mortos-vivos, demônios, espíritos e aberrações recebem -4 em ataques contra o alvo. O alvo não pode ser possuído/encantado por essas criaturas.\nPD extras: cada +1 PD, +1 alvo, ou +1 turno de duração."
+  },
+  {
+    "id": "milagre-2-olhos-da-umbra",
+    "nome": "Olhos da Umbra",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Escuridão\nDuração: 1 hora\nAlcance: toque\nAlvo: 1 criatura\nTempo de conjuração: 1 rodada\nDescrição do milagre: as pupilas se dilatam até o breu: o alvo ganha Visão no Escuro 60’.\nPD extras: cada +1 PD concede +1 criatura ou +1 hora de duração."
+  },
+  {
+    "id": "milagre-2-refugio-consagrado",
+    "nome": "Refúgio Consagrado",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Luz, Proteção\nDuração: 1 turno\nAlcance: pessoal\nAlvo: círculo de 10’ de raio centrado no sacerdote\nTempo de conjuração: 1 turno\nDescrição do milagre: o chão se torna solo sagrado. Aliados dentro recebem +2 em SM contra medo e recuperam 1d3 PV’s por turno. Mortos-vivos/demônios não podem entrar a menos que passem em uma SM de VON; se entrarem, sofrem 1d3 de dano por rodada e sua movimentação é reduzida em 10’\nPD extras: cada +1 PD dá +10’ de raio ou aumenta +1 turno de duração.."
+  },
+  {
+    "id": "milagre-2-purificar-alimentos-e-bebidas",
+    "nome": "Purificar Alimentos e Bebidas",
+    "tipo": "Milagre",
+    "trilha": "Sacerdote",
+    "circulo_ou_grau": 2,
+    "descricao": "Aspectos: Purificação\nDuração: instantânea\nAlcance: toque\nAlvo: 1 refeição ou 1 odre\nTempo de conjuração: 1 turno\nDescrição do milagre: remove contaminações comuns, toxinas leves e parasitas de comida/água, tornando-as potáveis. Não restaura itens tomados por maldições (a menos que indicado em PD extras).\nPD extras: para cada 1 PD extra, pode purificar uma refeição ou 1 odre a mais. Também pode gastar 1 PD extra para anular venenos ali presentes; ou para suspender por 24h um efeito profano ligado ao alimento (não remove permanentemente maldição)."
+  }
+]
