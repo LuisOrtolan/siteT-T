@@ -77,16 +77,43 @@
     <h3>Feitiços por dia</h3>
     <p>
       O número de feitiços diários por círculo depende do rank.  
-      (Você já tem a tabela no documento; se quiser eu transformo depois em tabela HTML bonitinha.)
     </p>
+      <div class="table-wrap">
+      <table class="table tabela-magias">
+        <thead>
+          <tr>
+            <th rowspan="2">Rank</th>
+            <th colspan="5">Círculo</th>
+          </tr>
+          <tr>
+            <th>1º</th>
+            <th>2º</th>
+            <th>3º</th>
+            <th>4º</th>
+            <th>5º</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>2</td><td>2</td><td></td><td></td><td></td><td></td></tr>
+          <tr><td>3</td><td>2</td><td>1</td><td></td><td></td><td></td></tr>
+          <tr><td>4</td><td>2</td><td>2</td><td></td><td></td><td></td></tr>
+          <tr><td>5</td><td>2</td><td>2</td><td>1</td><td></td><td></td></tr>
+          <tr><td>6</td><td>2</td><td>2</td><td>2</td><td></td><td></td></tr>
+          <tr><td>7</td><td>2</td><td>2</td><td>2</td><td>1</td><td></td></tr>
+          <tr><td>8</td><td>2</td><td>2</td><td>2</td><td>2</td><td></td></tr>
+          <tr><td>9</td><td>2</td><td>2</td><td>2</td><td>2</td><td>1</td></tr>
+          <tr><td>10</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <h3>Conjuração e instabilidade</h3>
     <ul>
       <li>Conjurar normalmente gasta a rodada inteira; precisa voz e ao menos uma mão livre.</li>
       <li>Se sofrer dano/perturbação durante conjuração, faz <strong>SM de VON</strong> para completar.</li>
       <li>
-        <strong>Magia instável:</strong> repetir feitiço no mesmo dia exige 1d20.
-        Se sair ≤ 2 × número de repetições extras, algo sai do controle (ex.: 2ª vez: 2-; 3ª: 4-…).
+        <strong>Magia instável:</strong> repetir feitiço no mesmo dia exige 1d10 ≤ ao número de vezes extras
         Falha no SM também exige essa rolagem (1/20 se foi a 1ª conjuração).
       </li>
     </ul>
@@ -94,7 +121,6 @@
     <h3>Repertório inicial</h3>
     <ul>
       <li>Começa com <strong>Detectar/Ler Magias</strong> + 1 feitiço de 1º círculo à escolha.</li>
-      <li>Role 1 vez na tabela de <strong>Corrupções</strong>.</li>
     </ul>
 
     <h3>Aprendendo feitiços</h3>

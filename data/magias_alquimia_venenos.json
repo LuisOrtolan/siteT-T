@@ -1,41 +1,5 @@
 [
   {
-    "id": "veneno-ingestao-o-alvo-de-consumir-beber-comer-o-veneno-que-agira-a-partir-de-seu-estomago",
-    "nome": "Ingestão: o alvo de consumir (beber/comer) o veneno, que agirá a partir de seu estômago.",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": ""
-  },
-  {
-    "id": "veneno-ferimento-normalmente-aplicado-em-armas-ou-municao-e-age-quando-entra-na-corrente-sanguinea-atraves-do-ferimento-pode-revestir-ate-3-flechas-virotes-no-caso-de-armas-serve-para-dois-ataques-bem-sucedidos-a-primeira-vez-que-ela-ferir-um-alvo-o-veneno-tem-seu-efeito-normal-na-segunda-vez-tem-metade-do-efeito-efeitos-que-nao-sao-de-dano-passam-a-ser-4-nos-salvamentos-na-segunda-vez",
-    "nome": "Ferimento: normalmente aplicado em armas ou munição,e  age quando entra na corrente sanguínea através do ferimento. Pode revestir até 3 flechas/virotes. No caso de armas, serve para dois ataques bem sucedidos (a primeira vez que ela ferir um alvo, o veneno tem seu efeito normal. Na segunda vez tem metade do efeito. Efeitos que não são de dano passam a ser +4 nos Salvamentos na segunda vez).",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": ""
-  },
-  {
-    "id": "veneno-inalacao-o-alvo-deve-respirar-o-veneno-para-que-este-tenha-efeito-normalmente-sao-pos-ou-um-tipo-de-fumaca",
-    "nome": "Inalação: O alvo deve respirar o veneno para que este tenha efeito. Normalmente são pós ou um tipo de fumaça.",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": ""
-  },
-  {
-    "id": "veneno-contato-apenas-colocar-o-veneno-em-contato-com-a-pele-do-alvo-ja-e-o-suficiente-para-que-esse-tenha-efeito",
-    "nome": "Contato: Apenas colocar o veneno em contato com a pele do alvo já é o suficiente para que esse tenha efeito.",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": "Fórmulas Alquímicas\nComuns\nSão mais fáceis de achar, usados por Alquimistas principiantes, e que podem ser encontrados e comprados em lojas especializadas."
-  },
-  {
     "id": "veneno-pocao-de-restauracao-lagrima-do-sol-nascente",
     "nome": "Poção de restauração (“Lágrima do Sol Nascente”)",
     "tipo": "Veneno",
@@ -385,41 +349,5 @@
     "circulo_ou_grau": "Raros",
     "raridade": "Raro",
     "descricao": "Custo base: 3500 PO\nUso: unguento a ser passado na pedra\nEfeito: transforma a pedra besuntada em lama mole. É possível passar em uma área de 20’x20’x20’. Se aplicado em alguém petrificado, este volta ao normal.\nCriando novas Fórmulas\nO Alquimista pode criar novas Fórmulas alquímicas em seu laboratório, estudando Ingredientes especiais e combinando-os para conseguir os mais variados efeitos.\nQuando o faz, é importante pensar em cada Ingrediente como uma Essência para a Fórmula. Cada essência é simplificada em uma palavra. Então, ao criar uma Fórmula, o personagem está juntando palavras que podem significar um certo efeito desejado (quanto maior seu rank na Trilha, mais essências ele pode combinar).\nO Alquimista pode tanto saber a essência/palavra dos Ingredientes que ele está combinando, a fim de criar algo específico, quanto também pode combinar Ingredientes que ele não sabe a essência, e contar com a sorte para ver o resultado final (e também descobrir a essência daqueles elementos).\nDe qualquer modo, sempre que o fizer, há um risco. A primeira vez que cria um Fórmula, o personagem deve fazer uma rolagem de 1d20+seu rank e consultar a tabela de Criação de Fórmulas para ver se algo deu errado.\nO jogador e o Mestre devem conversar sobre os Ingredientes e sobre o efeito final da Fórmula desejada, assim como determinar a raridade da mesma. Abaixo seguem alguns exemplos de Ingredientes e suas respectivas essências/palavras; mas os jogadores devem se sentir livres para criarem mais."
-  },
-  {
-    "id": "veneno-efeitos-ficam-a-cargo-do-jogador-e-do-mestre-mas-uma-boa-metrica-para-os-efeitos-e-a-seguinte",
-    "nome": "Efeitos: ficam a cargo do jogador e do Mestre, mas uma boa métrica para os efeitos é a seguinte:",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": "Dano/PV’s: incrementos de 1d6\nÁrea: 1 alvo, ou área 20’x20’\nDuração: 1d6 rodadas / 2d3 turnos / 1 hora\nCusto base: Comuns (250+50 por ingrediente extra), Incomuns (500+100 por ingrediente extra), Raras (1500 + 500 por ingrediente extra)\nExemplo: o jogador quer criar uma fórmula de poção que deixa quem a ingerir cego e mudo por um tempo. Ele e o Mestre conversam e chegam no seguinte consenso:\nEssências: Visão + Audição + Vulnerabilidade/Negativo\nRaridade: Incomum\nCusto base: 600 PO\nUso: poção a ser ingerida.\nEfeito: quem ingerir essa poção ficará cego e surdo por 2d3 turnos. Ele pode fazer um SF de CON para negar o efeito.\nE então pensam em um nome bacana: “Bile da Cobra-cega do Rio Styx”.\nAprendendo novas Fórmulas e Venenos\nPara descobrir quais Essências existem em determinado ingrediente, o Alquimista precisa fazer testes com o mesmo e estudá-lo. Para isso, ele precisa de um laboratório e deve gastar um tempo e dinheiro de acordo com a raridade do ingrediente."
-  },
-  {
-    "id": "veneno-comuns-200-por-essencia-1-semana-de-estudo",
-    "nome": "Comuns: 200 por Essência - 1 semana de estudo",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": ""
-  },
-  {
-    "id": "veneno-incomuns-400-por-essencia-2-semanas-de-estudo",
-    "nome": "Incomuns: 400 por Essência - 2 semanas de estudo",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": ""
-  },
-  {
-    "id": "veneno-raros-800-por-essencia-4-semanas-de-estudo",
-    "nome": "Raros: 800 por Essência - 4 semanas de estudo",
-    "tipo": "Veneno",
-    "trilha": "Alquimista",
-    "circulo_ou_grau": "Raros",
-    "raridade": "Raro",
-    "descricao": "Perceba que a raridade de um ingrediente fica a cargo de Mestre, e que um mesmo ingrediente pode ter mais de uma Essência, podendo ser usado de formas diversas. Quando o personagem descobre uma Essência, ele aprende a canalizar aquela essência específica nas misturas que fizer, e sabe se existem outras ou não que ainda possa aprender.\nPara desenvolver uma nova Fórmula, dobre o valor e tempo gastos na fabricação normal da poção. Depois, role na tabela de Criação de Fórmulas. Depois disso, quando for criá-la novamente, os custos e tempo passam a ser normais."
   }
 ]

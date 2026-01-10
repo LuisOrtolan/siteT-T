@@ -175,6 +175,78 @@
     return parseInt(s, 10);
   }
 
+
+  function stripStars(str) {
+    return String(str || "").replace(/\*+/g, "").trim();
+  }
+
+  function normKey(str) {
+    return stripStars(str)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  const OCC_SUBTYPES = {
+    "academico": {
+      die: 4,
+      results: {
+        1: "Astrônomo",
+        2: "Escriba",
+        3: "Arquiteto",
+        4: "Cartógrafo",
+      },
+    },
+    "artesao": {
+      die: 10,
+      results: {
+        1: "Carpinteiro",
+        2: "Moleiro",
+        3: "Joalheiro",
+        4: "Sapateiro",
+        5: "Peleteiro",
+        6: "Oleiro",
+        7: "Boticário",
+        8: "Tecelão",
+        9: "Tanoeiro",
+        10: "Canoeiro",
+      },
+    },
+    "fora de lei": {
+      die: 6,
+      results: {
+        1: "Bandido de estrada",
+        2: "Punguista",
+        3: "Contrabandista",
+        4: "Pirata",
+        5: "Vigarista",
+        6: "Cobrador de agiota",
+      },
+    },
+    "cuidador de animais": {
+      die: 6,
+      results: {
+        1: "Pastor",
+        2: "Veterinário",
+        3: "Apicultor",
+        4: "Cavalariço",
+        5: "Adestrador",
+        6: "Falcoeiro",
+      },
+    },
+    "artista": {
+      die: 6,
+      results: {
+        1: "Bobo da corte/cidade",
+        2: "Menestrel",
+        3: "Poeta/Escritor",
+        4: "Pintor/Escultor",
+        5: "Artista de circo",
+        6: "Bonequeiro",
+      },
+    },
+  };
+
   function rollNdM(rng, n, m) {
     const dice = [];
     let sum = 0;
@@ -267,9 +339,33 @@
     const rOcc = rollD66(rng);
     const occObj = tables.ocup.mapa[String(rOcc.valor)] || { ocupacao: "—", arma_inicial: "—" };
 
+    // subocupações (conforme o doc): Acadêmico*, Artesão**, Fora de lei***, Cuidador de animais****, Artista*****
+    const occBase = stripStars(occObj.ocupacao);
+    const occKey = normKey(occObj.ocupacao);
+    let occSub = null;
+    let occNomeFinal = occBase;
+
+    if (OCC_SUBTYPES[occKey]) {
+      const cfg = OCC_SUBTYPES[occKey];
+      const subRoll = randInt(rng, 1, cfg.die);
+      const subNome = cfg.results[subRoll] || "—";
+      occSub = { die: cfg.die, roll: subRoll, nome: subNome };
+      occNomeFinal = `${occBase} - ${subNome}`;
+    }
+
+
     // fortuna 1d20
     const rFort = randInt(rng, 1, 20);
     const fortObj = tables.fort.mapa[String(rFort)] || { fortuna: "—", explicacao: "—" };
+
+    // Sorte de Principiante (3d6) — nível 0
+    const rSorte = rollNdM(rng, 3, 6);
+    const sorte = rSorte.sum;
+
+    // Salvamentos — nível 0
+    const SF_BASE = 18;
+    const SM_BASE = 18;
+
 
     // PV (1d4 + mod CON), exceção: Fortuna 2 "Sobrevivente" => 1d6 (doc)
     const pvDie = (rFort === 2) ? 6 : 4;
@@ -302,8 +398,15 @@
       jotunirRoll,
       rOcc,
       occObj,
+      occBase,
+      occSub,
+      occNomeFinal,
       rFort,
       fortObj,
+      rSorte,
+      sorte,
+      SF_BASE,
+      SM_BASE,
       pvDie,
       rPV,
       pvTotal,
@@ -396,7 +499,7 @@
     const caEl = card.querySelector(".card-stats .stat:nth-child(2) .stat-value");
 
     const arma = escapeHtml(p.occObj.arma_inicial || "—");
-    const occ = escapeHtml(p.occObj.ocupacao || "—");
+    const occ = escapeHtml(p.occNomeFinal || p.occObj.ocupacao || "—");
     const race = escapeHtml(p.raceName || "—");
 
     h3.textContent = `${race} — ${occ}`;
@@ -434,7 +537,7 @@
         ? `<div class="line d66"><span class="label">d66:</span> dezena 1d6 → <strong>${d66.dezena}</strong>, unidade 1d6 → <strong>${d66.unidade}</strong> <span class="muted">(= ${d66.valor})</span></div>`
         : `<div class="line"><span class="label">d66:</span> <span class="muted">${d66.valor}</span></div>`;
       lines.innerHTML = `
-        <div class="line"><span class="label">Ocupação:</span> ${occ}</div>
+        <div class="line"><span class="label">Ocupação:</span> ${occ} ${p.occSub && showRolls ? `<span class="muted">(1d${p.occSub.die} → ${p.occSub.roll})</span>` : ``}</div>
         ${d66Line}
         <div class="line"><span class="label">Arma:</span> ${arma}</div>
         ${p.podeTerMunicao ? `<div class="line"><span class="label">Munição:</span> 2d10 (se aplicável)</div>` : ``}
@@ -453,7 +556,10 @@
       lines.innerHTML = `
         <div class="line"><span class="label">Fortuna:</span> ${fortTitle} <span class="muted">(${fortRoll})</span></div>
         <div class="line"><span class="label">PV:</span> ${p.pvTotal} ${pvRollInfo ? `<span class="muted">${pvRollInfo}</span>` : ``}</div>
-      `;
+      
+        <div class="line"><span class="label">Salvamentos:</span> SF ${p.SF_BASE} • SM ${p.SM_BASE}</div>
+        <div class="line"><span class="label">Sorte:</span> ${p.sorte} ${showRolls ? `<span class="muted">(3d6 → ${fmtDice(p.rSorte.dice)} = ${p.rSorte.sum})</span>` : ``}</div>
+`;
     }, 650);
 
     // Mochila
@@ -523,7 +629,7 @@
     const caEl = card.querySelector(".card-stats .stat:nth-child(2) .stat-value");
 
     const arma = escapeHtml(p.occObj.arma_inicial || "—");
-    const occ = escapeHtml(p.occObj.ocupacao || "—");
+    const occ = escapeHtml(p.occNomeFinal || p.occObj.ocupacao || "—");
     const race = escapeHtml(p.raceName || "—");
 
     h3.textContent = `${race} — ${occ}`;
@@ -568,7 +674,7 @@
         : `<div class="line"><span class="label">d66:</span> <span class="muted">${d66.valor}</span></div>`;
       if (lines) {
         lines.innerHTML = `
-          <div class="line"><span class="label">Ocupação:</span> ${occ}</div>
+          <div class="line"><span class="label">Ocupação:</span> ${occ} ${p.occSub && showRolls ? `<span class="muted">(1d${p.occSub.die} → ${p.occSub.roll})</span>` : ``}</div>
           ${d66Line}
           <div class="line"><span class="label">Arma:</span> ${arma}</div>
           ${p.podeTerMunicao ? `<div class="line"><span class="label">Munição:</span> 2d10 (se aplicável)</div>` : ``}
@@ -590,7 +696,10 @@
         lines.innerHTML = `
           <div class="line"><span class="label">Fortuna:</span> ${fortTitle} <span class="muted">(${fortRoll})</span></div>
           <div class="line"><span class="label">PV:</span> ${p.pvTotal} ${pvRollInfo ? `<span class="muted">${pvRollInfo}</span>` : ``}</div>
-        `;
+        
+        <div class="line"><span class="label">Salvamentos:</span> SF ${p.SF_BASE} • SM ${p.SM_BASE}</div>
+        <div class="line"><span class="label">Sorte:</span> ${p.sorte} ${showRolls ? `<span class="muted">(3d6 → ${fmtDice(p.rSorte.dice)} = ${p.rSorte.sum})</span>` : ``}</div>
+`;
       }
     }
 
@@ -710,10 +819,12 @@
       const p = lastPersons[i];
       linhas.push(`=== Personagem #${i + 1} ===`);
       linhas.push(`Raça: ${p.raceName}${p.jotunirTipo ? ' (' + p.jotunirTipo + ')' : ''}`);
-      linhas.push(`Ocupação (d66): ${p.occObj.ocupacao} (${p.rOcc.valor})`);
+      linhas.push(`Ocupação (d66): ${p.occNomeFinal || p.occObj.ocupacao} (${p.rOcc.valor}${p.occSub ? '; 1d' + p.occSub.die + ' → ' + p.occSub.roll : ''})`);
       linhas.push(`Arma inicial: ${p.occObj.arma_inicial}`);
       linhas.push(`PV: ${p.pvTotal}`);
       linhas.push(`CA (base): ${p.caBase}`);
+      linhas.push(`Salvamentos: SF ${p.SF_BASE} / SM ${p.SM_BASE}`);
+      linhas.push(`Sorte (3d6): ${p.sorte} (${p.rSorte.dice.join('+')} = ${p.rSorte.sum})`);
       linhas.push('');
 
       linhas.push('Atributos:');
