@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Preview — Ícones Line Art</title>
+<style>
+  body { background: #0f1014; color: #f5f5f7; font-family: system-ui, sans-serif; padding: 2rem; margin: 0; }
+  h1 { color: #c7a25a; margin-bottom: 0.3rem; }
+  p { color: #b0b3c0; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 1.4rem; }
+  .card {
+    background: #181a20; border: 1px solid #2a2d35; border-radius: 1rem;
+    padding: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { border-color: #c7a25a; box-shadow: 0 0 24px rgba(199,162,90,0.15); }
+  .icon-wrap {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 25%, rgba(199,162,90,0.12), transparent 65%),
+                radial-gradient(circle at 70% 75%, rgba(78,161,211,0.08), transparent 60%);
+    border: 1px dashed rgba(199,162,90,0.4);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .icon-wrap img { width: 54px; height: 54px; object-fit: contain; }
+  .label { font-size: 0.82rem; color: #c7a25a; font-weight: 600; text-align: center; }
+  h2 { color: #c7a25a; margin-top: 3rem; font-size: 1rem; opacity: 0.7; }
+  .small-row { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; }
+  .small-wrap {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 20%, rgba(199,162,90,0.4), transparent 60%);
+    border: 1px dashed rgba(199,162,90,0.55);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .small-wrap img { width: 30px; height: 30px; object-fit: contain; }
+</style>
+</head>
+<body>
+<h1>Ícones — Line Art estilo gravura medieval</h1>
+<p>Tamanho grande (páginas de cada trilha, 72px) e pequeno (cards da home, 42px).</p>
+
+<div class="grid">
+  <div class="card"><div class="icon-wrap"><img src="img/combatente.svg"/></div><div class="label">Combatente</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/batedor.svg"/></div><div class="label">Batedor</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/especialista.svg"/></div><div class="label">Especialista</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/arcanista.svg"/></div><div class="label">Arcanista</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/xama.svg"/></div><div class="label">Xamã</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/sacerdote.svg"/></div><div class="label">Sacerdote</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/mestre-das-feras.svg"/></div><div class="label">Mestre das Feras</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/lorde-runico.svg"/></div><div class="label">Lorde Rúnico</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/bardo.svg"/></div><div class="label">Bardo</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/alquimista.svg"/></div><div class="label">Alquimista</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/defensor.svg"/></div><div class="label">Defensor</div></div>
+  <div class="card"><div class="icon-wrap"><img src="img/troca-peles.svg"/></div><div class="label">Troca-peles</div></div>
+</div>
+
+<h2>Tamanho pequeno — cards da home (42px)</h2>
+<div class="small-row">
+  <div class="small-wrap"><img src="img/combatente.svg"/></div>
+  <div class="small-wrap"><img src="img/batedor.svg"/></div>
+  <div class="small-wrap"><img src="img/especialista.svg"/></div>
+  <div class="small-wrap"><img src="img/arcanista.svg"/></div>
+  <div class="small-wrap"><img src="img/xama.svg"/></div>
+  <div class="small-wrap"><img src="img/sacerdote.svg"/></div>
+  <div class="small-wrap"><img src="img/mestre-das-feras.svg"/></div>
+  <div class="small-wrap"><img src="img/lorde-runico.svg"/></div>
+  <div class="small-wrap"><img src="img/bardo.svg"/></div>
+  <div class="small-wrap"><img src="img/alquimista.svg"/></div>
+  <div class="small-wrap"><img src="img/defensor.svg"/></div>
+  <div class="small-wrap"><img src="img/troca-peles.svg"/></div>
+</div>
+</body>
+</html>

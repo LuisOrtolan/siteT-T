@@ -1,1 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 117 108" width="117" height="108"><rect x="27" y="0" width="9" height="9" fill="#e07878"/><rect x="36" y="0" width="9" height="9" fill="#e07878"/><rect x="45" y="0" width="9" height="9" fill="#e07878"/><rect x="27" y="9" width="9" height="9" fill="#e07878"/><rect x="45" y="9" width="9" height="9" fill="#e07878"/><rect x="27" y="18" width="9" height="9" fill="#e07878"/><rect x="36" y="18" width="9" height="9" fill="#e07878"/><rect x="45" y="18" width="9" height="9" fill="#e07878"/><rect x="36" y="27" width="9" height="9" fill="#e07878"/><rect x="45" y="27" width="9" height="9" fill="#e07878"/><rect x="36" y="36" width="9" height="9" fill="#e07878"/><rect x="45" y="36" width="9" height="9" fill="#e07878"/><rect x="27" y="45" width="9" height="9" fill="#e07878"/><rect x="36" y="45" width="9" height="9" fill="#e07878"/><rect x="45" y="45" width="9" height="9" fill="#e07878"/><rect x="54" y="45" width="9" height="9" fill="#e07878"/><rect x="18" y="54" width="9" height="9" fill="#e07878"/><rect x="27" y="54" width="9" height="9" fill="#e07878"/><rect x="36" y="54" width="9" height="9" fill="#e07878"/><rect x="45" y="54" width="9" height="9" fill="#e07878"/><rect x="54" y="54" width="9" height="9" fill="#e07878"/><rect x="63" y="54" width="9" height="9" fill="#e07878"/><rect x="9" y="63" width="9" height="9" fill="#e07878"/><rect x="18" y="63" width="9" height="9" fill="#e07878"/><rect x="27" y="63" width="9" height="9" fill="#e07878"/><rect x="36" y="63" width="9" height="9" fill="#e07878"/><rect x="45" y="63" width="9" height="9" fill="#e07878"/><rect x="54" y="63" width="9" height="9" fill="#e07878"/><rect x="63" y="63" width="9" height="9" fill="#e07878"/><rect x="72" y="63" width="9" height="9" fill="#e07878"/><rect x="9" y="72" width="9" height="9" fill="#e07878"/><rect x="18" y="72" width="9" height="9" fill="#e07878"/><rect x="27" y="72" width="9" height="9" fill="#e07878"/><rect x="36" y="72" width="9" height="9" fill="#e07878"/><rect x="45" y="72" width="9" height="9" fill="#e07878"/><rect x="54" y="72" width="9" height="9" fill="#e07878"/><rect x="63" y="72" width="9" height="9" fill="#e07878"/><rect x="72" y="72" width="9" height="9" fill="#e07878"/><rect x="9" y="81" width="9" height="9" fill="#e07878"/><rect x="18" y="81" width="9" height="9" fill="#e07878"/><rect x="27" y="81" width="9" height="9" fill="#e07878"/><rect x="36" y="81" width="9" height="9" fill="#e07878"/><rect x="45" y="81" width="9" height="9" fill="#e07878"/><rect x="54" y="81" width="9" height="9" fill="#e07878"/><rect x="63" y="81" width="9" height="9" fill="#e07878"/><rect x="72" y="81" width="9" height="9" fill="#e07878"/><rect x="18" y="90" width="9" height="9" fill="#e07878"/><rect x="27" y="90" width="9" height="9" fill="#e07878"/><rect x="36" y="90" width="9" height="9" fill="#e07878"/><rect x="45" y="90" width="9" height="9" fill="#e07878"/><rect x="54" y="90" width="9" height="9" fill="#e07878"/><rect x="63" y="90" width="9" height="9" fill="#e07878"/><rect x="27" y="99" width="9" height="9" fill="#e07878"/><rect x="36" y="99" width="9" height="9" fill="#e07878"/><rect x="45" y="99" width="9" height="9" fill="#e07878"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- body -->
+  <path d="M18,34 Q14,52 32,60 Q50,52 46,34 Q42,24 32,24 Q22,24 18,34 Z"
+        fill="rgba(224,120,120,0.09)" stroke="#c7a25a" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- soundhole -->
+  <circle cx="32" cy="44" r="6" fill="none" stroke="#c7a25a" stroke-width="1.1"/>
+  <!-- soundhole rosette -->
+  <circle cx="32" cy="44" r="3" fill="none" stroke="#c7a25a" stroke-width="0.6" opacity="0.4"/>
+  <!-- neck -->
+  <path d="M38,26 L50,8" stroke="#c7a25a" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+  <!-- nut (neck end) -->
+  <line x1="47" y1="10" x2="53" y2="6" stroke="#c7a25a" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- tuning pegs (3) -->
+  <circle cx="45" cy="7" r="2" fill="rgba(199,162,90,0.2)" stroke="#c7a25a" stroke-width="1"/>
+  <circle cx="50" cy="5" r="2" fill="rgba(199,162,90,0.2)" stroke="#c7a25a" stroke-width="1"/>
+  <circle cx="55" cy="8" r="2" fill="rgba(199,162,90,0.2)" stroke="#c7a25a" stroke-width="1"/>
+  <!-- strings (3) -->
+  <line x1="46" y1="9" x2="36" y2="29" stroke="#c7a25a" stroke-width="0.7" opacity="0.55"/>
+  <line x1="49" y1="7" x2="38" y2="28" stroke="#c7a25a" stroke-width="0.7" opacity="0.55"/>
+  <line x1="52" y1="7" x2="40" y2="28" stroke="#c7a25a" stroke-width="0.7" opacity="0.55"/>
+  <!-- bridge -->
+  <path d="M26,50 Q32,48 38,50" fill="none" stroke="#c7a25a" stroke-width="1" stroke-linecap="round"/>
+</svg>
