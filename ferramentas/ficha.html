@@ -1,8 +1,14 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha — Trilhas &amp; Tesouros</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-#app{font-family:'Georgia',serif;background:#0f1014;color:#f5f5f7;padding:12px}
+body{background:#0f1014;color:#f5f5f7;font-family:'Georgia',serif;padding:12px}
 input,select,textarea{font-family:inherit}
+#app{max-width:600px;margin:0 auto}
 .tt-top{text-align:center;padding:8px 0 12px;border-bottom:1px solid #2a2d35;margin-bottom:12px}
 .tt-top h1{font-size:16px;color:#c7a25a;letter-spacing:.1em;font-weight:normal}
 .tt-top p{font-size:10px;color:#5a5f70;margin-top:3px}
@@ -17,7 +23,7 @@ input,select,textarea{font-family:inherit}
 .fl{display:block;font-size:10px;color:#6b7080;margin-bottom:3px;letter-spacing:.04em}
 .fi{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px}
 .fi:focus{outline:none;border-color:#c7a25a60}
-.fi-sm{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 5px;color:#f5f5f7;font-size:13px;text-align:center}
+.fi-sm{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px;color:#f5f5f7;font-size:13px;text-align:center}
 .fi-sm:focus{outline:none;border-color:#c7a25a60}
 select.fi option,select.fi-sm option{background:#181a20}
 .attr-box{background:#0f1014;border:1px solid #2a2d35;border-radius:8px;padding:9px 7px;text-align:center}
@@ -34,7 +40,7 @@ select.fi option,select.fi-sm option{background:#181a20}
 .stat-box{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;padding:8px 6px;text-align:center}
 .stat-lbl{font-size:10px;color:#c7a25a;letter-spacing:.1em;font-weight:bold;display:block;margin-bottom:5px}
 .stat-row{display:flex;align-items:center;justify-content:center;gap:4px}
-.stat-row input{width:36px;background:transparent;border:none;border-bottom:1px solid #2a2d35;color:#f5f5f7;font-size:18px;text-align:center;padding:0}
+.stat-row input{width:38px;background:transparent;border:none;border-bottom:1px solid #2a2d35;color:#f5f5f7;font-size:18px;text-align:center;padding:0}
 .stat-row input:focus{outline:none;border-color:#c7a25a}
 .stat-sep{color:#3a3f50;font-size:14px}
 .pv-bar-bg{background:#0f1014;border:1px solid #2a2d35;border-radius:20px;height:10px;overflow:hidden;margin-top:5px}
@@ -60,8 +66,9 @@ select.fi option,select.fi-sm option{background:#181a20}
 .slot-item:last-child{border-bottom:none}
 .slot-item input.iname{background:transparent;border:none;color:#d0d3dc;font-size:12px;width:100%;font-family:inherit}
 .slot-item input.iname:focus{outline:none}
-.slot-item input.inum{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#d0d3dc;font-size:12px;text-align:center;padding:2px 3px;width:100%;font-family:inherit}
-.slot-item input.islot{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#c7a25a;font-size:12px;text-align:center;padding:2px 3px;width:100%;font-family:inherit}
+.slot-item input.inum,.slot-item input.islot{background:#181a20;border:1px solid #2a2d35;border-radius:5px;font-size:12px;text-align:center;padding:2px 3px;width:100%;font-family:inherit}
+.slot-item input.inum{color:#d0d3dc}
+.slot-item input.islot{color:#c7a25a}
 .slot-item input.inum:focus,.slot-item input.islot:focus{outline:none;border-color:#c7a25a60}
 .slot-item button{background:transparent;border:none;color:#d06060;font-size:13px;cursor:pointer;padding:0}
 .slot-add{display:flex;gap:5px;margin-top:7px}
@@ -70,7 +77,7 @@ select.fi option,select.fi-sm option{background:#181a20}
 .slot-add input.sm2{width:46px;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 4px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit}
 .slot-bar-bg{background:#0f1014;border:1px solid #2a2d35;border-radius:20px;height:8px;overflow:hidden;margin-top:4px}
 .slot-bar-fill{height:100%;border-radius:20px;transition:width .3s,background .3s}
-.carga-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:bold;letter-spacing:.05em;border:1px solid}
+.carga-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:bold;letter-spacing:.05em;border:1px solid}
 .carga-leve  {background:#3a8a3a18;border-color:#3a8a3a60;color:#5aaf5a}
 .carga-media {background:#c7a25a18;border-color:#c7a25a60;color:#c7a25a}
 .carga-pesada{background:#d0606018;border-color:#d0606060;color:#d06060}
@@ -111,104 +118,57 @@ select.fi option,select.fi-sm option{background:#181a20}
 .list-add input:focus{outline:none;border-color:#c7a25a60}
 .empty-hint{padding:10px;font-size:11px;color:#3a3f50;text-align:center}
 </style>
-<div id="app"></div>
+<body><div id="app"></div>
 <script>
-const LS='tt_ficha_v8';
+const LS='tt_ficha_v9';
 const TL=['—','Combatente','Batedor','Especialista','Arcanista','Xamã','Sacerdote','Mestre das Feras','Lorde Rúnico','Bardo','Alquimista','Defensor','Troca-peles'];
-
-function def(){return{
-  nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',
-  attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},
-  ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},
-  contadores:[],
-  armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],
-  trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},
-  trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],
-  idiomas:[],magias:[],habilidades:[],
-  equip:{items:[],tem_mochila:false,mochila_slots:10,mochila:[]},
-  carga:{leve:'',media:'',pesada:'',sobre:''},
-  moedas:{cobre:0,prata:0,ouro:0,electrum:0,platina:0},
-  pedras:'',anotacoes:''
-};}
-
+function def(){return{nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},contadores:[],armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],idiomas:[],magias:[],habilidades:[],equip:{items:[],tem_mochila:false,mochila_slots:10,mochila:[]},carga:{leve:'',media:'',pesada:'',sobre:''},moedas:{cobre:0,prata:0,ouro:0,electrum:0,platina:0},pedras:'',anotacoes:''};}
 function mod(v){const n=parseInt(v)||10;if(n<=3)return'-3';if(n<=5)return'-2';if(n<=8)return'-1';if(n<=12)return'0';if(n<=15)return'+1';if(n<=17)return'+2';return'+3';}
 function modColor(v){const n=parseInt(v)||10;if(n<=8)return'#d06060';if(n<=12)return'#8a8fa0';return'#5aaf5a';}
 function pvColor(p,mx){const r=mx>0?p/mx:0;return r>0.6?'#3a8a3a':r>0.3?'#c7a25a':'#d06060';}
 function fmtSlot(v){const n=parseFloat(v)||0;return n===Math.floor(n)?String(n):n.toFixed(1);}
 function totalSlots(arr){return arr.reduce((a,x)=>a+(parseFloat(x.slots)||0),0);}
-
-function cargaBadge(used){
-  const c=S.carga;
-  const l=parseFloat(c.leve)||0,m=parseFloat(c.media)||0,p=parseFloat(c.pesada)||0,s=parseFloat(c.sobre)||0;
-  if(!l&&!m&&!p&&!s) return '<span class="carga-badge carga-vazia">sem limites definidos</span>';
-  if(s&&used>=s) return '<span class="carga-badge carga-sobre">⚠ Sobrecarga</span>';
-  if(p&&used>=p) return '<span class="carga-badge carga-pesada">▲ Carga Pesada</span>';
-  if(m&&used>=m) return '<span class="carga-badge carga-media">● Carga Média</span>';
-  if(l&&used>=l) return '<span class="carga-badge carga-leve">✓ Carga Leve</span>';
-  return '<span class="carga-badge carga-vazia">✓ Sem carga</span>';
-}
-
-// Cor da barra baseada na faixa de carga (se definida), senão verde
-function barColor(used){
-  const c=S.carga;
-  const l=parseFloat(c.leve)||0,m=parseFloat(c.media)||0,p=parseFloat(c.pesada)||0,s=parseFloat(c.sobre)||0;
-  if(!l&&!m&&!p&&!s) return '#3a8a3a';
-  if(s&&used>=s) return '#e04060';
-  if(p&&used>=p) return '#d06060';
-  if(m&&used>=m) return '#c7a25a';
-  return '#3a8a3a';
-}
-
+function cargaInfo(used){const c=S.carga,l=parseFloat(c.leve)||0,m=parseFloat(c.media)||0,p=parseFloat(c.pesada)||0,s=parseFloat(c.sobre)||0;if(!l&&!m&&!p&&!s)return{badge:'<span class="carga-badge carga-vazia">sem limites definidos</span>',color:'#3a8a3a',ref:0};if(s&&used>=s)return{badge:'<span class="carga-badge carga-sobre">⚠ Sobrecarga</span>',color:'#e04060',ref:s};if(p&&used>=p)return{badge:'<span class="carga-badge carga-pesada">▲ Carga Pesada</span>',color:'#d06060',ref:p};if(m&&used>=m)return{badge:'<span class="carga-badge carga-media">● Carga Média</span>',color:'#c7a25a',ref:m};if(l&&used>=l)return{badge:'<span class="carga-badge carga-leve">✓ Carga Leve</span>',color:'#5aaf5a',ref:l};return{badge:'<span class="carga-badge carga-vazia">✓ Sem carga</span>',color:'#3a8a3a',ref:l||m||p||s};}
 let S=def(),tab=0,pvD=1,saveT=null;
-let newStr={idioma:'',magia:'',hab:'',en:'',eq:'1',es:'1',mn:'',mq:'1',ms:'1',cont:''};
-
+let ns={idioma:'',magia:'',hab:'',en:'',eq:'1',es:'1',mn:'',mq:'1',ms:'1',cont:''};
 try{const x=localStorage.getItem(LS);if(x)S={...def(),...JSON.parse(x)};}catch(e){}
-
 function save(){localStorage.setItem(LS,JSON.stringify(S));const el=document.getElementById('si');if(el){el.classList.add('show');clearTimeout(saveT);saveT=setTimeout(()=>el.classList.remove('show'),1800);}}
-
-function addSimple(t){const v=newStr[t].trim();if(!v)return;if(t==='idioma')S.idiomas.push(v);else if(t==='magia')S.magias.push(v);else S.habilidades.push(v);newStr[t]='';save();render();}
-function rmSimple(t,i){if(t==='idioma')S.idiomas.splice(i,1);else if(t==='magia')S.magias.splice(i,1);else S.habilidades.splice(i,1);save();render();}
-function sList(t,arr,ph){
-  return '<div class="list-area">'+
-    (arr.length?arr.map((x,i)=>'<div class="li"><span class="li-t">'+x+'</span><button class="li-x" onclick="rmSimple(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
-  '</div><div class="list-add"><input placeholder="'+ph+'" value="'+newStr[t]+'" oninput="newStr[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSimple(\''+t+'\')" /><button class="btn gold" onclick="addSimple(\''+t+'\')">+ Add</button></div>';}
-
-function addCont(){const n=newStr.cont.trim();if(!n)return;S.contadores.push({nome:n,qtd:0});newStr.cont='';save();render();}
-function rmCont(i){S.contadores.splice(i,1);save();render();}
-function adjCont(i,d){S.contadores[i].qtd=Math.max(0,(parseInt(S.contadores[i].qtd)||0)+d);save();render();}
-function updCont(i,v){S.contadores[i].qtd=parseInt(v)||0;save();}
-
-function addSlot(t){
-  const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',ns=t==='e'?'es':'ms';
-  const nome=newStr[nn].trim();if(!nome)return;
-  const qtd=parseInt(newStr[eq])||1,slots=parseFloat(newStr[ns])||0;
-  if(t==='e')S.equip.items.push({nome,qtd,slots});else S.equip.mochila.push({nome,qtd,slots});
-  newStr[nn]='';newStr[eq]='1';newStr[ns]='1';save();render();}
+function addS(t){const v=ns[t].trim();if(!v)return;if(t==='idioma')S.idiomas.push(v);else if(t==='magia')S.magias.push(v);else S.habilidades.push(v);ns[t]='';save();render();}
+function rmS(t,i){if(t==='idioma')S.idiomas.splice(i,1);else if(t==='magia')S.magias.splice(i,1);else S.habilidades.splice(i,1);save();render();}
+function sL(t,arr,ph){return '<div class="list-area">'+(arr.length?arr.map((x,i)=>'<div class="li"><span class="li-t">'+x+'</span><button class="li-x" onclick="rmS(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+'</div><div class="list-add"><input placeholder="'+ph+'" value="'+ns[t]+'" oninput="ns[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addS(\''+t+'\')" /><button class="btn gold" onclick="addS(\''+t+'\')">+ Add</button></div>';}
+function addC(){const n=ns.cont.trim();if(!n)return;S.contadores.push({nome:n,qtd:0});ns.cont='';save();render();}
+function rmC(i){S.contadores.splice(i,1);save();render();}
+function adjC(i,d){S.contadores[i].qtd=Math.max(0,(parseInt(S.contadores[i].qtd)||0)+d);save();render();}
+function updC(i,v){S.contadores[i].qtd=parseInt(v)||0;save();}
+function addSlot(t){const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',sn=t==='e'?'es':'ms';const nome=ns[nn].trim();if(!nome)return;const qtd=parseInt(ns[eq])||1,slots=parseFloat(ns[sn])||0;if(t==='e')S.equip.items.push({nome,qtd,slots});else S.equip.mochila.push({nome,qtd,slots});ns[nn]='';ns[eq]='1';ns[sn]='1';save();render();}
 function rmSlot(t,i){if(t==='e')S.equip.items.splice(i,1);else S.equip.mochila.splice(i,1);save();render();}
-function updSlot(t,i,k,v){
-  const arr=t==='e'?S.equip.items:S.equip.mochila;
-  if(k==='slots')arr[i][k]=parseFloat(v)||0;else if(k==='qtd')arr[i][k]=parseInt(v)||1;else arr[i][k]=v;
-  save();render();}
+/* onchange only — sem render() durante digitação */
+function updSlot(t,i,k,v){const arr=t==='e'?S.equip.items:S.equip.mochila;if(k==='slots')arr[i][k]=parseFloat(v)||0;else if(k==='qtd')arr[i][k]=parseInt(v)||1;else arr[i][k]=v;save();}
+function addA(){S.armas.push({nome:'',ataque:'',dano:'',alcance:'',obs:''});save();render();}
+function rmA(i){S.armas.splice(i,1);save();render();}
+function updA(i,k,v){S.armas[i][k]=v;save();}
+function addTr(){S.trilhas.push({nome:'—',rank:1,ouro:'',ataques:''});save();render();}
+function rmTr(i){S.trilhas.splice(i,1);save();render();}
+function updTr(i,k,v){S.trilhas[i][k]=v;save();}
+function adjPV(d){S.pv.v=Math.max(0,Math.min(S.pv.max,S.pv.v+d));save();render();}
+function trSel(val,onch){return '<select class="fi" onchange="'+onch+'">'+TL.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
+function doExport(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(S.nome||'personagem')+'_tt.json';a.click();}
+function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{S={...def(),...JSON.parse(ev.target.result)};save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
+function doReset(){if(!confirm('Nova ficha? Apaga tudo.'))return;S=def();save();render();}
 
-function slotSection(t,items,label){
-  const mochilaSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
-  const used=totalSlots(items)+mochilaSlot;
-  const col=barColor(used);
-  const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',ns=t==='e'?'es':'ms';
-
-  // Barra sem máximo fixo — cheia quando atinge sobrecarga ou pesada, ou mostra proporção relativa
-  const c=S.carga;
-  const ref=parseFloat(c.sobre)||parseFloat(c.pesada)||parseFloat(c.media)||parseFloat(c.leve)||0;
-  const pct=ref>0?Math.min(1,used/ref):0;
-
+function slotSec(t,items,label){
+  const mSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
+  const used=totalSlots(items)+mSlot;
+  const info=t==='e'?cargaInfo(used):{badge:'',color:'#3a8a3a',ref:0};
+  const col=info.color;
+  const pct=info.ref>0?Math.min(1,used/info.ref)*100:Math.min(100,used*8);
+  const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',sn=t==='e'?'es':'ms';
   return '<div style="margin-bottom:8px">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
     '<span style="font-size:10px;color:#6b7080">'+label+'</span>'+
-    '<div style="display:flex;align-items:center;gap:8px">'+
-    (t==='e'?cargaBadge(used):'')+
-    '<span style="font-weight:bold;font-size:13px;color:'+col+'">'+fmtSlot(used)+' slots</span>'+
-    '</div></div>'+
-    '<div class="slot-bar-bg"><div class="slot-bar-fill" style="width:'+(ref>0?Math.round(pct*100):Math.min(100,used*8))+'%;background:'+col+'"></div></div>'+
+    '<div style="display:flex;align-items:center;gap:8px">'+info.badge+
+    '<span style="font-weight:bold;font-size:13px;color:'+col+'">'+fmtSlot(used)+' slots</span></div></div>'+
+    '<div class="slot-bar-bg"><div class="slot-bar-fill" style="width:'+Math.round(pct)+'%;background:'+col+'"></div></div>'+
     (t==='e'&&S.equip.tem_mochila?'<div style="font-size:9px;color:#5a5f70;margin-top:4px">★ Mochila: +1 slot de equipamento, capacidade interna de '+S.equip.mochila_slots+' slots</div>':'')+
     '</div>'+
     '<div style="display:grid;grid-template-columns:1fr 46px 46px 24px;gap:5px;margin-bottom:4px;padding:0 9px">'+
@@ -216,73 +176,58 @@ function slotSection(t,items,label){
     '<div class="slot-list">'+
     (items.length?items.map((x,i)=>'<div class="slot-item">'+
       '<input class="iname" value="'+x.nome+'" oninput="updSlot(\''+t+'\','+i+',\'nome\',this.value)" placeholder="—"/>'+
-      '<input class="inum" type="number" min="1" value="'+(x.qtd||1)+'" oninput="updSlot(\''+t+'\','+i+',\'qtd\',this.value)"/>'+
-      '<input class="islot" type="number" min="0" step="0.5" value="'+x.slots+'" oninput="updSlot(\''+t+'\','+i+',\'slots\',this.value)"/>'+
+      '<input class="inum" type="number" min="1" value="'+(x.qtd||1)+'" onchange="updSlot(\''+t+'\','+i+',\'qtd\',this.value);render()"/>'+
+      '<input class="islot" type="number" min="0" step="0.5" value="'+x.slots+'" onchange="updSlot(\''+t+'\','+i+',\'slots\',this.value);render()"/>'+
       '<button onclick="rmSlot(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
     '</div>'+
     '<div class="slot-add">'+
-    '<input class="main" placeholder="Nome…" value="'+newStr[nn]+'" oninput="newStr[\''+nn+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSlot(\''+t+'\')"/>'+
-    '<input class="sm2" type="number" min="1" value="'+newStr[eq]+'" oninput="newStr[\''+eq+'\']=this.value" placeholder="Qtd"/>'+
-    '<input class="sm2" type="number" min="0" step="0.5" value="'+newStr[ns]+'" oninput="newStr[\''+ns+'\']=this.value" placeholder="Sl"/>'+
+    '<input class="main" placeholder="Nome…" value="'+ns[nn]+'" oninput="ns[\''+nn+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSlot(\''+t+'\')"/>'+
+    '<input class="sm2" type="number" min="1" value="'+ns[eq]+'" oninput="ns[\''+eq+'\']=this.value" placeholder="Qtd"/>'+
+    '<input class="sm2" type="number" min="0" step="0.5" value="'+ns[sn]+'" oninput="ns[\''+sn+'\']=this.value" placeholder="Sl"/>'+
     '<button class="btn gold" onclick="addSlot(\''+t+'\')">+ Add</button></div>';}
 
-function addArma(){S.armas.push({nome:'',ataque:'',dano:'',alcance:'',obs:''});save();render();}
-function rmArma(i){S.armas.splice(i,1);save();render();}
-function updArma(i,k,v){S.armas[i][k]=v;save();}
-function addTrilha(){S.trilhas.push({nome:'—',rank:1,ouro:'',ataques:''});save();render();}
-function rmTrilha(i){S.trilhas.splice(i,1);save();render();}
-function updTrilha(i,k,v){S.trilhas[i][k]=v;save();}
-function adjPV(d){S.pv.v=Math.max(0,Math.min(S.pv.max,S.pv.v+d));save();render();}
-function trilhaSelect(val,onch){return '<select class="fi" onchange="'+onch+'">'+TL.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
-function doExport(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(S.nome||'personagem')+'_tt.json';a.click();}
-function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{S={...def(),...JSON.parse(ev.target.result)};save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
-function doReset(){if(!confirm('Nova ficha? Apaga tudo.'))return;S=def();save();render();}
-
 function tab0(){
-  const ATTRS=['FOR','DES','CON','INT','VON','CAR'],pvPct=S.pv.max>0?S.pv.v/S.pv.max:0;
+  const AT=['FOR','DES','CON','INT','VON','CAR'],pvP=S.pv.max>0?S.pv.v/S.pv.max:0;
   return '<div class="sec"><div class="sec-t">Identidade</div>'+
-  '<div class="g2" style="margin-bottom:7px">'+
-  '<div><label class="fl">NOME</label><input class="fi" value="'+S.nome+'" oninput="S.nome=this.value;save()" placeholder="Nome"/></div>'+
+  '<div class="g2" style="margin-bottom:7px"><div><label class="fl">NOME</label><input class="fi" value="'+S.nome+'" oninput="S.nome=this.value;save()" placeholder="Nome"/></div>'+
   '<div><label class="fl">JOGADOR(A)</label><input class="fi" value="'+S.jogador+'" oninput="S.jogador=this.value;save()" placeholder="Jogador"/></div></div>'+
   '<div style="margin-bottom:7px"><label class="fl">OCUPAÇÕES</label><input class="fi" value="'+S.ocupacoes+'" oninput="S.ocupacoes=this.value;save()" placeholder="Ocupações anteriores"/></div>'+
   '<div class="g4">'+
-  '<div><label class="fl">NÍVEL</label><input class="fi-sm" type="number" min="1" value="'+S.nivel+'" oninput="S.nivel=parseInt(this.value)||1;save()"/></div>'+
-  '<div><label class="fl">XP</label><input class="fi-sm" type="number" min="0" value="'+S.xp+'" oninput="S.xp=parseInt(this.value)||0;save()"/></div>'+
+  '<div><label class="fl">NÍVEL</label><input class="fi-sm" type="number" min="1" value="'+S.nivel+'" onchange="S.nivel=parseInt(this.value)||1;save()"/></div>'+
+  '<div><label class="fl">XP</label><input class="fi-sm" type="number" min="0" value="'+S.xp+'" onchange="S.xp=parseInt(this.value)||0;save()"/></div>'+
   '<div><label class="fl">BÔNUS XP</label><input class="fi-sm" value="'+S.bonus_xp+'" oninput="S.bonus_xp=this.value;save()"/></div>'+
   '<div><label class="fl">ORIGEM</label><input class="fi-sm" value="'+S.origem+'" oninput="S.origem=this.value;save()"/></div></div>'+
-  '<div class="g2" style="margin-top:7px">'+
-  '<div><label class="fl">SEXO</label><input class="fi" value="'+S.sexo+'" oninput="S.sexo=this.value;save()"/></div>'+
+  '<div class="g2" style="margin-top:7px"><div><label class="fl">SEXO</label><input class="fi" value="'+S.sexo+'" oninput="S.sexo=this.value;save()"/></div>'+
   '<div><label class="fl">IDADE</label><input class="fi" value="'+S.idade+'" oninput="S.idade=this.value;save()"/></div></div></div>'+
 
   '<div class="sec"><div class="sec-t">Atributos</div><div class="g3">'+
-  ATTRS.map(a=>{const base=S.attrs[a].base,atual=S.attrs[a].atual,m=mod(atual),mc=modColor(atual),dim=atual<base;
-    return '<div class="attr-box"><span class="attr-name">'+a+'</span>'+
-    '<div class="attr-fields">'+
-    '<div class="attr-col"><span class="attr-col-lbl">BASE</span><input type="number" min="1" max="18" value="'+base+'" oninput="S.attrs[\''+a+'\'].base=parseInt(this.value)||1;save()"/></div>'+
+  AT.map(a=>{const base=S.attrs[a].base,atual=S.attrs[a].atual,m=mod(atual),mc=modColor(atual),dim=atual<base;
+    return '<div class="attr-box"><span class="attr-name">'+a+'</span><div class="attr-fields">'+
+    '<div class="attr-col"><span class="attr-col-lbl">BASE</span><input type="number" min="1" max="18" value="'+base+'" onchange="S.attrs[\''+a+'\'].base=parseInt(this.value)||1;save()"/></div>'+
     '<div class="attr-col atual"><span class="attr-col-lbl" style="color:#c7a25a90">ATUAL</span>'+
     '<input type="number" min="1" max="18" value="'+atual+'" style="'+(dim?'color:#c7a25a':'')+'"'+
-    ' oninput="S.attrs[\''+a+'\'].atual=parseInt(this.value)||1;save();document.getElementById(\'mod_'+a+'\').textContent=mod(parseInt(this.value)||1);document.getElementById(\'mod_'+a+'\').style.color=modColor(parseInt(this.value)||1)"/></div></div>'+
-    '<div class="attr-mod-row"><span class="attr-mod-lbl">mod</span><span class="attr-mod-val" id="mod_'+a+'" style="color:'+mc+'">'+m+'</span></div></div>';}).join('')+
+    ' oninput="S.attrs[\''+a+'\'].atual=parseInt(this.value)||1;save();document.getElementById(\'md_'+a+'\').textContent=mod(parseInt(this.value)||1);document.getElementById(\'md_'+a+'\').style.color=modColor(parseInt(this.value)||1)"/></div></div>'+
+    '<div class="attr-mod-row"><span class="attr-mod-lbl">mod</span><span class="attr-mod-val" id="md_'+a+'" style="color:'+mc+'">'+m+'</span></div></div>';}).join('')+
   '</div></div>'+
 
   '<div class="sec"><div class="sec-t">Defesas</div><div class="g3">'+
-  '<div class="stat-box"><span class="stat-lbl">CA</span><div class="stat-row"><input type="number" value="'+S.ca+'" oninput="S.ca=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">classe de armadura</div></div>'+
-  '<div class="stat-box"><span class="stat-lbl">SF</span><div class="stat-row"><input type="number" value="'+S.sf+'" oninput="S.sf=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda física</div></div>'+
-  '<div class="stat-box"><span class="stat-lbl">SM</span><div class="stat-row"><input type="number" value="'+S.sm+'" oninput="S.sm=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda mental</div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">CA</span><div class="stat-row"><input type="number" value="'+S.ca+'" onchange="S.ca=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">classe de armadura</div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">SF</span><div class="stat-row"><input type="number" value="'+S.sf+'" onchange="S.sf=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda física</div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">SM</span><div class="stat-row"><input type="number" value="'+S.sm+'" onchange="S.sm=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda mental</div></div>'+
   '</div></div>'+
 
   '<div class="sec"><div class="sec-t">Vitalidade</div><div class="g2">'+
   '<div class="stat-box"><span class="stat-lbl">PV\'s</span>'+
-  '<div class="stat-row"><input type="number" min="0" value="'+S.pv.v+'" oninput="S.pv.v=Math.max(0,parseInt(this.value)||0);save();render()"/><span class="stat-sep">/</span>'+
-  '<input type="number" min="1" value="'+S.pv.max+'" oninput="S.pv.max=Math.max(1,parseInt(this.value)||1);save();render()"/></div>'+
-  '<div class="pv-bar-bg"><div class="pv-bar-fill" style="width:'+Math.round(pvPct*100)+'%;background:'+pvColor(S.pv.v,S.pv.max)+'"></div></div>'+
+  '<div class="stat-row"><input type="number" min="0" value="'+S.pv.v+'" onchange="S.pv.v=Math.max(0,parseInt(this.value)||0);save();render()"/><span class="stat-sep">/</span>'+
+  '<input type="number" min="1" value="'+S.pv.max+'" onchange="S.pv.max=Math.max(1,parseInt(this.value)||1);save();render()"/></div>'+
+  '<div class="pv-bar-bg"><div class="pv-bar-fill" style="width:'+Math.round(pvP*100)+'%;background:'+pvColor(S.pv.v,S.pv.max)+'"></div></div>'+
   '<div style="display:flex;gap:5px;justify-content:center;margin-top:7px;align-items:center">'+
   '<button class="btn sm red" onclick="adjPV(-pvD)">−</button>'+
   '<input type="number" min="1" value="'+pvD+'" oninput="pvD=Math.max(1,parseInt(this.value)||1)" style="width:40px;background:#0f1014;border:1px solid #2a2d35;border-radius:5px;padding:3px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit"/>'+
   '<button class="btn sm gold" onclick="adjPV(pvD)">+</button></div></div>'+
   '<div class="stat-box"><span class="stat-lbl">SORTE / FORTUNA</span>'+
-  '<div class="stat-row"><input type="number" min="0" value="'+S.sorte.v+'" oninput="S.sorte.v=parseInt(this.value)||0;save()"/><span class="stat-sep">/</span>'+
-  '<input type="number" min="0" value="'+S.sorte.max+'" oninput="S.sorte.max=parseInt(this.value)||0;save()"/></div>'+
+  '<div class="stat-row"><input type="number" min="0" value="'+S.sorte.v+'" onchange="S.sorte.v=parseInt(this.value)||0;save()"/><span class="stat-sep">/</span>'+
+  '<input type="number" min="0" value="'+S.sorte.max+'" onchange="S.sorte.max=parseInt(this.value)||0;save()"/></div>'+
   '<div style="font-size:9px;color:#5a5f70;margin-top:4px">atual / máximo</div>'+
   '<div style="display:flex;gap:5px;justify-content:center;margin-top:8px">'+
   '<button class="btn sm red" onclick="S.sorte.v=Math.max(0,S.sorte.v-1);save();render()">−</button>'+
@@ -293,95 +238,88 @@ function tab0(){
   '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:4px;margin-bottom:5px">'+
   ['Nome','Ataque','Dano','Alcance','Obs.'].map(h=>'<div class="col-h">'+h+'</div>').join('')+'</div>'+
   S.armas.map((a,i)=>'<div class="arma-row">'+
-    '<input class="fi" value="'+a.nome+'" oninput="updArma('+i+',\'nome\',this.value)" placeholder="—"/>'+
-    '<input class="fi-sm" value="'+a.ataque+'" oninput="updArma('+i+',\'ataque\',this.value)" placeholder="—"/>'+
-    '<input class="fi-sm" value="'+a.dano+'" oninput="updArma('+i+',\'dano\',this.value)" placeholder="—"/>'+
-    '<input class="fi-sm" value="'+a.alcance+'" oninput="updArma('+i+',\'alcance\',this.value)" placeholder="—"/>'+
-    '<div style="display:flex;gap:4px"><input class="fi" value="'+a.obs+'" oninput="updArma('+i+',\'obs\',this.value)" placeholder="—"/>'+
-    (S.armas.length>1?'<button class="btn red" onclick="rmArma('+i+')" style="padding:4px 7px;flex-shrink:0">✕</button>':'')+
+    '<input class="fi" value="'+a.nome+'" oninput="updA('+i+',\'nome\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.ataque+'" oninput="updA('+i+',\'ataque\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.dano+'" oninput="updA('+i+',\'dano\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.alcance+'" oninput="updA('+i+',\'alcance\',this.value)" placeholder="—"/>'+
+    '<div style="display:flex;gap:4px"><input class="fi" value="'+a.obs+'" oninput="updA('+i+',\'obs\',this.value)" placeholder="—"/>'+
+    (S.armas.length>1?'<button class="btn red" onclick="rmA('+i+')" style="padding:4px 7px;flex-shrink:0">✕</button>':'')+
     '</div></div>').join('')+
-  '<button class="btn gold" onclick="addArma()" style="margin-top:8px;width:100%">+ Adicionar arma</button></div>'+
+  '<button class="btn gold" onclick="addA()" style="margin-top:8px;width:100%">+ Adicionar arma</button></div>'+
 
   '<div class="sec"><div class="sec-t">Contadores</div>'+
   '<div class="proj-box">'+
   (S.contadores.length?S.contadores.map((p,i)=>'<div class="proj-row">'+
     '<span class="proj-name">'+p.nome+'</span>'+
-    '<div class="proj-ctrl">'+
-    '<button class="btn sm red" onclick="adjCont('+i+',-1)">−</button>'+
-    '<input type="number" min="0" value="'+p.qtd+'" oninput="updCont('+i+',this.value)"/>'+
-    '<button class="btn sm gold" onclick="adjCont('+i+',1)">+</button>'+
-    '<button class="btn" onclick="rmCont('+i+')" style="padding:3px 7px;color:#d06060;margin-left:4px">✕</button>'+
+    '<div class="proj-ctrl"><button class="btn sm red" onclick="adjC('+i+',-1)">−</button>'+
+    '<input type="number" min="0" value="'+p.qtd+'" oninput="updC('+i+',this.value)"/>'+
+    '<button class="btn sm gold" onclick="adjC('+i+',1)">+</button>'+
+    '<button class="btn" onclick="rmC('+i+')" style="padding:3px 7px;color:#d06060;margin-left:4px">✕</button>'+
     '</div></div>').join(''):'<div class="empty-hint" style="padding:6px 0">Nenhum contador — adicione flechas, virotes, usos…</div>')+
-  '</div>'+
-  '<div class="proj-add-row"><input placeholder="Ex: Flechas, Virotes, Cargas de Mana…" value="'+newStr.cont+'" oninput="newStr.cont=this.value" onkeydown="if(event.key===\'Enter\')addCont()"/><button class="btn gold" onclick="addCont()">+ Add</button></div>'+
-  '</div>';}
+  '</div><div class="proj-add-row">'+
+  '<input placeholder="Ex: Flechas, Virotes, Cargas de Mana…" value="'+ns.cont+'" oninput="ns.cont=this.value" onkeydown="if(event.key===\'Enter\')addC()"/>'+
+  '<button class="btn gold" onclick="addC()">+ Add</button></div></div>';}
 
 function tab1(){
   return '<div class="sec"><div class="sec-t">Trilha Principal</div>'+
   '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5px;margin-bottom:5px">'+
   ['Nome','Rank','Ouro Gasto','Ataques'].map(h=>'<div class="col-h" style="text-align:left">'+h+'</div>').join('')+'</div>'+
-  '<div class="trilha-row">'+
-  trilhaSelect(S.trilha_principal.nome,"S.trilha_principal.nome=this.value;save()")+
-  '<input class="fi-sm" type="number" min="1" value="'+S.trilha_principal.rank+'" oninput="S.trilha_principal.rank=parseInt(this.value)||1;save()"/>'+
+  '<div class="trilha-row">'+trSel(S.trilha_principal.nome,"S.trilha_principal.nome=this.value;save()")+
+  '<input class="fi-sm" type="number" min="1" value="'+S.trilha_principal.rank+'" onchange="S.trilha_principal.rank=parseInt(this.value)||1;save()"/>'+
   '<input class="fi-sm" value="'+S.trilha_principal.ouro+'" oninput="S.trilha_principal.ouro=this.value;save()" placeholder="0"/>'+
   '<input class="fi-sm" value="'+S.trilha_principal.ataques+'" oninput="S.trilha_principal.ataques=this.value;save()" placeholder="—"/>'+
   '</div></div>'+
   '<div class="sec"><div class="sec-t">Trilhas Secundárias</div>'+
   '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5px;margin-bottom:5px">'+
   ['Nome','Rank','Ouro Gasto','Ataques'].map(h=>'<div class="col-h" style="text-align:left">'+h+'</div>').join('')+'</div>'+
-  S.trilhas.map((t,i)=>'<div class="trilha-row">'+
-    trilhaSelect(t.nome,"updTrilha("+i+",'nome',this.value)")+
-    '<input class="fi-sm" type="number" min="1" value="'+t.rank+'" oninput="updTrilha('+i+',\'rank\',parseInt(this.value)||1)"/>'+
-    '<input class="fi-sm" value="'+t.ouro+'" oninput="updTrilha('+i+',\'ouro\',this.value)" placeholder="0"/>'+
-    '<div style="display:flex;gap:4px"><input class="fi-sm" value="'+t.ataques+'" oninput="updTrilha('+i+',\'ataques\',this.value)" placeholder="—"/>'+
-    (S.trilhas.length>1?'<button class="btn red" onclick="rmTrilha('+i+')" style="padding:3px 7px;flex-shrink:0">✕</button>':'')+
+  S.trilhas.map((t,i)=>'<div class="trilha-row">'+trSel(t.nome,"updTr("+i+",'nome',this.value)")+
+    '<input class="fi-sm" type="number" min="1" value="'+t.rank+'" onchange="updTr('+i+',\'rank\',parseInt(this.value)||1)"/>'+
+    '<input class="fi-sm" value="'+t.ouro+'" oninput="updTr('+i+',\'ouro\',this.value)" placeholder="0"/>'+
+    '<div style="display:flex;gap:4px"><input class="fi-sm" value="'+t.ataques+'" oninput="updTr('+i+',\'ataques\',this.value)" placeholder="—"/>'+
+    (S.trilhas.length>1?'<button class="btn red" onclick="rmTr('+i+')" style="padding:3px 7px;flex-shrink:0">✕</button>':'')+
     '</div></div>').join('')+
-  '<button class="btn gold" onclick="addTrilha()" style="margin-top:8px;width:100%">+ Trilha</button></div>'+
-  '<div class="sec"><div class="sec-t">Magias — Feitiços, Rituais, Milagres, Runas, Músicas, Fórmulas…</div>'+sList('magia',S.magias,'Nome da magia, ritual, runa…')+'</div>'+
-  '<div class="sec"><div class="sec-t">Habilidades e Características</div>'+sList('hab',S.habilidades,'Nova habilidade ou característica…')+'</div>'+
-  '<div class="sec"><div class="sec-t">Idiomas</div>'+sList('idioma',S.idiomas,'Idioma…')+'</div>';}
+  '<button class="btn gold" onclick="addTr()" style="margin-top:8px;width:100%">+ Trilha</button></div>'+
+  '<div class="sec"><div class="sec-t">Magias — Feitiços, Rituais, Milagres, Runas, Músicas, Fórmulas…</div>'+sL('magia',S.magias,'Nome da magia, ritual, runa…')+'</div>'+
+  '<div class="sec"><div class="sec-t">Habilidades e Características</div>'+sL('hab',S.habilidades,'Nova habilidade ou característica…')+'</div>'+
+  '<div class="sec"><div class="sec-t">Idiomas</div>'+sL('idioma',S.idiomas,'Idioma…')+'</div>';}
 
 function tab2(){
-  return '<div class="sec"><div class="sec-t">Equipamentos</div>'+slotSection('e',S.equip.items,'Carga atual')+'</div>'+
-  '<div class="sec">'+
-  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:'+(S.equip.tem_mochila?'10px':'2px')+'">'+
+  return '<div class="sec"><div class="sec-t">Equipamentos</div>'+slotSec('e',S.equip.items,'Carga atual')+'</div>'+
+  '<div class="sec"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:'+(S.equip.tem_mochila?'10px':'2px')+'">'+
   '<div class="sec-t" style="margin-bottom:0">Mochila</div>'+
   '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:#6b7080">Tem mochila?</span>'+
-  '<button class="toggle'+(S.equip.tem_mochila?' on':'')+'" onclick="S.equip.tem_mochila=!S.equip.tem_mochila;save();render()"></button>'+
-  '</div></div>'+
+  '<button class="toggle'+(S.equip.tem_mochila?' on':'')+'" onclick="S.equip.tem_mochila=!S.equip.tem_mochila;save();render()"></button></div></div>'+
   (S.equip.tem_mochila?
-    '<div style="margin-bottom:7px;display:flex;align-items:center;gap:8px">'+
+    '<div style="margin-bottom:9px;display:flex;align-items:center;gap:8px">'+
     '<span style="font-size:10px;color:#6b7080">Capacidade interna:</span>'+
-    '<input type="number" min="0" step="1" value="'+S.equip.mochila_slots+'" oninput="S.equip.mochila_slots=parseInt(this.value)||0;save();render()" style="width:46px;background:#0f1014;border:1px solid #2a2d35;border-radius:5px;padding:2px 4px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit"/> slots</div>'+
-    slotSection('m',S.equip.mochila,'Carga na mochila')
+    '<input type="number" min="0" step="1" value="'+S.equip.mochila_slots+'" onchange="S.equip.mochila_slots=parseInt(this.value)||0;save();render()" style="width:46px;background:#0f1014;border:1px solid #2a2d35;border-radius:5px;padding:2px 4px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit"/>'+
+    '<span style="font-size:10px;color:#6b7080">slots</span></div>'+
+    slotSec('m',S.equip.mochila,'Carga na mochila')
   :'<div style="font-size:11px;color:#3a3f50;padding:4px 0">Personagem sem mochila.</div>')+
   '</div>'+
-  '<div class="sec"><div class="sec-t">Moedas</div>'+
-  '<div class="moeda-grid">'+
+  '<div class="sec"><div class="sec-t">Moedas</div><div class="moeda-grid">'+
   [['cobre','Cobre'],['prata','Prata'],['ouro','Ouro'],['electrum','Eléctrum'],['platina','Platina']].map(([k,l])=>
-    '<div class="moeda-box"><span class="moeda-lbl">'+l+'</span><input type="number" min="0" value="'+S.moedas[k]+'" oninput="S.moedas[\''+k+'\']=parseInt(this.value)||0;save()"/></div>').join('')+
+    '<div class="moeda-box"><span class="moeda-lbl">'+l+'</span><input type="number" min="0" value="'+S.moedas[k]+'" onchange="S.moedas[\''+k+'\']=parseInt(this.value)||0;save()"/></div>').join('')+
   '</div><div style="margin-top:8px"><label class="fl">PEDRAS PRECIOSAS</label><input class="fi" value="'+S.pedras+'" oninput="S.pedras=this.value;save()" placeholder="Descreva as pedras…"/></div></div>'+
   '<div class="sec"><div class="sec-t">Carga e Movimento</div>'+
-  '<table class="mov-table">'+
-  '<tr><th></th><th>Leve</th><th>Média</th><th>Pesada¹</th><th>Sobrecarga²</th></tr>'+
+  '<table class="mov-table"><tr><th></th><th>Leve</th><th>Média</th><th>Pesada¹</th><th>Sobrecarga²</th></tr>'+
   '<tr><td>Mov. Base</td><td>40\'</td><td>30\'</td><td>20\'</td><td>10\'</td></tr>'+
   '<tr><td>Especial</td><td>20\'</td><td>15\'</td><td>10\'</td><td>—</td></tr>'+
   '<tr><td>Exploração</td><td>120\'</td><td>90\'</td><td>60\'</td><td>30\'</td></tr>'+
   '<tr><td>Viagem/dia</td><td>20mi</td><td>15mi</td><td>10mi</td><td>5mi</td></tr>'+
   '<tr><td style="color:#c7a25a;font-weight:bold">Meus slots</td>'+
-  ['leve','media','pesada','sobre'].map(k=>'<td><input class="cinput" type="number" min="0" step="0.5" placeholder="—" value="'+(S.carga[k]||'')+'" oninput="S.carga[\''+k+'\']=this.value;save();render()"/></td>').join('')+
+  ['leve','media','pesada','sobre'].map(k=>'<td><input class="cinput" type="number" min="0" step="0.5" placeholder="—" value="'+(S.carga[k]||'')+'" onchange="S.carga[\''+k+'\']=this.value;save();render()"/></td>').join('')+
   '</tr></table>'+
-  '<div style="font-size:9px;color:#5a5f70;margin-top:6px;line-height:1.5">Preencha <em>Meus slots</em> para ver o badge de faixa no topo dos Equipamentos.<br>¹ Não pode usar mod. positivo de DES na CA &nbsp;² −2 nos testes físicos</div></div>';}
+  '<div style="font-size:9px;color:#5a5f70;margin-top:6px;line-height:1.5">Preencha <em>Meus slots</em> para ver o badge de faixa nos Equipamentos.<br>¹ Não pode usar mod. positivo de DES na CA &nbsp;² −2 nos testes físicos</div></div>';}
 
 function tab3(){
   return '<div class="sec"><div class="sec-t">Anotações</div>'+
   '<textarea class="notes" oninput="S.anotacoes=this.value;save()" placeholder="Anotações livres, história, contatos, recompensas, pistas…">'+S.anotacoes+'</textarea></div>'+
   '<div class="sec"><div class="sec-t">Ficha</div>'+
-  '<div class="actions">'+
-  '<button class="btn gold" onclick="doExport()">⬇ Exportar JSON</button>'+
+  '<div class="actions"><button class="btn gold" onclick="doExport()">⬇ Exportar JSON</button>'+
   '<button class="btn" onclick="doImport()">⬆ Importar JSON</button>'+
-  '<button class="btn red" onclick="doReset()">⟳ Nova ficha</button>'+
-  '</div><div class="save-ind" id="si">✓ salvo automaticamente</div></div>';}
+  '<button class="btn red" onclick="doReset()">⟳ Nova ficha</button></div>'+
+  '<div class="save-ind" id="si">✓ salvo automaticamente</div></div>';}
 
 function render(){
   const tabs=['Personagem','Trilhas','Inventário','Notas'];
@@ -390,4 +328,4 @@ function render(){
     '<div class="tabs">'+tabs.map((t,i)=>'<div class="tab'+(i===tab?' active':'')+'" onclick="tab='+i+';render()">'+t+'</div>').join('')+'</div>'+
     (tab===0?tab0():tab===1?tab1():tab===2?tab2():tab3());}
 render();
-</script>
+</script></body></html>
