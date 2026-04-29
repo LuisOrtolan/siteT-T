@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Personagem — Trilhas & Tesouros</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Georgia',serif;background:#0f1014;color:#f5f5f7;padding:12px;min-height:100vh}
+input,select,textarea{font-family:inherit}
+.tt-top{text-align:center;padding:8px 0 12px;border-bottom:1px solid #2a2d35;margin-bottom:12px}
+.tt-top h1{font-size:16px;color:#c7a25a;letter-spacing:.1em;font-weight:normal}
+.tt-top p{font-size:10px;color:#5a5f70;margin-top:3px}
+.tabs{display:flex;gap:4px;margin-bottom:12px}
+.tab{flex:1;padding:7px 4px;background:#181a20;border:1px solid #2a2d35;border-radius:7px;color:#6b7080;font-size:11px;cursor:pointer;text-align:center;transition:all .15s}
+.tab.active{background:#c7a25a18;border-color:#c7a25a50;color:#c7a25a}
+.sec{background:#181a20;border:1px solid #2a2d35;border-radius:9px;padding:12px;margin-bottom:10px}
+.sec-t{font-size:10px;font-weight:bold;letter-spacing:.12em;text-transform:uppercase;color:#c7a25a;margin-bottom:9px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:7px}
+.fl{display:block;font-size:10px;color:#6b7080;margin-bottom:3px;letter-spacing:.04em}
+.fi{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px}
+.fi:focus{outline:none;border-color:#c7a25a60}
+.fi-sm{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 5px;color:#f5f5f7;font-size:13px;text-align:center}
+.fi-sm:focus{outline:none;border-color:#c7a25a60}
+select.fi option,select.fi-sm option{background:#181a20}
+.attr-box{background:#0f1014;border:1px solid #2a2d35;border-radius:8px;padding:9px 7px;text-align:center}
+.attr-name{font-size:12px;color:#c7a25a;letter-spacing:.1em;font-weight:bold;display:block;margin-bottom:7px}
+.attr-fields{display:flex;gap:5px;justify-content:center;margin-bottom:5px}
+.attr-col{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}
+.attr-col-lbl{font-size:9px;color:#5a5f70;letter-spacing:.04em}
+.attr-col input{width:100%;background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#f5f5f7;font-size:16px;text-align:center;padding:4px 2px}
+.attr-col input:focus{outline:none;border-color:#c7a25a60}
+.attr-col.atual input{font-size:18px}
+.attr-mod-row{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:2px}
+.attr-mod-lbl{font-size:9px;color:#5a5f70}
+.attr-mod-val{font-size:12px;font-weight:bold}
+.stat-box{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;padding:8px 6px;text-align:center}
+.stat-lbl{font-size:10px;color:#c7a25a;letter-spacing:.1em;font-weight:bold;display:block;margin-bottom:5px}
+.stat-row{display:flex;align-items:center;justify-content:center;gap:4px}
+.stat-row input{width:36px;background:transparent;border:none;border-bottom:1px solid #2a2d35;color:#f5f5f7;font-size:18px;text-align:center;padding:0}
+.stat-row input:focus{outline:none;border-color:#c7a25a}
+.stat-sep{color:#3a3f50;font-size:14px}
+.pv-bar-bg{background:#0f1014;border:1px solid #2a2d35;border-radius:20px;height:10px;overflow:hidden;margin-top:5px}
+.pv-bar-fill{height:100%;border-radius:20px;transition:width .3s,background .3s}
+.btn{background:#1f2230;border:1px solid #2a2d35;border-radius:6px;color:#f5f5f7;font-size:12px;padding:5px 9px;cursor:pointer;transition:background .15s}
+.btn:hover{background:#2a2d3e}
+.btn.gold{background:#c7a25a15;border-color:#c7a25a40;color:#c7a25a}
+.btn.gold:hover{background:#c7a25a25}
+.btn.red{background:#d0606018;border-color:#d0606040;color:#d06060}
+.btn.red:hover{background:#d0606028}
+.btn.sm{font-size:15px;padding:2px 9px;font-weight:bold}
+.toggle{width:36px;height:20px;background:#2a2d35;border-radius:20px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
+.toggle.on{background:#c7a25a40}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#6b7080;border-radius:50%;top:3px;left:3px;transition:transform .2s,background .2s}
+.toggle.on::after{transform:translateX(16px);background:#c7a25a}
+.arma-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid #1a1d24}
+.arma-row:last-child{border-bottom:none}
+.col-h{font-size:9px;color:#5a5f70;text-align:center}
+.trilha-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a1d24}
+.trilha-row:last-child{border-bottom:none}
+.slot-list{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;overflow:hidden}
+.slot-item{display:grid;grid-template-columns:1fr 58px 24px;gap:6px;align-items:center;padding:6px 9px;border-bottom:1px solid #1a1d24}
+.slot-item:last-child{border-bottom:none}
+.slot-item input.iname{background:transparent;border:none;color:#d0d3dc;font-size:12px;width:100%;font-family:inherit}
+.slot-item input.iname:focus{outline:none}
+.slot-item input.islot{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#c7a25a;font-size:12px;text-align:center;padding:2px 4px;width:100%;font-family:inherit}
+.slot-item input.islot:focus{outline:none;border-color:#c7a25a60}
+.slot-item button{background:transparent;border:none;color:#d06060;font-size:13px;cursor:pointer;padding:0}
+.slot-add{display:flex;gap:5px;margin-top:7px}
+.slot-add input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
+.slot-add input:focus{outline:none;border-color:#c7a25a60}
+.slot-bar-bg{background:#0f1014;border:1px solid #2a2d35;border-radius:20px;height:8px;overflow:hidden;margin-top:4px}
+.slot-bar-fill{height:100%;border-radius:20px;transition:width .3s,background .3s}
+.slot-label{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#6b7080}
+.moeda-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.moeda-box{text-align:center;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:6px 4px}
+.moeda-lbl{font-size:9px;color:#8a8fa0;margin-bottom:3px;display:block}
+.moeda-box input{width:100%;background:transparent;border:none;color:#f5f5f7;font-size:14px;text-align:center;padding:0;font-family:inherit}
+.mov-table{width:100%;font-size:11px;border-collapse:collapse}
+.mov-table th{font-size:9px;color:#c7a25a;letter-spacing:.06em;font-weight:bold;padding:5px 4px;background:#0f1014;border:1px solid #1e2028;text-align:center}
+.mov-table td{padding:5px 4px;border:1px solid #1e2028;text-align:center;color:#d0d3dc;background:#0a0c10}
+.mov-table td:first-child{color:#8a8fa0;text-align:left;padding-left:7px;background:#0f1014}
+.notes{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:7px;padding:8px;color:#d0d3dc;font-size:12px;line-height:1.5;resize:vertical;min-height:90px;font-family:inherit}
+.notes:focus{outline:none;border-color:#c7a25a60}
+.save-ind{font-size:10px;color:#3a8a3a;text-align:center;padding:4px;opacity:0;transition:opacity .3s}
+.save-ind.show{opacity:1}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.list-area{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;overflow:hidden}
+.li{display:flex;align-items:center;gap:7px;padding:6px 9px;border-bottom:1px solid #1a1d24}
+.li:last-child{border-bottom:none}
+.li-t{flex:1;font-size:12px;color:#d0d3dc}
+.li-x{background:transparent;border:none;color:#d06060;font-size:13px;cursor:pointer;padding:0 3px}
+.list-add{display:flex;gap:5px;margin-top:7px}
+.list-add input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
+.list-add input:focus{outline:none;border-color:#c7a25a60}
+.empty-hint{padding:10px;font-size:11px;color:#3a3f50;text-align:center}
+#app{max-width:600px;margin:0 auto}
+</style>
+<body><div id="app"></div>
+<script>
+const LS='tt_ficha_v5';
+const TRILHAS_LIST=['—','Combatente','Batedor','Especialista','Arcanista','Xamã','Sacerdote','Mestre das Feras','Lorde Rúnico','Bardo','Alquimista','Defensor','Troca-peles'];
+
+function def(){return{
+  nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',
+  attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},
+  ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},
+  armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],
+  trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},
+  trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],
+  idiomas:[],magias:[],habilidades:[],
+  equip:{slots_max:10,items:[],tem_mochila:false,mochila_slots:10,mochila:[]},
+  moedas:{cobre:0,prata:0,ouro:0,electrum:0,platina:0},
+  pedras:'',anotacoes:''
+};}
+
+function mod(v){const m=Math.floor((Number(v)||10)/2)-5;return(m>=0?'+':'')+m;}
+function modColor(v){const m=Math.floor((Number(v)||10)/2)-5;return m>0?'#5aaf5a':m<0?'#d06060':'#8a8fa0';}
+function pvColor(p,mx){const r=mx>0?p/mx:0;return r>0.6?'#3a8a3a':r>0.3?'#c7a25a':'#d06060';}
+function slotColor(u,mx){if(mx<=0)return'#5a5f70';const r=u/mx;return r<0.7?'#3a8a3a':r<1?'#c7a25a':'#d06060';}
+function fmtSlot(v){const n=parseFloat(v)||0;return n===Math.floor(n)?String(n):n.toFixed(1);}
+function totalSlots(arr){return arr.reduce((a,x)=>a+(parseFloat(x.slots)||0),0);}
+
+let S=def(),tab=0,pvD=1,saveT=null;
+let newStr={idioma:'',magia:'',hab:'',en:'',es:'1',mn:'',ms:'1'};
+
+try{const x=localStorage.getItem(LS);if(x)S={...def(),...JSON.parse(x)};}catch(e){}
+
+function save(){
+  localStorage.setItem(LS,JSON.stringify(S));
+  const el=document.getElementById('si');
+  if(el){el.classList.add('show');clearTimeout(saveT);saveT=setTimeout(()=>el.classList.remove('show'),1800);}
+}
+
+function addSimple(t){const v=newStr[t].trim();if(!v)return;
+  if(t==='idioma')S.idiomas.push(v);else if(t==='magia')S.magias.push(v);else S.habilidades.push(v);
+  newStr[t]='';save();render();}
+function rmSimple(t,i){
+  if(t==='idioma')S.idiomas.splice(i,1);else if(t==='magia')S.magias.splice(i,1);else S.habilidades.splice(i,1);
+  save();render();}
+function sList(t,arr,ph){
+  return '<div class="list-area">'+
+    (arr.length?arr.map((x,i)=>'<div class="li"><span class="li-t">'+x+'</span><button class="li-x" onclick="rmSimple(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
+  '</div><div class="list-add"><input placeholder="'+ph+'" value="'+newStr[t]+'" oninput="newStr[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSimple(\''+t+'\')" /><button class="btn gold" onclick="addSimple(\''+t+'\')">+ Add</button></div>';}
+
+function addSlot(t){const nn=t==='e'?'en':'mn',ns=t==='e'?'es':'ms';
+  const nome=newStr[nn].trim();if(!nome)return;
+  const slots=parseFloat(newStr[ns])||0;
+  if(t==='e')S.equip.items.push({nome,slots});else S.equip.mochila.push({nome,slots});
+  newStr[nn]='';newStr[ns]='1';save();render();}
+function rmSlot(t,i){if(t==='e')S.equip.items.splice(i,1);else S.equip.mochila.splice(i,1);save();render();}
+function updSlot(t,i,k,v){
+  const arr=t==='e'?S.equip.items:S.equip.mochila;
+  arr[i][k]=k==='slots'?(parseFloat(v)||0):v;save();
+  const mochilaSlot=(!('m'!==t)&&S.equip.tem_mochila)?0:(t==='e'&&S.equip.tem_mochila?1:0);
+  const used=totalSlots(arr)+(t==='e'?mochilaSlot:0);
+  const mx=t==='e'?S.equip.slots_max:S.equip.mochila_slots;
+  const col=slotColor(used,mx);
+  const bar=document.getElementById('bar-'+t),lbl=document.getElementById('lbl-'+t);
+  if(bar){bar.style.width=Math.round(mx>0?Math.min(1,used/mx)*100:0)+'%';bar.style.background=col;}
+  if(lbl){lbl.textContent=fmtSlot(used)+'/'+mx;lbl.style.color=col;}}
+
+function slotSection(t,items,slotsMax,maxKey){
+  const mochilaSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
+  const used=totalSlots(items)+mochilaSlot;
+  const pct=slotsMax>0?Math.min(1,used/slotsMax):0;
+  const col=slotColor(used,slotsMax);
+  const nn=t==='e'?'en':'mn',ns=t==='e'?'es':'ms';
+  const label=t==='e'?'Slots usados':'Slots na mochila';
+  return '<div style="margin-bottom:8px">'+
+    '<div class="slot-label"><span>'+label+'</span>'+
+    '<div style="display:flex;align-items:center;gap:6px">'+
+    '<span style="font-size:10px;color:#6b7080">Capacidade:</span>'+
+    '<input type="number" min="0" step="1" value="'+slotsMax+'" oninput="S.equip[\''+maxKey+'\']=parseInt(this.value)||0;save();render()" style="width:46px;background:#0f1014;border:1px solid #2a2d35;border-radius:5px;padding:2px 4px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit"/>'+
+    '<span id="lbl-'+t+'" style="font-weight:bold;font-size:12px;color:'+col+'">'+fmtSlot(used)+'/'+slotsMax+'</span></div></div>'+
+    '<div class="slot-bar-bg"><div id="bar-'+t+'" class="slot-bar-fill" style="width:'+Math.round(pct*100)+'%;background:'+col+'"></div></div>'+
+    (t==='e'&&S.equip.tem_mochila?'<div style="font-size:9px;color:#5a5f70;margin-top:4px">★ Mochila: +1 slot de equipamento, capacidade interna de '+S.equip.mochila_slots+' slots</div>':'')+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 58px 24px;gap:6px;margin-bottom:4px;padding:0 9px">'+
+    '<div class="col-h" style="text-align:left">Item</div><div class="col-h">Slots</div><div></div></div>'+
+    '<div class="slot-list">'+
+    (items.length?items.map((x,i)=>'<div class="slot-item">'+
+      '<input class="iname" value="'+x.nome+'" oninput="updSlot(\''+t+'\','+i+',\'nome\',this.value)" placeholder="—"/>'+
+      '<input class="islot" type="number" min="0" step="0.5" value="'+x.slots+'" oninput="updSlot(\''+t+'\','+i+',\'slots\',this.value)"/>'+
+      '<button onclick="rmSlot(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
+    '</div>'+
+    '<div class="slot-add">'+
+    '<input placeholder="Nome do item…" value="'+newStr[nn]+'" oninput="newStr[\''+nn+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSlot(\''+t+'\')"/>'+
+    '<input type="number" min="0" step="0.5" value="'+newStr[ns]+'" oninput="newStr[\''+ns+'\']=this.value" style="width:58px" placeholder="Slots"/>'+
+    '<button class="btn gold" onclick="addSlot(\''+t+'\')">+ Add</button></div>';}
+
+function addArma(){S.armas.push({nome:'',ataque:'',dano:'',alcance:'',obs:''});save();render();}
+function rmArma(i){S.armas.splice(i,1);save();render();}
+function updArma(i,k,v){S.armas[i][k]=v;save();}
+function addTrilha(){S.trilhas.push({nome:'—',rank:1,ouro:'',ataques:''});save();render();}
+function rmTrilha(i){S.trilhas.splice(i,1);save();render();}
+function updTrilha(i,k,v){S.trilhas[i][k]=v;save();}
+function adjPV(d){S.pv.v=Math.max(0,Math.min(S.pv.max,S.pv.v+d));save();render();}
+function doExport(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(S.nome||'personagem')+'_tt.json';a.click();}
+function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{S={...def(),...JSON.parse(ev.target.result)};save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
+function doReset(){if(!confirm('Nova ficha? Apaga tudo.'))return;S=def();save();render();}
+
+const trilhaOpts=TRILHAS_LIST.map(t=>'<option>'+t+'</option>').join('');
+function trilhaSelect(val,onch){return '<select class="fi" onchange="'+onch+'">'+TRILHAS_LIST.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
+
+function tab0(){
+  const ATTRS=['FOR','DES','CON','INT','VON','CAR'];
+  const pvPct=S.pv.max>0?S.pv.v/S.pv.max:0;
+  return '<div class="sec"><div class="sec-t">Identidade</div>'+
+  '<div class="g2" style="margin-bottom:7px">'+
+  '<div><label class="fl">NOME</label><input class="fi" value="'+S.nome+'" oninput="S.nome=this.value;save()" placeholder="Nome"/></div>'+
+  '<div><label class="fl">JOGADOR(A)</label><input class="fi" value="'+S.jogador+'" oninput="S.jogador=this.value;save()" placeholder="Jogador"/></div></div>'+
+  '<div style="margin-bottom:7px"><label class="fl">OCUPAÇÕES</label><input class="fi" value="'+S.ocupacoes+'" oninput="S.ocupacoes=this.value;save()" placeholder="Ocupações anteriores"/></div>'+
+  '<div class="g4">'+
+  '<div><label class="fl">NÍVEL</label><input class="fi-sm" type="number" min="1" value="'+S.nivel+'" oninput="S.nivel=parseInt(this.value)||1;save()"/></div>'+
+  '<div><label class="fl">XP</label><input class="fi-sm" type="number" min="0" value="'+S.xp+'" oninput="S.xp=parseInt(this.value)||0;save()"/></div>'+
+  '<div><label class="fl">BÔNUS XP</label><input class="fi-sm" value="'+S.bonus_xp+'" oninput="S.bonus_xp=this.value;save()"/></div>'+
+  '<div><label class="fl">ORIGEM</label><input class="fi-sm" value="'+S.origem+'" oninput="S.origem=this.value;save()"/></div></div>'+
+  '<div class="g2" style="margin-top:7px">'+
+  '<div><label class="fl">SEXO</label><input class="fi" value="'+S.sexo+'" oninput="S.sexo=this.value;save()"/></div>'+
+  '<div><label class="fl">IDADE</label><input class="fi" value="'+S.idade+'" oninput="S.idade=this.value;save()"/></div></div></div>'+
+
+  '<div class="sec"><div class="sec-t">Atributos</div><div class="g3">'+
+  ATTRS.map(a=>{const base=S.attrs[a].base,atual=S.attrs[a].atual,m=mod(atual),mc=modColor(atual),dim=atual<base;
+    return '<div class="attr-box"><span class="attr-name">'+a+'</span>'+
+    '<div class="attr-fields">'+
+    '<div class="attr-col"><span class="attr-col-lbl">BASE</span>'+
+    '<input type="number" min="1" max="30" value="'+base+'" oninput="S.attrs[\''+a+'\'].base=parseInt(this.value)||1;save()"/></div>'+
+    '<div class="attr-col atual"><span class="attr-col-lbl" style="color:#c7a25a90">ATUAL</span>'+
+    '<input type="number" min="1" max="30" value="'+atual+'" style="'+(dim?'color:#c7a25a':'')+'"'+
+    ' oninput="S.attrs[\''+a+'\'].atual=parseInt(this.value)||1;save();document.getElementById(\'mod_'+a+'\').textContent=mod(parseInt(this.value)||1);document.getElementById(\'mod_'+a+'\').style.color=modColor(parseInt(this.value)||1)"/></div></div>'+
+    '<div class="attr-mod-row"><span class="attr-mod-lbl">mod</span><span class="attr-mod-val" id="mod_'+a+'" style="color:'+mc+'">'+m+'</span></div></div>';}).join('')+
+  '</div></div>'+
+
+  '<div class="sec"><div class="sec-t">Defesas</div><div class="g3">'+
+  '<div class="stat-box"><span class="stat-lbl">CA</span><div class="stat-row"><input type="number" value="'+S.ca+'" oninput="S.ca=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">classe de armadura</div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">SF</span><div class="stat-row"><input type="number" value="'+S.sf+'" oninput="S.sf=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda física</div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">SM</span><div class="stat-row"><input type="number" value="'+S.sm+'" oninput="S.sm=parseInt(this.value)||10;save()"/></div><div style="font-size:9px;color:#5a5f70;margin-top:3px">salvaguarda mental</div></div>'+
+  '</div></div>'+
+
+  '<div class="sec"><div class="sec-t">Vitalidade</div><div class="g2">'+
+  '<div class="stat-box"><span class="stat-lbl">PV\'s</span>'+
+  '<div class="stat-row"><input type="number" min="0" value="'+S.pv.v+'" oninput="S.pv.v=Math.max(0,parseInt(this.value)||0);save();render()"/><span class="stat-sep">/</span>'+
+  '<input type="number" min="1" value="'+S.pv.max+'" oninput="S.pv.max=Math.max(1,parseInt(this.value)||1);save();render()"/></div>'+
+  '<div class="pv-bar-bg"><div class="pv-bar-fill" style="width:'+Math.round(pvPct*100)+'%;background:'+pvColor(S.pv.v,S.pv.max)+'"></div></div>'+
+  '<div style="display:flex;gap:5px;justify-content:center;margin-top:7px;align-items:center">'+
+  '<button class="btn sm red" onclick="adjPV(-pvD)">−</button>'+
+  '<input type="number" min="1" value="'+pvD+'" oninput="pvD=Math.max(1,parseInt(this.value)||1)" style="width:40px;background:#0f1014;border:1px solid #2a2d35;border-radius:5px;padding:3px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit"/>'+
+  '<button class="btn sm gold" onclick="adjPV(pvD)">+</button></div></div>'+
+  '<div class="stat-box"><span class="stat-lbl">SORTE / FORTUNA</span>'+
+  '<div class="stat-row"><input type="number" min="0" value="'+S.sorte.v+'" oninput="S.sorte.v=parseInt(this.value)||0;save()"/><span class="stat-sep">/</span>'+
+  '<input type="number" min="0" value="'+S.sorte.max+'" oninput="S.sorte.max=parseInt(this.value)||0;save()"/></div>'+
+  '<div style="font-size:9px;color:#5a5f70;margin-top:4px">atual / máximo</div>'+
+  '<div style="display:flex;gap:5px;justify-content:center;margin-top:8px">'+
+  '<button class="btn sm red" onclick="S.sorte.v=Math.max(0,S.sorte.v-1);save();render()">−</button>'+
+  '<button class="btn sm gold" onclick="S.sorte.v=Math.min(S.sorte.max,S.sorte.v+1);save();render()">+</button>'+
+  '</div></div></div></div>';}
+
+function tab1(){
+  return '<div class="sec"><div class="sec-t">Armas</div>'+
+  '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:4px;margin-bottom:5px">'+
+  ['Nome','Ataque','Dano','Alcance','Obs.'].map(h=>'<div class="col-h">'+h+'</div>').join('')+'</div>'+
+  S.armas.map((a,i)=>'<div class="arma-row">'+
+    '<input class="fi" value="'+a.nome+'" oninput="updArma('+i+',\'nome\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.ataque+'" oninput="updArma('+i+',\'ataque\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.dano+'" oninput="updArma('+i+',\'dano\',this.value)" placeholder="—"/>'+
+    '<input class="fi-sm" value="'+a.alcance+'" oninput="updArma('+i+',\'alcance\',this.value)" placeholder="—"/>'+
+    '<div style="display:flex;gap:4px"><input class="fi" value="'+a.obs+'" oninput="updArma('+i+',\'obs\',this.value)" placeholder="—"/>'+
+    (S.armas.length>1?'<button class="btn red" onclick="rmArma('+i+')" style="padding:4px 7px;flex-shrink:0">✕</button>':'')+
+    '</div></div>').join('')+
+  '<button class="btn gold" onclick="addArma()" style="margin-top:8px;width:100%">+ Adicionar arma</button></div>'+
+
+  '<div class="sec"><div class="sec-t">Trilha Principal</div>'+
+  '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5px;margin-bottom:5px">'+
+  ['Nome','Rank','Ouro Gasto','Ataques'].map(h=>'<div class="col-h" style="text-align:left">'+h+'</div>').join('')+'</div>'+
+  '<div class="trilha-row">'+
+  trilhaSelect(S.trilha_principal.nome,"S.trilha_principal.nome=this.value;save()")+
+  '<input class="fi-sm" type="number" min="1" value="'+S.trilha_principal.rank+'" oninput="S.trilha_principal.rank=parseInt(this.value)||1;save()"/>'+
+  '<input class="fi-sm" value="'+S.trilha_principal.ouro+'" oninput="S.trilha_principal.ouro=this.value;save()" placeholder="0"/>'+
+  '<input class="fi-sm" value="'+S.trilha_principal.ataques+'" oninput="S.trilha_principal.ataques=this.value;save()" placeholder="—"/>'+
+  '</div></div>'+
+
+  '<div class="sec"><div class="sec-t">Trilhas Secundárias</div>'+
+  '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5px;margin-bottom:5px">'+
+  ['Nome','Rank','Ouro Gasto','Ataques'].map(h=>'<div class="col-h" style="text-align:left">'+h+'</div>').join('')+'</div>'+
+  S.trilhas.map((t,i)=>'<div class="trilha-row">'+
+    trilhaSelect(t.nome,"updTrilha("+i+",'nome',this.value)")+
+    '<input class="fi-sm" type="number" min="1" value="'+t.rank+'" oninput="updTrilha('+i+',\'rank\',parseInt(this.value)||1)"/>'+
+    '<input class="fi-sm" value="'+t.ouro+'" oninput="updTrilha('+i+',\'ouro\',this.value)" placeholder="0"/>'+
+    '<div style="display:flex;gap:4px"><input class="fi-sm" value="'+t.ataques+'" oninput="updTrilha('+i+',\'ataques\',this.value)" placeholder="—"/>'+
+    (S.trilhas.length>1?'<button class="btn red" onclick="rmTrilha('+i+')" style="padding:3px 7px;flex-shrink:0">✕</button>':'')+
+    '</div></div>').join('')+
+  '<button class="btn gold" onclick="addTrilha()" style="margin-top:8px;width:100%">+ Trilha</button></div>'+
+
+  '<div class="sec"><div class="sec-t">Habilidades e Características</div>'+sList('hab',S.habilidades,'Nova habilidade ou característica…')+'</div>'+
+  '<div class="sec"><div class="sec-t">Idiomas</div>'+sList('idioma',S.idiomas,'Idioma…')+'</div>';}
+
+function tab2(){
+  return '<div class="sec"><div class="sec-t">Equipamentos</div>'+slotSection('e',S.equip.items,S.equip.slots_max,'slots_max')+'</div>'+
+  '<div class="sec">'+
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:'+(S.equip.tem_mochila?'10px':'0')+'">'+
+  '<div class="sec-t" style="margin-bottom:0">Mochila</div>'+
+  '<div style="display:flex;align-items:center;gap:8px">'+
+  '<span style="font-size:11px;color:#6b7080">Tem mochila?</span>'+
+  '<button class="toggle'+(S.equip.tem_mochila?' on':'')+'" onclick="S.equip.tem_mochila=!S.equip.tem_mochila;save();render()"></button>'+
+  '</div></div>'+
+  (S.equip.tem_mochila?slotSection('m',S.equip.mochila,S.equip.mochila_slots,'mochila_slots'):'<div style="font-size:11px;color:#3a3f50;padding:4px 0">Personagem sem mochila.</div>')+
+  '</div>'+
+  '<div class="sec"><div class="sec-t">Magias — Feitiços, Rituais, Milagres, Runas, Músicas, Fórmulas…</div>'+sList('magia',S.magias,'Nome da magia, ritual, runa…')+'</div>'+
+  '<div class="sec"><div class="sec-t">Moedas</div>'+
+  '<div class="moeda-grid">'+
+  [['cobre','Cobre'],['prata','Prata'],['ouro','Ouro'],['electrum','Eléctrum'],['platina','Platina']].map(([k,l])=>
+    '<div class="moeda-box"><span class="moeda-lbl">'+l+'</span><input type="number" min="0" value="'+S.moedas[k]+'" oninput="S.moedas[\''+k+'\']=parseInt(this.value)||0;save()"/></div>').join('')+
+  '</div><div style="margin-top:8px"><label class="fl">PEDRAS PRECIOSAS</label><input class="fi" value="'+S.pedras+'" oninput="S.pedras=this.value;save()" placeholder="Descreva as pedras…"/></div></div>'+
+  '<div class="sec"><div class="sec-t">Carga e Movimento</div>'+
+  '<table class="mov-table"><tr><th></th><th>Leve</th><th>Média</th><th>Pesada¹</th><th>Sobre²</th></tr>'+
+  '<tr><td>Mov. Base</td><td>40\'</td><td>30\'</td><td>20\'</td><td>10\'</td></tr>'+
+  '<tr><td>Especial</td><td>20\'</td><td>15\'</td><td>10\'</td><td>—</td></tr>'+
+  '<tr><td>Exploração</td><td>120\'</td><td>90\'</td><td>60\'</td><td>30\'</td></tr>'+
+  '<tr><td>Viagem/dia</td><td>20mi</td><td>15mi</td><td>10mi</td><td>5mi</td></tr></table>'+
+  '<div style="font-size:9px;color:#5a5f70;margin-top:6px;line-height:1.5">¹ Não pode usar mod. positivo de DES na CA<br>² −2 nos testes físicos / rodada inteira para se deslocar</div></div>';}
+
+function tab3(){
+  return '<div class="sec"><div class="sec-t">Anotações</div>'+
+  '<textarea class="notes" oninput="S.anotacoes=this.value;save()" placeholder="Anotações livres, história, contatos, recompensas, pistas…">'+S.anotacoes+'</textarea></div>'+
+  '<div class="sec"><div class="sec-t">Ficha</div>'+
+  '<div class="actions">'+
+  '<button class="btn gold" onclick="doExport()">⬇ Exportar JSON</button>'+
+  '<button class="btn" onclick="doImport()">⬆ Importar JSON</button>'+
+  '<button class="btn red" onclick="doReset()">⟳ Nova ficha</button>'+
+  '</div><div class="save-ind" id="si">✓ salvo automaticamente</div></div>';}
+
+function render(){
+  const tabs=['Personagem','Trilhas','Inventário','Notas'];
+  document.getElementById('app').innerHTML=
+    '<div class="tt-top"><h1>⚔ TRILHAS &amp; TESOUROS</h1><p>FICHA DE PERSONAGEM DIGITAL</p></div>'+
+    '<div class="tabs">'+tabs.map((t,i)=>'<div class="tab'+(i===tab?' active':'')+'" onclick="tab='+i+';render()">'+t+'</div>').join('')+'</div>'+
+    (tab===0?tab0():tab===1?tab1():tab===2?tab2():tab3());}
+render();
+</script>
+</body></html>
