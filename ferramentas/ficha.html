@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ficha de Personagem — Trilhas & Tesouros</title>
+<title>Ficha de Personagem — Trilhas &amp; Tesouros</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Georgia',serif;background:#0f1014;color:#f5f5f7;padding:12px;min-height:100vh}
 input,select,textarea{font-family:inherit}
+#app{max-width:600px;margin:0 auto}
 .tt-top{text-align:center;padding:8px 0 12px;border-bottom:1px solid #2a2d35;margin-bottom:12px}
 .tt-top h1{font-size:16px;color:#c7a25a;letter-spacing:.1em;font-weight:normal}
 .tt-top p{font-size:10px;color:#5a5f70;margin-top:3px}
@@ -51,6 +52,9 @@ select.fi option,select.fi-sm option{background:#181a20}
 .btn.red{background:#d0606018;border-color:#d0606040;color:#d06060}
 .btn.red:hover{background:#d0606028}
 .btn.sm{font-size:15px;padding:2px 9px;font-weight:bold}
+.btn.dice{font-size:11px;padding:4px 8px;background:#2a1e3a;border-color:#6a3a8a40;color:#b060d0}
+.btn.dice:hover{background:#3a2a4a}
+.dice-result{font-size:11px;color:#b060d0;margin-left:6px;font-style:italic}
 .toggle{width:36px;height:20px;background:#2a2d35;border-radius:20px;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;border:none}
 .toggle.on{background:#c7a25a40}
 .toggle::after{content:'';position:absolute;width:14px;height:14px;background:#6b7080;border-radius:50%;top:3px;left:3px;transition:transform .2s,background .2s}
@@ -61,19 +65,30 @@ select.fi option,select.fi-sm option{background:#181a20}
 .trilha-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a1d24}
 .trilha-row:last-child{border-bottom:none}
 .slot-list{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;overflow:hidden}
-.slot-item{display:grid;grid-template-columns:1fr 58px 24px;gap:6px;align-items:center;padding:6px 9px;border-bottom:1px solid #1a1d24}
+.slot-item{display:grid;grid-template-columns:1fr 46px 46px 24px;gap:5px;align-items:center;padding:6px 9px;border-bottom:1px solid #1a1d24}
 .slot-item:last-child{border-bottom:none}
 .slot-item input.iname{background:transparent;border:none;color:#d0d3dc;font-size:12px;width:100%;font-family:inherit}
 .slot-item input.iname:focus{outline:none}
-.slot-item input.islot{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#c7a25a;font-size:12px;text-align:center;padding:2px 4px;width:100%;font-family:inherit}
-.slot-item input.islot:focus{outline:none;border-color:#c7a25a60}
+.slot-item input.inum{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#d0d3dc;font-size:12px;text-align:center;padding:2px 3px;width:100%;font-family:inherit}
+.slot-item input.islot{background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#c7a25a;font-size:12px;text-align:center;padding:2px 3px;width:100%;font-family:inherit}
+.slot-item input.inum:focus,.slot-item input.islot:focus{outline:none;border-color:#c7a25a60}
 .slot-item button{background:transparent;border:none;color:#d06060;font-size:13px;cursor:pointer;padding:0}
 .slot-add{display:flex;gap:5px;margin-top:7px}
-.slot-add input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
-.slot-add input:focus{outline:none;border-color:#c7a25a60}
+.slot-add input.main{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
+.slot-add input.main:focus{outline:none;border-color:#c7a25a60}
+.slot-add input.sm2{width:46px;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 4px;color:#f5f5f7;font-size:12px;text-align:center;font-family:inherit}
 .slot-bar-bg{background:#0f1014;border:1px solid #2a2d35;border-radius:20px;height:8px;overflow:hidden;margin-top:4px}
 .slot-bar-fill{height:100%;border-radius:20px;transition:width .3s,background .3s}
 .slot-label{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#6b7080}
+.proj-box{background:#0f1014;border:1px solid #2a2d35;border-radius:8px;padding:10px 12px}
+.proj-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.proj-name{font-size:12px;color:#d0d3dc;flex:1}
+.proj-ctrl{display:flex;align-items:center;gap:5px}
+.proj-ctrl input{width:52px;background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#f5f5f7;font-size:16px;text-align:center;padding:3px;font-family:inherit}
+.proj-ctrl input:focus{outline:none;border-color:#c7a25a60}
+.proj-add-row{display:flex;gap:5px;margin-top:8px}
+.proj-add-row input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
+.proj-add-row input:focus{outline:none;border-color:#c7a25a60}
 .moeda-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .moeda-box{text-align:center;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:6px 4px}
 .moeda-lbl{font-size:9px;color:#8a8fa0;margin-bottom:3px;display:block}
@@ -96,17 +111,18 @@ select.fi option,select.fi-sm option{background:#181a20}
 .list-add input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
 .list-add input:focus{outline:none;border-color:#c7a25a60}
 .empty-hint{padding:10px;font-size:11px;color:#3a3f50;text-align:center}
-#app{max-width:600px;margin:0 auto}
 </style>
-<body><div id="app"></div>
+<body>
+<div id="app"></div>
 <script>
-const LS='tt_ficha_v5';
+const LS='tt_ficha_v6';
 const TRILHAS_LIST=['—','Combatente','Batedor','Especialista','Arcanista','Xamã','Sacerdote','Mestre das Feras','Lorde Rúnico','Bardo','Alquimista','Defensor','Troca-peles'];
 
 function def(){return{
   nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',
   attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},
-  ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},
+  ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},sorte_dado:'',
+  projeteis:[],
   armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],
   trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},
   trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],
@@ -116,15 +132,30 @@ function def(){return{
   pedras:'',anotacoes:''
 };}
 
-function mod(v){const m=Math.floor((Number(v)||10)/2)-5;return(m>=0?'+':'')+m;}
-function modColor(v){const m=Math.floor((Number(v)||10)/2)-5;return m>0?'#5aaf5a':m<0?'#d06060':'#8a8fa0';}
+function mod(v){
+  const n=parseInt(v)||10;
+  if(n<=3)return'-3';
+  if(n<=5)return'-2';
+  if(n<=8)return'-1';
+  if(n<=12)return'0';
+  if(n<=15)return'+1';
+  if(n<=17)return'+2';
+  return'+3';
+}
+function modColor(v){
+  const n=parseInt(v)||10;
+  if(n<=8)return'#d06060';
+  if(n<=12)return'#8a8fa0';
+  return'#5aaf5a';
+}
 function pvColor(p,mx){const r=mx>0?p/mx:0;return r>0.6?'#3a8a3a':r>0.3?'#c7a25a':'#d06060';}
 function slotColor(u,mx){if(mx<=0)return'#5a5f70';const r=u/mx;return r<0.7?'#3a8a3a':r<1?'#c7a25a':'#d06060';}
 function fmtSlot(v){const n=parseFloat(v)||0;return n===Math.floor(n)?String(n):n.toFixed(1);}
 function totalSlots(arr){return arr.reduce((a,x)=>a+(parseFloat(x.slots)||0),0);}
+function d6(){return Math.floor(Math.random()*6)+1;}
 
 let S=def(),tab=0,pvD=1,saveT=null;
-let newStr={idioma:'',magia:'',hab:'',en:'',es:'1',mn:'',ms:'1'};
+let newStr={idioma:'',magia:'',hab:'',en:'',eq:'1',es:'1',mn:'',mq:'1',ms:'1',proj:''};
 
 try{const x=localStorage.getItem(LS);if(x)S={...def(),...JSON.parse(x)};}catch(e){}
 
@@ -145,17 +176,28 @@ function sList(t,arr,ph){
     (arr.length?arr.map((x,i)=>'<div class="li"><span class="li-t">'+x+'</span><button class="li-x" onclick="rmSimple(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
   '</div><div class="list-add"><input placeholder="'+ph+'" value="'+newStr[t]+'" oninput="newStr[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSimple(\''+t+'\')" /><button class="btn gold" onclick="addSimple(\''+t+'\')">+ Add</button></div>';}
 
-function addSlot(t){const nn=t==='e'?'en':'mn',ns=t==='e'?'es':'ms';
+function addProj(){const n=newStr.proj.trim();if(!n)return;S.projeteis.push({nome:n,qtd:10});newStr.proj='';save();render();}
+function rmProj(i){S.projeteis.splice(i,1);save();render();}
+function adjProj(i,d){S.projeteis[i].qtd=Math.max(0,(parseInt(S.projeteis[i].qtd)||0)+d);save();render();}
+function updProjQtd(i,v){S.projeteis[i].qtd=parseInt(v)||0;save();}
+function rollSorte(){const r=d6();S.sorte_dado='1d6 = '+r;save();render();}
+
+function addSlot(t){
+  const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',ns=t==='e'?'es':'ms';
   const nome=newStr[nn].trim();if(!nome)return;
+  const qtd=parseInt(newStr[eq])||1;
   const slots=parseFloat(newStr[ns])||0;
-  if(t==='e')S.equip.items.push({nome,slots});else S.equip.mochila.push({nome,slots});
-  newStr[nn]='';newStr[ns]='1';save();render();}
+  if(t==='e')S.equip.items.push({nome,qtd,slots});else S.equip.mochila.push({nome,qtd,slots});
+  newStr[nn]='';newStr[eq]='1';newStr[ns]='1';save();render();}
 function rmSlot(t,i){if(t==='e')S.equip.items.splice(i,1);else S.equip.mochila.splice(i,1);save();render();}
 function updSlot(t,i,k,v){
   const arr=t==='e'?S.equip.items:S.equip.mochila;
-  arr[i][k]=k==='slots'?(parseFloat(v)||0):v;save();
-  const mochilaSlot=(!('m'!==t)&&S.equip.tem_mochila)?0:(t==='e'&&S.equip.tem_mochila?1:0);
-  const used=totalSlots(arr)+(t==='e'?mochilaSlot:0);
+  if(k==='slots')arr[i][k]=parseFloat(v)||0;
+  else if(k==='qtd')arr[i][k]=parseInt(v)||1;
+  else arr[i][k]=v;
+  save();
+  const mochilaSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
+  const used=totalSlots(arr)+mochilaSlot;
   const mx=t==='e'?S.equip.slots_max:S.equip.mochila_slots;
   const col=slotColor(used,mx);
   const bar=document.getElementById('bar-'+t),lbl=document.getElementById('lbl-'+t);
@@ -167,7 +209,7 @@ function slotSection(t,items,slotsMax,maxKey){
   const used=totalSlots(items)+mochilaSlot;
   const pct=slotsMax>0?Math.min(1,used/slotsMax):0;
   const col=slotColor(used,slotsMax);
-  const nn=t==='e'?'en':'mn',ns=t==='e'?'es':'ms';
+  const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',ns=t==='e'?'es':'ms';
   const label=t==='e'?'Slots usados':'Slots na mochila';
   return '<div style="margin-bottom:8px">'+
     '<div class="slot-label"><span>'+label+'</span>'+
@@ -178,17 +220,19 @@ function slotSection(t,items,slotsMax,maxKey){
     '<div class="slot-bar-bg"><div id="bar-'+t+'" class="slot-bar-fill" style="width:'+Math.round(pct*100)+'%;background:'+col+'"></div></div>'+
     (t==='e'&&S.equip.tem_mochila?'<div style="font-size:9px;color:#5a5f70;margin-top:4px">★ Mochila: +1 slot de equipamento, capacidade interna de '+S.equip.mochila_slots+' slots</div>':'')+
     '</div>'+
-    '<div style="display:grid;grid-template-columns:1fr 58px 24px;gap:6px;margin-bottom:4px;padding:0 9px">'+
-    '<div class="col-h" style="text-align:left">Item</div><div class="col-h">Slots</div><div></div></div>'+
+    '<div style="display:grid;grid-template-columns:1fr 46px 46px 24px;gap:5px;margin-bottom:4px;padding:0 9px">'+
+    '<div class="col-h" style="text-align:left">Item</div><div class="col-h">Qtd.</div><div class="col-h">Slots</div><div></div></div>'+
     '<div class="slot-list">'+
     (items.length?items.map((x,i)=>'<div class="slot-item">'+
       '<input class="iname" value="'+x.nome+'" oninput="updSlot(\''+t+'\','+i+',\'nome\',this.value)" placeholder="—"/>'+
+      '<input class="inum" type="number" min="1" value="'+(x.qtd||1)+'" oninput="updSlot(\''+t+'\','+i+',\'qtd\',this.value)"/>'+
       '<input class="islot" type="number" min="0" step="0.5" value="'+x.slots+'" oninput="updSlot(\''+t+'\','+i+',\'slots\',this.value)"/>'+
       '<button onclick="rmSlot(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+
     '</div>'+
     '<div class="slot-add">'+
-    '<input placeholder="Nome do item…" value="'+newStr[nn]+'" oninput="newStr[\''+nn+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSlot(\''+t+'\')"/>'+
-    '<input type="number" min="0" step="0.5" value="'+newStr[ns]+'" oninput="newStr[\''+ns+'\']=this.value" style="width:58px" placeholder="Slots"/>'+
+    '<input class="main" placeholder="Nome…" value="'+newStr[nn]+'" oninput="newStr[\''+nn+'\']=this.value" onkeydown="if(event.key===\'Enter\')addSlot(\''+t+'\')"/>'+
+    '<input class="sm2" type="number" min="1" value="'+newStr[eq]+'" oninput="newStr[\''+eq+'\']=this.value" placeholder="Qtd"/>'+
+    '<input class="sm2" type="number" min="0" step="0.5" value="'+newStr[ns]+'" oninput="newStr[\''+ns+'\']=this.value" placeholder="Sl"/>'+
     '<button class="btn gold" onclick="addSlot(\''+t+'\')">+ Add</button></div>';}
 
 function addArma(){S.armas.push({nome:'',ataque:'',dano:'',alcance:'',obs:''});save();render();}
@@ -198,12 +242,10 @@ function addTrilha(){S.trilhas.push({nome:'—',rank:1,ouro:'',ataques:''});save
 function rmTrilha(i){S.trilhas.splice(i,1);save();render();}
 function updTrilha(i,k,v){S.trilhas[i][k]=v;save();}
 function adjPV(d){S.pv.v=Math.max(0,Math.min(S.pv.max,S.pv.v+d));save();render();}
+function trilhaSelect(val,onch){return '<select class="fi" onchange="'+onch+'">'+TRILHAS_LIST.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
 function doExport(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(S.nome||'personagem')+'_tt.json';a.click();}
 function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{S={...def(),...JSON.parse(ev.target.result)};save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
 function doReset(){if(!confirm('Nova ficha? Apaga tudo.'))return;S=def();save();render();}
-
-const trilhaOpts=TRILHAS_LIST.map(t=>'<option>'+t+'</option>').join('');
-function trilhaSelect(val,onch){return '<select class="fi" onchange="'+onch+'">'+TRILHAS_LIST.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
 
 function tab0(){
   const ATTRS=['FOR','DES','CON','INT','VON','CAR'];
@@ -227,9 +269,9 @@ function tab0(){
     return '<div class="attr-box"><span class="attr-name">'+a+'</span>'+
     '<div class="attr-fields">'+
     '<div class="attr-col"><span class="attr-col-lbl">BASE</span>'+
-    '<input type="number" min="1" max="30" value="'+base+'" oninput="S.attrs[\''+a+'\'].base=parseInt(this.value)||1;save()"/></div>'+
+    '<input type="number" min="1" max="18" value="'+base+'" oninput="S.attrs[\''+a+'\'].base=parseInt(this.value)||1;save()"/></div>'+
     '<div class="attr-col atual"><span class="attr-col-lbl" style="color:#c7a25a90">ATUAL</span>'+
-    '<input type="number" min="1" max="30" value="'+atual+'" style="'+(dim?'color:#c7a25a':'')+'"'+
+    '<input type="number" min="1" max="18" value="'+atual+'" style="'+(dim?'color:#c7a25a':'')+'"'+
     ' oninput="S.attrs[\''+a+'\'].atual=parseInt(this.value)||1;save();document.getElementById(\'mod_'+a+'\').textContent=mod(parseInt(this.value)||1);document.getElementById(\'mod_'+a+'\').style.color=modColor(parseInt(this.value)||1)"/></div></div>'+
     '<div class="attr-mod-row"><span class="attr-mod-lbl">mod</span><span class="attr-mod-val" id="mod_'+a+'" style="color:'+mc+'">'+m+'</span></div></div>';}).join('')+
   '</div></div>'+
@@ -253,10 +295,26 @@ function tab0(){
   '<div class="stat-row"><input type="number" min="0" value="'+S.sorte.v+'" oninput="S.sorte.v=parseInt(this.value)||0;save()"/><span class="stat-sep">/</span>'+
   '<input type="number" min="0" value="'+S.sorte.max+'" oninput="S.sorte.max=parseInt(this.value)||0;save()"/></div>'+
   '<div style="font-size:9px;color:#5a5f70;margin-top:4px">atual / máximo</div>'+
-  '<div style="display:flex;gap:5px;justify-content:center;margin-top:8px">'+
+  '<div style="display:flex;gap:5px;justify-content:center;margin-top:8px;align-items:center">'+
   '<button class="btn sm red" onclick="S.sorte.v=Math.max(0,S.sorte.v-1);save();render()">−</button>'+
   '<button class="btn sm gold" onclick="S.sorte.v=Math.min(S.sorte.max,S.sorte.v+1);save();render()">+</button>'+
-  '</div></div></div></div>';}
+  '<button class="btn dice" onclick="rollSorte()" title="Rolar 1d6">⚄ 1d6</button>'+
+  '</div>'+(S.sorte_dado?'<div style="font-size:11px;color:#b060d0;margin-top:5px;font-style:italic">'+S.sorte_dado+'</div>':'')+
+  '</div></div></div>'+
+
+  '<div class="sec"><div class="sec-t">Flechas / Virotes</div>'+
+  '<div class="proj-box">'+
+  (S.projeteis.length?S.projeteis.map((p,i)=>'<div class="proj-row">'+
+    '<span class="proj-name">'+p.nome+'</span>'+
+    '<div class="proj-ctrl">'+
+    '<button class="btn sm red" onclick="adjProj('+i+',-1)">−</button>'+
+    '<input type="number" min="0" value="'+p.qtd+'" oninput="updProjQtd('+i+',this.value);save()"/>'+
+    '<button class="btn sm gold" onclick="adjProj('+i+',1)">+</button>'+
+    '<button class="btn" onclick="rmProj('+i+')" style="padding:3px 7px;color:#d06060;margin-left:4px">✕</button>'+
+    '</div></div>').join(''):'<div class="empty-hint" style="padding:6px 0">Nenhum projétil cadastrado</div>')+
+  '</div>'+
+  '<div class="proj-add-row"><input placeholder="Tipo (ex: Flechas, Virotes, Dardos…)" value="'+newStr.proj+'" oninput="newStr.proj=this.value" onkeydown="if(event.key===\'Enter\')addProj()"/><button class="btn gold" onclick="addProj()">+ Add</button></div>'+
+  '</div>';}
 
 function tab1(){
   return '<div class="sec"><div class="sec-t">Armas</div>'+
@@ -293,14 +351,13 @@ function tab1(){
     (S.trilhas.length>1?'<button class="btn red" onclick="rmTrilha('+i+')" style="padding:3px 7px;flex-shrink:0">✕</button>':'')+
     '</div></div>').join('')+
   '<button class="btn gold" onclick="addTrilha()" style="margin-top:8px;width:100%">+ Trilha</button></div>'+
-
   '<div class="sec"><div class="sec-t">Habilidades e Características</div>'+sList('hab',S.habilidades,'Nova habilidade ou característica…')+'</div>'+
   '<div class="sec"><div class="sec-t">Idiomas</div>'+sList('idioma',S.idiomas,'Idioma…')+'</div>';}
 
 function tab2(){
   return '<div class="sec"><div class="sec-t">Equipamentos</div>'+slotSection('e',S.equip.items,S.equip.slots_max,'slots_max')+'</div>'+
   '<div class="sec">'+
-  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:'+(S.equip.tem_mochila?'10px':'0')+'">'+
+  '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:'+(S.equip.tem_mochila?'10px':'2px')+'">'+
   '<div class="sec-t" style="margin-bottom:0">Mochila</div>'+
   '<div style="display:flex;align-items:center;gap:8px">'+
   '<span style="font-size:11px;color:#6b7080">Tem mochila?</span>'+
@@ -340,4 +397,5 @@ function render(){
     (tab===0?tab0():tab===1?tab1():tab===2?tab2():tab3());}
 render();
 </script>
-</body></html>
+</body>
+</html>
