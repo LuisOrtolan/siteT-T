@@ -60,8 +60,17 @@
     "trilha": "Lorde Rúnico",
     "circulo_ou_grau": "Maiores",
     "sigla": "ETHEL",
-    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem poderá desviar qualquer projétil arremessado contra ele (adagas, lanças, flechas, virotes, etc.). Ele recebe um bônus de +8 contra qualquer ataque à distância feito contra ele. Se o ataque errar, ele pode escolher agarrar o objeto (contanto que esteja com uma mão vazia). Esse bônus dura 1 rodada para cada rank em Lorde Rúnico do personagem que ativou a runa.\n-Local de recarga: ao ar livre, quando estiver soprando ventos capazes de levantar folhas.\n-Especial: Gastando 2 PV’s adicionais, o personagem pode acionar essa runa em resposta a um ataque à distância que recebeu.\nIR\nRuna do Conhecimento\n-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa passa a enxergar todas as coisas pelo que elas realmente são. Coisas invisíveis passam a ser visíveis; fantasmas e ilusões passam a ser reconhecíveis; disfarces, mágicos ou não, deixam de funcionar; portas secretas magicamente escondidas se revelam; e até mesmo vítimas de polimorfia ou transformadas em pedra se mostram como seriam na verdade. Dura 1 hora.\n-Local de recarga: sob a luz da lua da meia noite."
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: enquanto portar a runa, o personagem poderá desviar qualquer projétil arremessado contra ele (adagas, lanças, flechas, virotes, etc.). Ele recebe um bônus de +8 contra qualquer ataque à distância feito contra ele. Se o ataque errar, ele pode escolher agarrar o objeto (contanto que esteja com uma mão vazia). Esse bônus dura 1 rodada para cada rank em Lorde Rúnico do personagem que ativou a runa.\n-Local de recarga: ao ar livre, quando estiver soprando ventos capazes de levantar folhas.\n-Especial: Gastando 2 PV’s adicionais, o personagem pode acionar essa runa em resposta a um ataque à distância que recebeu."
   },
+  {
+    "id": "runa-do-conhecimento",
+    "nome": "Runa do Conhecimento",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "IR",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: o portador da runa passa a enxergar todas as coisas pelo que elas realmente são. Coisas invisíveis passam a ser visíveis; fantasmas e ilusões passam a ser reconhecíveis; disfarces, mágicos ou não, deixam de funcionar; portas secretas magicamente escondidas se revelam; e até mesmo vítimas de polimorfia ou transformadas em pedra se mostram como seriam na verdade. Dura 1 hora.\n-Local de recarga: sob a luz da lua da meia noite."
+  },  
   {
     "id": "runa-maiores-runa-da-cura-merecida",
     "nome": "Runa da Cura Merecida",
@@ -114,8 +123,17 @@
     "trilha": "Lorde Rúnico",
     "circulo_ou_grau": "Maiores",
     "sigla": "HAEGALLH",
-    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: esta runa pode ser usada para apagar o fogo, a luz ou as vozes. Após ativada, ela pode apagar o fogo de um lugar de qualquer tamanho até o de um incêndio em uma construção média. Ela também pode ser usada para “apagar” a luz em um ambiente, deixando tudo magicamente escuro em uma área de até 60x60 pés. Também pode ser usada para que uma área do mesmo tamanho não tenha som, ou seja, nenhum som pode ser produzido ou pode entrar na área. Nos últimos dois casos, o efeito dura um número de rodadas igual ao rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: dentro de um corpo de água corrente ou sob a luz da lua da meia noite.\nUR\nRuna do Braço Forte\n-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem passa a infringir mais dano com a arma que estiver portando (+1 por dado de dano da arma). A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. O efeito dura 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa WYNN)."
+    "descricao": "-Custo de ativação: 3 PV’s\n-Efeito: esta runa pode ser usada para apagar o fogo, a luz ou as vozes. Após ativada, ela pode apagar o fogo de um lugar de qualquer tamanho até o de um incêndio em uma construção média. Ela também pode ser usada para “apagar” a luz em um ambiente, deixando tudo magicamente escuro em uma área de até 60x60 pés. Também pode ser usada para que uma área do mesmo tamanho não tenha som, ou seja, nenhum som pode ser produzido ou pode entrar na área. Nos últimos dois casos, o efeito dura um número de rodadas igual ao rank do Lorde Rúnico que ativar a runa.\n-Local de recarga: dentro de um corpo de água corrente ou sob a luz da lua da meia noite."
   },
+  {
+    "id": "runa-do-braco-forte",
+    "nome": "Runa do Braço Forte",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "UR",
+    "descricao": "-Custo de ativação: 2 PV’s\n-Efeito: enquanto portar a runa, o personagem passa a infringir mais dano com a arma que estiver portando (+1 por dado de dano da arma). A arma também passa a ser considerada mágica para efeitos de superar resistências de certas criaturas. O efeito dura 1 turno. Ele pode ter um número de runas dessas ativas ao mesmo tempo igual à um terço do seu nível (arredondado para cima).\n-Local de recarga: entre algumas brasas.\n-Especial: pode ser inscrita permanentemente em uma arma. Cada arma somente comporta 1 runa inscrita (mas pode ser combinada com a runa WYNN)."
+  },  
   {
     "id": "runa-maiores-runa-da-fortuna-dourada",
     "nome": "Runa da Fortuna Dourada",
@@ -123,7 +141,16 @@
     "trilha": "Lorde Rúnico",
     "circulo_ou_grau": "Maiores",
     "sigla": "JERA",
-    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao ativar essa runa, ela brilha com uma luz dourada como a de uma tocha, por 1 hora + 1 turno por rank do Lorde Rúnico que a ativar. Também pode ser usada para dissipar escuridões mágicas de qualquer tipo.\n-Local de recarga: sob a luz do sol do meio dia.\n-Especial: pode ser inscrita permanentemente em uma arma, escudo ou joia. O item passará a emitir essa luz constantemente. Cada arma, escudo ou joia somente comporta 1 runa inscrita.\nIS\nRuna do Hidromel dos Deuses\n-Custo de ativação: 1 PV\n-Efeito: quando ativada, esta runa purifica qualquer líquido em que for mergulhada. O personagem é capaz de purificar, por ativação, o equivalente a um odre de mais ou menos 2 litros.\n-Local de recarga: imersa em hidromel ou cerveja.\n-Especial: pode ser inscrita permanentemente em um chifre ou caneco. Uma vez por dia, qualquer líquido que seja colocado dentro do recipiente será purificado. Se for colocado hidromel ou cerveja, entornar toda a bebida recuperará até 2 pontos de Fadiga."
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: ao ativar essa runa, ela brilha com uma luz dourada como a de uma tocha, por 1 hora + 1 turno por rank do Lorde Rúnico que a ativar. Também pode ser usada para dissipar escuridões mágicas de qualquer tipo.\n-Local de recarga: sob a luz do sol do meio dia.\n-Especial: pode ser inscrita permanentemente em uma arma, escudo ou joia. O item passará a emitir essa luz constantemente. Cada arma, escudo ou joia somente comporta 1 runa inscrita."
+  },
+  {  
+    "id": "runa-do-hidromel-dos-deuses",
+    "nome": "Runa do Hidromel dos Deuses",
+    "tipo": "Runa",
+    "trilha": "Lorde Rúnico",
+    "circulo_ou_grau": "Maiores",
+    "sigla": "IS",
+    "descricao": "-Custo de ativação: 1 PV\n-Efeito: quando ativada, esta runa purifica qualquer líquido em que for mergulhada. O personagem é capaz de purificar, por ativação, o equivalente a um odre de mais ou menos 2 litros.\n-Local de recarga: imersa em hidromel ou cerveja.\n-Especial: pode ser inscrita permanentemente em um chifre ou caneco. Uma vez por dia, qualquer líquido que seja colocado dentro do recipiente será purificado. Se for colocado hidromel ou cerveja, entornar toda a bebida recuperará até 2 pontos de Fadiga."
   },
   {
     "id": "runa-maiores-runa-das-longas-viagens",
