@@ -128,79 +128,95 @@ select.fi option,select.fi-sm option{background:#181a20}
 .char-card-meta{font-size:11px;color:#8a8fa0}
 .char-card-actions{display:flex;gap:8px;flex-shrink:0;padding-left:4px;border-left:1px solid #2a2d35}
 .char-card-actions .btn.sm{padding:7px 11px;font-size:14px}
+.mag-picker{margin-top:8px}
+.mag-results{max-height:260px;overflow-y:auto;background:#0f1014;border:1px solid #2a2d35;border-radius:7px}
+.mag-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border-bottom:1px solid #1a1d24}
+.mag-row:last-child{border-bottom:none}
+.mag-row-info{display:flex;flex-direction:column;min-width:0}
+.mag-row-name{font-size:12px;color:#f5f5f7}
+.mag-row-meta{font-size:10px;color:#8a8fa0}
 </style>
 <body><div id="app"></div>
+<script src="../js/ficha-store.js"></script>
 <script>
-const LS='tt_fichas_v1';
-const TL=['—','Combatente','Batedor','Especialista','Arcanista','Xamã','Sacerdote','Mestre das Feras','Lorde Rúnico','Bardo','Alquimista','Defensor','Troca-peles'];
-function def(){return{nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},contadores:[],armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],idiomas:[],magias:[],habilidades:[],equip:{items:[],tem_mochila:false,mochila_slots:10,mochila:[]},carga:{leve:'',media:'',pesada:'',sobre:''},moedas:{cobre:0,prata:0,ouro:0,electrum:0,platina:0},pedras:'',anotacoes:''};}
+const TL=TT_FICHA.TL;
+function def(){return TT_FICHA.def();}
 function mod(v){const n=parseInt(v)||10;if(n<=3)return'-3';if(n<=5)return'-2';if(n<=8)return'-1';if(n<=12)return'0';if(n<=15)return'+1';if(n<=17)return'+2';return'+3';}
 function modColor(v){const n=parseInt(v)||10;if(n<=8)return'#d06060';if(n<=12)return'#8a8fa0';return'#5aaf5a';}
 function pvColor(p,mx){const r=mx>0?p/mx:0;return r>0.6?'#3a8a3a':r>0.3?'#c7a25a':'#d06060';}
 function fmtSlot(v){const n=parseFloat(v)||0;return n===Math.floor(n)?String(n):n.toFixed(1);}
 function totalSlots(arr){return arr.reduce((a,x)=>a+(parseFloat(x.slots)||0),0);}
 function cargaInfo(used){const c=S.carga,l=parseFloat(c.leve)||0,m=parseFloat(c.media)||0,p=parseFloat(c.pesada)||0,s=parseFloat(c.sobre)||0;if(!l&&!m&&!p&&!s)return{badge:'<span class="carga-badge carga-vazia">sem limites definidos</span>',color:'#3a8a3a',ref:0};if(p&&used>p)return{badge:'<span class="carga-badge carga-sobre">⚠ Sobrecarga</span>',color:'#e04060',ref:s||p};if(m&&used>m)return{badge:'<span class="carga-badge carga-pesada">▲ Carga Pesada</span>',color:'#d06060',ref:p||m};if(l&&used>l)return{badge:'<span class="carga-badge carga-media">● Carga Média</span>',color:'#c7a25a',ref:m||l};if(used>0)return{badge:'<span class="carga-badge carga-leve">✓ Carga Leve</span>',color:'#5aaf5a',ref:l};return{badge:'<span class="carga-badge carga-vazia">✓ Sem carga</span>',color:'#3a8a3a',ref:l};}
-const LS_OLD='tt_ficha_v9';
-const LS_ACTIVE='tt_ficha_ativa_v1';
-function newId(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-function normChar(c){
-  const d=def();
-  const attrs={};
-  Object.keys(d.attrs).forEach(k=>{attrs[k]={...d.attrs[k],...((c.attrs&&c.attrs[k])||{})};});
-  return{...d,...c,
-    attrs,
-    pv:{...d.pv,...(c.pv||{})},
-    sorte:{...d.sorte,...(c.sorte||{})},
-    equip:{...d.equip,...(c.equip||{})},
-    carga:{...d.carga,...(c.carga||{})},
-    moedas:{...d.moedas,...(c.moedas||{})},
-    trilha_principal:{...d.trilha_principal,...(c.trilha_principal||{})}
-  };
-}
-function loadRoster(){
-  try{
-    const x=localStorage.getItem(LS);
-    if(x){
-      const list=JSON.parse(x).map(normChar);
-      return{list,migratedId:null};
-    }
-  }catch(e){}
-  try{
-    const old=localStorage.getItem(LS_OLD);
-    if(old){
-      const data=JSON.parse(old),id=newId();
-      const list=[normChar({...data,id})];
-      localStorage.setItem(LS,JSON.stringify(list));
-      return{list,migratedId:id};
-    }
-  }catch(e){}
-  return{list:[],migratedId:null};
-}
-const _loaded=loadRoster();
-let roster=_loaded.list;
+
+const _migrated=TT_FICHA.migrateOld();
+let roster=_migrated?_migrated.list:TT_FICHA.getRoster();
 let curId=null,view='catalogo';
-if(_loaded.migratedId){curId=_loaded.migratedId;view='ficha';}
-else{
-  try{
-    const activeId=localStorage.getItem(LS_ACTIVE);
-    if(activeId&&roster.some(c=>c.id===activeId)){curId=activeId;view='ficha';}
-  }catch(e){}
+const _abrirParam=new URLSearchParams(location.search).get('abrir');
+if(_abrirParam&&roster.some(c=>c.id===_abrirParam)){
+  curId=_abrirParam;view='ficha';
+}else if(_migrated){
+  curId=_migrated.migratedId;view='ficha';
+}else{
+  const activeId=TT_FICHA.getActiveId();
+  if(activeId&&roster.some(c=>c.id===activeId)){curId=activeId;view='ficha';}
 }
-if(curId){try{localStorage.setItem(LS_ACTIVE,curId);}catch(e){}}
+if(curId)TT_FICHA.setActiveId(curId);
 let S=curId?roster.find(c=>c.id===curId):null;
 let tab=0,pvD=1,saveT=null;
 let ns={idioma:'',magia:'',hab:'',en:'',eq:'1',es:'1',mn:'',mq:'1',ms:'1',cont:''};
-function saveRoster(){localStorage.setItem(LS,JSON.stringify(roster));}
+function saveRoster(){TT_FICHA.saveRoster(roster);}
 function save(){saveRoster();const el=document.getElementById('si');if(el){el.classList.add('show');clearTimeout(saveT);saveT=setTimeout(()=>el.classList.remove('show'),1800);}}
-function openChar(id){curId=id;S=roster.find(c=>c.id===id);tab=0;view='ficha';try{localStorage.setItem(LS_ACTIVE,id);}catch(e){}render();}
-function backToCatalogo(){view='catalogo';curId=null;S=null;try{localStorage.removeItem(LS_ACTIVE);}catch(e){}render();}
-function novoPersonagem(){const c={...def(),id:newId()};roster.push(c);saveRoster();openChar(c.id);}
-function duplicarPersonagem(id){const orig=roster.find(c=>c.id===id);if(!orig)return;const copy=JSON.parse(JSON.stringify(orig));copy.id=newId();copy.nome=(orig.nome?orig.nome:'Personagem')+' (cópia)';roster.push(copy);saveRoster();render();}
-function apagarPersonagem(id){const c=roster.find(x=>x.id===id);if(!confirm('Apagar "'+(c&&c.nome?c.nome:'personagem sem nome')+'"? Essa ação não pode ser desfeita.'))return;roster=roster.filter(x=>x.id!==id);saveRoster();if(curId===id){curId=null;S=null;view='catalogo';try{localStorage.removeItem(LS_ACTIVE);}catch(e){}}render();}
+function openChar(id){curId=id;S=roster.find(c=>c.id===id);tab=0;view='ficha';TT_FICHA.setActiveId(id);render();}
+function backToCatalogo(){view='catalogo';curId=null;S=null;TT_FICHA.clearActiveId();render();}
+function novoPersonagem(){const c={...def(),id:TT_FICHA.newId()};roster.push(c);saveRoster();openChar(c.id);}
+function duplicarPersonagem(id){const orig=roster.find(c=>c.id===id);if(!orig)return;const copy=JSON.parse(JSON.stringify(orig));copy.id=TT_FICHA.newId();copy.nome=(orig.nome?orig.nome:'Personagem')+' (cópia)';roster.push(copy);saveRoster();render();}
+function apagarPersonagem(id){const c=roster.find(x=>x.id===id);if(!confirm('Apagar "'+(c&&c.nome?c.nome:'personagem sem nome')+'"? Essa ação não pode ser desfeita.'))return;roster=roster.filter(x=>x.id!==id);saveRoster();if(curId===id){curId=null;S=null;view='catalogo';TT_FICHA.clearActiveId();}render();}
 function addS(t){const v=ns[t].trim();if(!v)return;if(t==='idioma')S.idiomas.push(v);else if(t==='magia')S.magias.push(v);else S.habilidades.push(v);ns[t]='';save();render();}
 function rmS(t,i){if(t==='idioma')S.idiomas.splice(i,1);else if(t==='magia')S.magias.splice(i,1);else S.habilidades.splice(i,1);save();render();}
 function updS(t,i,v){if(t==='idioma')S.idiomas[i]=v;else if(t==='magia')S.magias[i]=v;else S.habilidades[i]=v;save();}
 function sL(t,arr,ph){return '<div class="list-area">'+(arr.length?arr.map((x,i)=>'<div class="li"><input class="li-t" value="'+x+'" oninput="updS(\''+t+'\','+i+',this.value)"/><button class="li-x" onclick="rmS(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+'</div><div class="list-add"><input placeholder="'+ph+'" value="'+ns[t]+'" oninput="ns[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addS(\''+t+'\')" /><button class="btn gold" onclick="addS(\''+t+'\')">+ Add</button></div>';}
+let magPickerOpen=false,magPickerTrilha=null,magPickerQuery='',magiasDB=null,magiasLoading=false,magiasErro=false;
+const MAG_TRILHAS=['Arcanista','Xamã','Sacerdote','Bardo','Alquimista','Lorde Rúnico'];
+function loadMagiasDB(){
+  if(magiasDB||magiasLoading)return;
+  magiasLoading=true;magiasErro=false;
+  fetch('../data/magias.json').then(r=>{if(!r.ok)throw new Error('http '+r.status);return r.json();})
+    .then(d=>{magiasDB=d;magiasLoading=false;const el=document.getElementById('magResults');if(el)el.innerHTML=magResultsHtml();})
+    .catch(e=>{magiasLoading=false;magiasErro=true;const el=document.getElementById('magResults');if(el)el.innerHTML=magResultsHtml();});
+}
+function toggleMagPicker(){
+  magPickerOpen=!magPickerOpen;
+  if(magPickerOpen){if(!magPickerTrilha)magPickerTrilha=(S.trilha_principal.nome!=='—'?S.trilha_principal.nome:'Xamã');loadMagiasDB();}
+  render();
+}
+function magResultsHtml(){
+  if(magiasErro)return '<div class="empty-hint" style="padding:14px 0">Não deu pra carregar a lista (precisa estar servindo o site por http, não abrindo o arquivo direto). Digite manualmente ali em cima mesmo.</div>';
+  if(!magiasDB)return '<div class="empty-hint" style="padding:14px 0">Carregando lista de magias…</div>';
+  const q=magPickerQuery.trim().toLowerCase();
+  const items=magiasDB.filter(m=>m.trilha===magPickerTrilha&&(!q||m.nome.toLowerCase().includes(q)));
+  if(!items.length)return '<div class="empty-hint" style="padding:14px 0">Nenhuma magia encontrada.</div>';
+  return items.map(m=>{
+    const circ=typeof m.circulo_ou_grau==='number'?'Círc. '+m.circulo_ou_grau:m.circulo_ou_grau;
+    return '<div class="mag-row"><div class="mag-row-info"><span class="mag-row-name">'+m.nome+'</span><span class="mag-row-meta">'+m.tipo+' · '+circ+'</span></div>'+
+      '<button class="btn sm gold" onclick="addMagiaFromDB(\''+m.id+'\')">+ Add</button></div>';
+  }).join('');
+}
+function filterMagPicker(v){magPickerQuery=v;const el=document.getElementById('magResults');if(el)el.innerHTML=magResultsHtml();}
+function setMagPickerTrilha(v){magPickerTrilha=v;const el=document.getElementById('magResults');if(el)el.innerHTML=magResultsHtml();}
+function addMagiaFromDB(id){
+  if(!magiasDB)return;
+  const m=magiasDB.find(x=>x.id===id);if(!m)return;
+  const circ=typeof m.circulo_ou_grau==='number'?'círculo '+m.circulo_ou_grau:m.circulo_ou_grau;
+  S.magias.push(m.nome+' ('+m.tipo+', '+circ+')');
+  save();render();
+}
+function renderMagPicker(){
+  return '<div class="mag-picker">'+
+    '<div class="g2" style="margin-bottom:6px">'+
+    '<select class="fi" onchange="setMagPickerTrilha(this.value)">'+MAG_TRILHAS.map(t=>'<option'+(t===magPickerTrilha?' selected':'')+'>'+t+'</option>').join('')+'</select>'+
+    '<input class="fi" placeholder="Buscar por nome…" value="'+magPickerQuery+'" oninput="filterMagPicker(this.value)"/>'+
+    '</div><div class="mag-results" id="magResults">'+magResultsHtml()+'</div></div>';
+}
 function addC(){const n=ns.cont.trim();if(!n)return;S.contadores.push({nome:n,qtd:0});ns.cont='';save();render();}
 function rmC(i){S.contadores.splice(i,1);save();render();}
 function updCNome(i,v){S.contadores[i].nome=v;save();}
@@ -226,7 +242,14 @@ function doImportCatalogo(){const inp=document.createElement('input');inp.type='
 function slotSec(t,items,label){
   const mSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
   const used=totalSlots(items)+mSlot;
-  const info=t==='e'?cargaInfo(used):{badge:'',color:'#3a8a3a',ref:0};
+  let info;
+  if(t==='e'){
+    info=cargaInfo(used);
+  }else{
+    const cap=parseFloat(S.equip.mochila_slots)||0;
+    if(cap>0&&used>cap)info={badge:'<span class="carga-badge carga-sobre">⚠ Acima da capacidade ('+fmtSlot(cap)+')</span>',color:'#e04060',ref:cap};
+    else info={badge:'',color:'#3a8a3a',ref:cap};
+  }
   const col=info.color;
   const pct=info.ref>0?Math.min(1,used/info.ref)*100:Math.min(100,used*8);
   const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',sn=t==='e'?'es':'ms';
@@ -260,7 +283,7 @@ function tab0(){
   '<div><label class="fl">JOGADOR(A)</label><input class="fi" value="'+S.jogador+'" oninput="S.jogador=this.value;save()" placeholder="Jogador"/></div></div>'+
   '<div style="margin-bottom:7px"><label class="fl">OCUPAÇÕES</label><input class="fi" value="'+S.ocupacoes+'" oninput="S.ocupacoes=this.value;save()" placeholder="Ocupações anteriores"/></div>'+
   '<div class="g4">'+
-  '<div><label class="fl">NÍVEL</label><input class="fi-sm" type="number" min="1" value="'+S.nivel+'" onchange="S.nivel=parseInt(this.value)||1;save()"/></div>'+
+  '<div><label class="fl">NÍVEL</label><input class="fi-sm" type="number" min="0" value="'+S.nivel+'" onchange="const v=parseInt(this.value);S.nivel=isNaN(v)?0:v;save()"/></div>'+
   '<div><label class="fl">XP</label><input class="fi-sm" type="number" min="0" value="'+S.xp+'" onchange="S.xp=parseInt(this.value)||0;save()"/></div>'+
   '<div><label class="fl">BÔNUS XP</label><input class="fi-sm" value="'+S.bonus_xp+'" oninput="S.bonus_xp=this.value;save()"/></div>'+
   '<div><label class="fl">ORIGEM</label><input class="fi-sm" value="'+S.origem+'" oninput="S.origem=this.value;save()"/></div></div>'+
@@ -346,7 +369,9 @@ function tab1(){
     (S.trilhas.length>1?'<button class="btn red" onclick="rmTr('+i+')" style="padding:3px 7px;flex-shrink:0">✕</button>':'')+
     '</div></div>').join('')+
   '<button class="btn gold" onclick="addTr()" style="margin-top:8px;width:100%">+ Trilha</button></div>'+
-  '<div class="sec"><div class="sec-t">Magias — Feitiços, Rituais, Milagres, Runas, Músicas, Fórmulas…</div>'+sL('magia',S.magias,'Nome da magia, ritual, runa…')+'</div>'+
+  '<div class="sec"><div class="sec-t">Magias — Feitiços, Rituais, Milagres, Runas, Músicas, Fórmulas…</div>'+sL('magia',S.magias,'Nome da magia, ritual, runa…')+
+  '<button class="btn" style="margin-top:8px;width:100%" onclick="toggleMagPicker()">'+(magPickerOpen?'▲ Fechar lista de magias':'🔍 Escolher de uma lista por trilha')+'</button>'+
+  (magPickerOpen?renderMagPicker():'')+'</div>'+
   '<div class="sec"><div class="sec-t">Habilidades e Características</div>'+sL('hab',S.habilidades,'Nova habilidade ou característica…')+'</div>'+
   '<div class="sec"><div class="sec-t">Idiomas</div>'+sL('idioma',S.idiomas,'Idioma…')+'</div>';}
 
