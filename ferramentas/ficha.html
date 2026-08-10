@@ -56,7 +56,7 @@ select.fi option,select.fi-sm option{background:#181a20}
 .toggle.on{background:#c7a25a40}
 .toggle::after{content:'';position:absolute;width:14px;height:14px;background:#6b7080;border-radius:50%;top:3px;left:3px;transition:transform .2s,background .2s}
 .toggle.on::after{transform:translateX(16px);background:#c7a25a}
-.arma-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid #1a1d24}
+.arma-row{display:grid;grid-template-columns:1.4fr 0.8fr 0.8fr 0.8fr 3fr;gap:5px;align-items:center;padding:5px 0;border-bottom:1px solid #1a1d24}
 .arma-row:last-child{border-bottom:none}
 .col-h{font-size:9px;color:#5a5f70;text-align:center}
 .trilha-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #1a1d24}
@@ -86,7 +86,8 @@ select.fi option,select.fi-sm option{background:#181a20}
 .proj-box{background:#0f1014;border:1px solid #2a2d35;border-radius:8px;padding:10px 12px}
 .proj-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .proj-row:last-child{margin-bottom:0}
-.proj-name{font-size:12px;color:#d0d3dc;flex:1}
+.proj-name{font-size:12px;color:#d0d3dc;flex:1;background:transparent;border:none;font-family:inherit;padding:0}
+.proj-name:focus{outline:none;color:#f5f5f7}
 .proj-ctrl{display:flex;align-items:center;gap:5px}
 .proj-ctrl input{width:52px;background:#181a20;border:1px solid #2a2d35;border-radius:5px;color:#f5f5f7;font-size:16px;text-align:center;padding:3px;font-family:inherit}
 .proj-ctrl input:focus{outline:none;border-color:#c7a25a60}
@@ -103,7 +104,7 @@ select.fi option,select.fi-sm option{background:#181a20}
 .moeda-box{text-align:center;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:6px 4px}
 .moeda-lbl{font-size:9px;color:#8a8fa0;margin-bottom:3px;display:block}
 .moeda-box input{width:100%;background:transparent;border:none;color:#f5f5f7;font-size:14px;text-align:center;padding:0;font-family:inherit}
-.notes{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:7px;padding:8px;color:#d0d3dc;font-size:12px;line-height:1.5;resize:vertical;min-height:90px;font-family:inherit}
+.notes{width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:7px;padding:8px;color:#d0d3dc;font-size:12px;line-height:1.5;resize:vertical;min-height:min(46vh,340px);font-family:inherit}
 .notes:focus{outline:none;border-color:#c7a25a60}
 .save-ind{font-size:10px;color:#3a8a3a;text-align:center;padding:4px;opacity:0;transition:opacity .3s}
 .save-ind.show{opacity:1}
@@ -111,16 +112,26 @@ select.fi option,select.fi-sm option{background:#181a20}
 .list-area{background:#0f1014;border:1px solid #2a2d35;border-radius:7px;overflow:hidden}
 .li{display:flex;align-items:center;gap:7px;padding:6px 9px;border-bottom:1px solid #1a1d24}
 .li:last-child{border-bottom:none}
-.li-t{flex:1;font-size:12px;color:#d0d3dc}
+.li-t{flex:1;font-size:12px;color:#d0d3dc;background:transparent;border:none;font-family:inherit;padding:0}
+.li-t:focus{outline:none;color:#f5f5f7}
 .li-x{background:transparent;border:none;color:#d06060;font-size:13px;cursor:pointer;padding:0 3px}
 .list-add{display:flex;gap:5px;margin-top:7px}
 .list-add input{flex:1;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:5px 7px;color:#f5f5f7;font-size:12px;font-family:inherit}
 .list-add input:focus{outline:none;border-color:#c7a25a60}
 .empty-hint{padding:10px;font-size:11px;color:#3a3f50;text-align:center}
+.back-row{text-align:left;margin-bottom:6px}
+.char-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.char-card{background:#181a20;border:1px solid #2a2d35;border-radius:9px;padding:10px 11px;display:flex;align-items:center;gap:10px;transition:border-color .15s}
+.char-card:hover{border-color:#c7a25a50}
+.char-card-main{flex:1;cursor:pointer;min-width:0}
+.char-card-name{font-size:14px;color:#f5f5f7;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.char-card-meta{font-size:11px;color:#8a8fa0}
+.char-card-actions{display:flex;gap:8px;flex-shrink:0;padding-left:4px;border-left:1px solid #2a2d35}
+.char-card-actions .btn.sm{padding:7px 11px;font-size:14px}
 </style>
 <body><div id="app"></div>
 <script>
-const LS='tt_ficha_v9';
+const LS='tt_fichas_v1';
 const TL=['—','Combatente','Batedor','Especialista','Arcanista','Xamã','Sacerdote','Mestre das Feras','Lorde Rúnico','Bardo','Alquimista','Defensor','Troca-peles'];
 function def(){return{nome:'',jogador:'',ocupacoes:'',nivel:1,xp:0,bonus_xp:0,origem:'',sexo:'',idade:'',attrs:{FOR:{base:10,atual:10},DES:{base:10,atual:10},CON:{base:10,atual:10},INT:{base:10,atual:10},VON:{base:10,atual:10},CAR:{base:10,atual:10}},ca:10,sf:10,sm:10,pv:{v:8,max:8},sorte:{v:3,max:3},contadores:[],armas:[{nome:'',ataque:'',dano:'',alcance:'',obs:''}],trilha_principal:{nome:'—',rank:1,ouro:'',ataques:''},trilhas:[{nome:'—',rank:1,ouro:'',ataques:''}],idiomas:[],magias:[],habilidades:[],equip:{items:[],tem_mochila:false,mochila_slots:10,mochila:[]},carga:{leve:'',media:'',pesada:'',sobre:''},moedas:{cobre:0,prata:0,ouro:0,electrum:0,platina:0},pedras:'',anotacoes:''};}
 function mod(v){const n=parseInt(v)||10;if(n<=3)return'-3';if(n<=5)return'-2';if(n<=8)return'-1';if(n<=12)return'0';if(n<=15)return'+1';if(n<=17)return'+2';return'+3';}
@@ -129,15 +140,70 @@ function pvColor(p,mx){const r=mx>0?p/mx:0;return r>0.6?'#3a8a3a':r>0.3?'#c7a25a
 function fmtSlot(v){const n=parseFloat(v)||0;return n===Math.floor(n)?String(n):n.toFixed(1);}
 function totalSlots(arr){return arr.reduce((a,x)=>a+(parseFloat(x.slots)||0),0);}
 function cargaInfo(used){const c=S.carga,l=parseFloat(c.leve)||0,m=parseFloat(c.media)||0,p=parseFloat(c.pesada)||0,s=parseFloat(c.sobre)||0;if(!l&&!m&&!p&&!s)return{badge:'<span class="carga-badge carga-vazia">sem limites definidos</span>',color:'#3a8a3a',ref:0};if(p&&used>p)return{badge:'<span class="carga-badge carga-sobre">⚠ Sobrecarga</span>',color:'#e04060',ref:s||p};if(m&&used>m)return{badge:'<span class="carga-badge carga-pesada">▲ Carga Pesada</span>',color:'#d06060',ref:p||m};if(l&&used>l)return{badge:'<span class="carga-badge carga-media">● Carga Média</span>',color:'#c7a25a',ref:m||l};if(used>0)return{badge:'<span class="carga-badge carga-leve">✓ Carga Leve</span>',color:'#5aaf5a',ref:l};return{badge:'<span class="carga-badge carga-vazia">✓ Sem carga</span>',color:'#3a8a3a',ref:l};}
-let S=def(),tab=0,pvD=1,saveT=null;
+const LS_OLD='tt_ficha_v9';
+const LS_ACTIVE='tt_ficha_ativa_v1';
+function newId(){return 'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function normChar(c){
+  const d=def();
+  const attrs={};
+  Object.keys(d.attrs).forEach(k=>{attrs[k]={...d.attrs[k],...((c.attrs&&c.attrs[k])||{})};});
+  return{...d,...c,
+    attrs,
+    pv:{...d.pv,...(c.pv||{})},
+    sorte:{...d.sorte,...(c.sorte||{})},
+    equip:{...d.equip,...(c.equip||{})},
+    carga:{...d.carga,...(c.carga||{})},
+    moedas:{...d.moedas,...(c.moedas||{})},
+    trilha_principal:{...d.trilha_principal,...(c.trilha_principal||{})}
+  };
+}
+function loadRoster(){
+  try{
+    const x=localStorage.getItem(LS);
+    if(x){
+      const list=JSON.parse(x).map(normChar);
+      return{list,migratedId:null};
+    }
+  }catch(e){}
+  try{
+    const old=localStorage.getItem(LS_OLD);
+    if(old){
+      const data=JSON.parse(old),id=newId();
+      const list=[normChar({...data,id})];
+      localStorage.setItem(LS,JSON.stringify(list));
+      return{list,migratedId:id};
+    }
+  }catch(e){}
+  return{list:[],migratedId:null};
+}
+const _loaded=loadRoster();
+let roster=_loaded.list;
+let curId=null,view='catalogo';
+if(_loaded.migratedId){curId=_loaded.migratedId;view='ficha';}
+else{
+  try{
+    const activeId=localStorage.getItem(LS_ACTIVE);
+    if(activeId&&roster.some(c=>c.id===activeId)){curId=activeId;view='ficha';}
+  }catch(e){}
+}
+if(curId){try{localStorage.setItem(LS_ACTIVE,curId);}catch(e){}}
+let S=curId?roster.find(c=>c.id===curId):null;
+let tab=0,pvD=1,saveT=null;
 let ns={idioma:'',magia:'',hab:'',en:'',eq:'1',es:'1',mn:'',mq:'1',ms:'1',cont:''};
-try{const x=localStorage.getItem(LS);if(x)S={...def(),...JSON.parse(x)};}catch(e){}
-function save(){localStorage.setItem(LS,JSON.stringify(S));const el=document.getElementById('si');if(el){el.classList.add('show');clearTimeout(saveT);saveT=setTimeout(()=>el.classList.remove('show'),1800);}}
+function saveRoster(){localStorage.setItem(LS,JSON.stringify(roster));}
+function save(){saveRoster();const el=document.getElementById('si');if(el){el.classList.add('show');clearTimeout(saveT);saveT=setTimeout(()=>el.classList.remove('show'),1800);}}
+function openChar(id){curId=id;S=roster.find(c=>c.id===id);tab=0;view='ficha';try{localStorage.setItem(LS_ACTIVE,id);}catch(e){}render();}
+function backToCatalogo(){view='catalogo';curId=null;S=null;try{localStorage.removeItem(LS_ACTIVE);}catch(e){}render();}
+function novoPersonagem(){const c={...def(),id:newId()};roster.push(c);saveRoster();openChar(c.id);}
+function duplicarPersonagem(id){const orig=roster.find(c=>c.id===id);if(!orig)return;const copy=JSON.parse(JSON.stringify(orig));copy.id=newId();copy.nome=(orig.nome?orig.nome:'Personagem')+' (cópia)';roster.push(copy);saveRoster();render();}
+function apagarPersonagem(id){const c=roster.find(x=>x.id===id);if(!confirm('Apagar "'+(c&&c.nome?c.nome:'personagem sem nome')+'"? Essa ação não pode ser desfeita.'))return;roster=roster.filter(x=>x.id!==id);saveRoster();if(curId===id){curId=null;S=null;view='catalogo';try{localStorage.removeItem(LS_ACTIVE);}catch(e){}}render();}
 function addS(t){const v=ns[t].trim();if(!v)return;if(t==='idioma')S.idiomas.push(v);else if(t==='magia')S.magias.push(v);else S.habilidades.push(v);ns[t]='';save();render();}
 function rmS(t,i){if(t==='idioma')S.idiomas.splice(i,1);else if(t==='magia')S.magias.splice(i,1);else S.habilidades.splice(i,1);save();render();}
-function sL(t,arr,ph){return '<div class="list-area">'+(arr.length?arr.map((x,i)=>'<div class="li"><span class="li-t">'+x+'</span><button class="li-x" onclick="rmS(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+'</div><div class="list-add"><input placeholder="'+ph+'" value="'+ns[t]+'" oninput="ns[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addS(\''+t+'\')" /><button class="btn gold" onclick="addS(\''+t+'\')">+ Add</button></div>';}
+function updS(t,i,v){if(t==='idioma')S.idiomas[i]=v;else if(t==='magia')S.magias[i]=v;else S.habilidades[i]=v;save();}
+function sL(t,arr,ph){return '<div class="list-area">'+(arr.length?arr.map((x,i)=>'<div class="li"><input class="li-t" value="'+x+'" oninput="updS(\''+t+'\','+i+',this.value)"/><button class="li-x" onclick="rmS(\''+t+'\','+i+')">✕</button></div>').join(''):'<div class="empty-hint">—</div>')+'</div><div class="list-add"><input placeholder="'+ph+'" value="'+ns[t]+'" oninput="ns[\''+t+'\']=this.value" onkeydown="if(event.key===\'Enter\')addS(\''+t+'\')" /><button class="btn gold" onclick="addS(\''+t+'\')">+ Add</button></div>';}
 function addC(){const n=ns.cont.trim();if(!n)return;S.contadores.push({nome:n,qtd:0});ns.cont='';save();render();}
 function rmC(i){S.contadores.splice(i,1);save();render();}
+function updCNome(i,v){S.contadores[i].nome=v;save();}
 function adjC(i,d){S.contadores[i].qtd=Math.max(0,(parseInt(S.contadores[i].qtd)||0)+d);save();render();}
 function updC(i,v){S.contadores[i].qtd=parseInt(v)||0;save();}
 function addSlot(t){const nn=t==='e'?'en':'mn',eq=t==='e'?'eq':'mq',sn=t==='e'?'es':'ms';const nome=ns[nn].trim();if(!nome)return;const qtd=parseInt(ns[eq])||1,slots=parseFloat(ns[sn])||0;if(t==='e')S.equip.items.push({nome,qtd,slots});else S.equip.mochila.push({nome,qtd,slots});ns[nn]='';ns[eq]='1';ns[sn]='1';save();render();}
@@ -153,8 +219,9 @@ function updTr(i,k,v){S.trilhas[i][k]=v;save();}
 function adjPV(d){S.pv.v=Math.max(0,Math.min(S.pv.max,S.pv.v+d));save();render();}
 function trSel(val,onch){return '<select class="fi" onchange="'+onch+'">'+TL.map(t=>'<option'+(t===val?' selected':'')+'>'+t+'</option>').join('')+'</select>';}
 function doExport(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(S.nome||'personagem')+'_tt.json';a.click();}
-function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{S={...def(),...JSON.parse(ev.target.result)};save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
-function doReset(){if(!confirm('Nova ficha? Apaga tudo.'))return;S=def();save();render();}
+function doImport(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);if(Array.isArray(data)){alert('Esse arquivo tem vários personagens — importe pela tela de Personagens (← Personagens → Importar).');return;}if(!confirm('Isso substitui os dados de "'+(S.nome||'este personagem')+'" pelo conteúdo do arquivo. Continuar?'))return;const id=S.id;S=normChar({...data,id});const idx=roster.findIndex(c=>c.id===id);if(idx>-1)roster[idx]=S;save();render();}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
+function doExportTudo(){const b=new Blob([JSON.stringify(roster,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='trilhas_tesouros_personagens.json';a.click();}
+function doImportCatalogo(){const inp=document.createElement('input');inp.type='file';inp.accept='.json';inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const data=JSON.parse(ev.target.result);const items=Array.isArray(data)?data:[data];items.forEach(d=>{const{id,...rest}=d;roster.push(normChar({...rest,id:newId()}));});saveRoster();render();alert(items.length>1?items.length+' personagens importados.':'Personagem importado.');}catch(e){alert('Arquivo inválido');}};r.readAsText(f);};inp.click();}
 
 function slotSec(t,items,label){
   const mSlot=(t==='e'&&S.equip.tem_mochila)?1:0;
@@ -235,7 +302,7 @@ function tab0(){
   '</div></div></div></div>'+
 
   '<div class="sec"><div class="sec-t">Armas</div>'+
-  '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 2fr;gap:4px;margin-bottom:5px">'+
+  '<div style="display:grid;grid-template-columns:1.4fr 0.8fr 0.8fr 0.8fr 3fr;gap:4px;margin-bottom:5px">'+
   ['Nome','Ataque','Dano','Alcance','Obs.'].map(h=>'<div class="col-h">'+h+'</div>').join('')+'</div>'+
   S.armas.map((a,i)=>'<div class="arma-row">'+
     '<input class="fi" value="'+a.nome+'" oninput="updA('+i+',\'nome\',this.value)" placeholder="—"/>'+
@@ -250,7 +317,7 @@ function tab0(){
   '<div class="sec"><div class="sec-t">Contadores</div>'+
   '<div class="proj-box">'+
   (S.contadores.length?S.contadores.map((p,i)=>'<div class="proj-row">'+
-    '<span class="proj-name">'+p.nome+'</span>'+
+    '<input class="proj-name" value="'+p.nome+'" oninput="updCNome('+i+',this.value)"/>'+
     '<div class="proj-ctrl"><button class="btn sm red" onclick="adjC('+i+',-1)">−</button>'+
     '<input type="number" min="0" value="'+p.qtd+'" oninput="updC('+i+',this.value)"/>'+
     '<button class="btn sm gold" onclick="adjC('+i+',1)">+</button>'+
@@ -318,13 +385,37 @@ function tab3(){
   '<div class="sec"><div class="sec-t">Ficha</div>'+
   '<div class="actions"><button class="btn gold" onclick="doExport()">⬇ Exportar JSON</button>'+
   '<button class="btn" onclick="doImport()">⬆ Importar JSON</button>'+
-  '<button class="btn red" onclick="doReset()">⟳ Nova ficha</button></div>'+
+  '<button class="btn red" onclick="apagarPersonagem(\''+S.id+'\')">🗑 Apagar personagem</button></div>'+
   '<div class="save-ind" id="si">✓ salvo automaticamente</div></div>';}
 
+function renderCatalogo(){
+  const cards=roster.length?roster.map(c=>{
+    const nome=c.nome?c.nome:'Personagem sem nome';
+    const trilha=(c.trilha_principal&&c.trilha_principal.nome&&c.trilha_principal.nome!=='—')?c.trilha_principal.nome:null;
+    const meta='Nível '+(c.nivel||1)+(trilha?' · '+trilha:'');
+    return '<div class="char-card">'+
+      '<div class="char-card-main" onclick="openChar(\''+c.id+'\')">'+
+      '<div class="char-card-name">'+nome+'</div>'+
+      '<div class="char-card-meta">'+meta+'</div></div>'+
+      '<div class="char-card-actions">'+
+      '<button class="btn sm" title="Duplicar" onclick="event.stopPropagation();duplicarPersonagem(\''+c.id+'\')">⧉</button>'+
+      '<button class="btn sm red" title="Apagar" onclick="event.stopPropagation();apagarPersonagem(\''+c.id+'\')">✕</button>'+
+      '</div></div>';
+  }).join(''):'<div class="empty-hint" style="padding:22px 10px">Nenhum personagem salvo ainda. Crie o primeiro!</div>';
+  return '<div class="tt-top"><h1>⚔ TRILHAS &amp; TESOUROS</h1><p>MEUS PERSONAGENS</p></div>'+
+    '<div class="sec"><button class="btn gold" style="width:100%" onclick="novoPersonagem()">+ Novo Personagem</button></div>'+
+    '<div class="char-list">'+cards+'</div>'+
+    '<div class="sec"><div class="sec-t">Backup</div>'+
+    '<div class="actions"><button class="btn" onclick="doExportTudo()">⬇ Exportar tudo</button>'+
+    '<button class="btn" onclick="doImportCatalogo()">⬆ Importar</button></div></div>';}
+
 function render(){
+  const app=document.getElementById('app');
+  if(view==='catalogo'){app.innerHTML=renderCatalogo();return;}
   const tabs=['Personagem','Trilhas','Inventário','Notas'];
-  document.getElementById('app').innerHTML=
-    '<div class="tt-top"><h1>⚔ TRILHAS &amp; TESOUROS</h1><p>FICHA DE PERSONAGEM DIGITAL</p></div>'+
+  app.innerHTML=
+    '<div class="tt-top"><div class="back-row"><button class="btn sm" onclick="backToCatalogo()">← Personagens</button></div>'+
+    '<h1>⚔ TRILHAS &amp; TESOUROS</h1><p>'+(S.nome?S.nome:'FICHA DE PERSONAGEM DIGITAL')+'</p></div>'+
     '<div class="tabs">'+tabs.map((t,i)=>'<div class="tab'+(i===tab?' active':'')+'" onclick="tab='+i+';render()">'+t+'</div>').join('')+'</div>'+
     (tab===0?tab0():tab===1?tab1():tab===2?tab2():tab3());}
 render();
