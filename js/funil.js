@@ -465,6 +465,11 @@
           <div class="lines"></div>
         </section>
       </div>
+
+      <div class="card-footer">
+        <button class="btn-ghost btn-enviar-ficha" type="button">📋 Enviar para Ficha</button>
+        <a class="link-abrir-ficha" href="#" hidden>Abrir na Ficha →</a>
+      </div>
     `;
     return card;
   }
@@ -492,7 +497,72 @@
     }, delayMs);
   }
 
-  function fillCard(card, p, showRolls) {
+  // ---------- Envio para a Ficha Digital ----------
+  function personagemParaFicha(p, seed) {
+    const AT = ["FOR", "DES", "CON", "INT", "VON", "CAR"];
+    const attrs = {};
+    AT.forEach((k) => { attrs[k] = { base: p.atributos[k], atual: p.atributos[k] }; });
+    const origem = p.raceName + (p.jotunirTipo ? " (" + p.jotunirTipo + ")" : "");
+    const equipItems = [
+      { nome: p.eqItem1, qtd: 1, slots: 0 },
+      { nome: p.eqItem2, qtd: 1, slots: 0 },
+      { nome: p.eqItemG, qtd: 1, slots: 0 },
+    ];
+    return {
+      ocupacoes: p.occNomeFinal || (p.occObj && p.occObj.ocupacao) || "",
+      nivel: 0,
+      origem,
+      attrs,
+      ca: p.caBase,
+      sf: p.SF_BASE,
+      sm: p.SM_BASE,
+      pv: { v: p.pvTotal, max: p.pvTotal },
+      sorte: { v: p.sorte, max: p.sorte },
+      armas: [{
+        nome: (p.occObj && p.occObj.arma_inicial) || "",
+        ataque: "", dano: "", alcance: "",
+        obs: p.podeTerMunicao ? "Pode usar munição (2d10, se aplicável)" : "",
+      }],
+      equip: { items: equipItems, tem_mochila: false, mochila_slots: 10, mochila: [] },
+      anotacoes: "Gerado pela Forja do Funil — Selo do Destino: " + (seed || "—"),
+    };
+  }
+
+  function wireSendButton(card, p, index) {
+    const btn = card.querySelector(".btn-enviar-ficha");
+    const link = card.querySelector(".link-abrir-ficha");
+    if (!btn) return;
+
+    if (sentMap[index]) {
+      btn.textContent = "✓ Enviado para a Ficha";
+      btn.disabled = true;
+      if (link) {
+        link.href = "ficha.html?abrir=" + encodeURIComponent(sentMap[index]);
+        link.hidden = false;
+      }
+      return;
+    }
+
+    btn.onclick = () => {
+      if (!window.TT_FICHA) {
+        alert("Não consegui conectar com a Ficha Digital. Recarregue a página e tente de novo.");
+        return;
+      }
+      const seed = els.seedValue.textContent.trim();
+      const partial = personagemParaFicha(p, seed);
+      const created = TT_FICHA.addCharacter(partial);
+      sentMap[index] = created.id;
+      btn.textContent = "✓ Enviado para a Ficha";
+      btn.disabled = true;
+      if (link) {
+        link.href = "ficha.html?abrir=" + encodeURIComponent(created.id);
+        link.hidden = false;
+      }
+      ping("stamp");
+    };
+  }
+
+  function fillCard(card, p, showRolls, index) {
     const h3 = card.querySelector(".card-title h3");
     const subtitle = card.querySelector(".card-title p");
     const pvEl = card.querySelector(".card-stats .stat:nth-child(1) .stat-value");
@@ -588,12 +658,15 @@
       card.classList.remove("is-pending");
       card.classList.add("is-ready");
     }, 980);
+
+    wireSendButton(card, p, index);
   }
 
   // ---------- UX wiring ----------
   let qty = 4;
   let lastPersons = null;
   let lastQty = 4;
+  let sentMap = {}; // index -> id do personagem criado na Ficha (sobrevive a re-render, zera só em nova rolagem)
 
   // Re-render using the already generated characters (no reroll).
   // Used when toggling "Mostrar rolagens" or changing quantity after rolling.
@@ -611,17 +684,17 @@
         // keep the original staged reveal
         setTimeout(() => {
           ping("tick");
-          fillCard(card, lastPersons[i], showRolls);
+          fillCard(card, lastPersons[i], showRolls, i);
         }, i * 180);
       } else {
         // instant fill (no delays/sounds)
-        fillCardInstant(card, lastPersons[i], showRolls);
+        fillCardInstant(card, lastPersons[i], showRolls, i);
       }
     }
   }
 
   // Instant fill version of fillCard, used for re-rendering when UI toggles change.
-  function fillCardInstant(card, p, showRolls) {
+  function fillCardInstant(card, p, showRolls, index) {
     // Use the same content as fillCard, but render everything immediately.
     const h3 = card.querySelector(".card-title h3");
     const subtitle = card.querySelector(".card-title p");
@@ -731,6 +804,8 @@
 
     card.classList.remove("is-pending");
     card.classList.add("is-ready");
+
+    wireSendButton(card, p, index);
   }
   function setQty(n) {
     qty = n;
@@ -791,6 +866,7 @@
 
       lastPersons = persons;
       lastQty = qty;
+      sentMap = {};
       if (els.btnExport) els.btnExport.disabled = false;
 
       renderFromLast({ animate: true });
