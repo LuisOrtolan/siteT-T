@@ -203,18 +203,25 @@
         '</div></div>';
     }
 
+    // Traduz o motivo de uma falha do TT_SALA numa mensagem que ajuda a
+    // diagnosticar (ex: RLS negando, tabela ausente porque o schema_mesa.sql
+    // não foi rodado) sem expor jargão demais.
+    function describeFail(res, fallback) {
+      if (res.reason === 'logged-out') return 'Sua sessão expirou. Faça login de novo.';
+      if (res.reason === 'no-auth') return 'Login não configurado neste site.';
+      if (res.error && res.error.message) return fallback + ' (' + res.error.message + ')';
+      return fallback;
+    }
+
     function doCreateRoom() {
       const nomeSala = document.getElementById('ln-nomesala').value.trim();
       const nome = document.getElementById('ln-meunome1').value.trim();
       const err = document.getElementById('ln-err1');
       if (!nome) { err.textContent = 'Digite seu nome de personagem.'; return; }
       err.textContent = 'Criando...';
-      TT_SALA.createRoom(nomeSala).then(function (res) {
-        if (!res.ok) { err.textContent = 'Não deu pra criar a sala. Tente de novo.'; return; }
-        const client = TT_AUTH.getClient();
-        client.from('sala_participantes').update({ nome_exibicao: nome }).eq('sala_id', res.sala.id).eq('user_id', meuUserId).then(function () {
-          enterRoom(res.sala.id, nome);
-        });
+      TT_SALA.createRoom(nomeSala, nome).then(function (res) {
+        if (!res.ok) { console.error('Falha ao criar sala:', res); err.textContent = describeFail(res, 'Não deu pra criar a sala. Tente de novo.'); return; }
+        enterRoom(res.sala.id, nome);
       });
     }
 
@@ -226,7 +233,11 @@
       if (!nome) { err.textContent = 'Digite seu nome de personagem.'; return; }
       err.textContent = 'Entrando...';
       TT_SALA.joinRoom(codigo, nome).then(function (res) {
-        if (!res.ok) { err.textContent = res.reason === 'not-found' ? 'Sala não encontrada.' : 'Não deu pra entrar. Tente de novo.'; return; }
+        if (!res.ok) {
+          console.error('Falha ao entrar na sala:', res);
+          err.textContent = res.reason === 'not-found' ? 'Sala não encontrada. Confira o código.' : describeFail(res, 'Não deu pra entrar. Tente de novo.');
+          return;
+        }
         enterRoom(codigo, nome);
       });
     }
