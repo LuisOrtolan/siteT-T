@@ -976,6 +976,7 @@
         </style>
     <body>
         <div id="tt-auth" class="tt-auth-fixed"></div>
+        <div id="tt-gate"></div>
         <div id="app"></div>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
         <script src="../js/supabase-config.js"></script>
@@ -1595,12 +1596,12 @@
                 const tabs = ['Personagem', 'Trilhas', 'Inventário', 'Notas'];
                 app.innerHTML = '<div class="tt-top"><div class="back-row"><button class="btn sm" onclick="backToCatalogo()">← Personagens</button>' + '<span style="display:flex;align-items:center;gap:6px"><span class="save-ind-inline" id="si2"></span><button class="btn gold sm" onclick="manualSave()">💾 Salvar</button></span></div>' + '<h1>⚔ TRILHAS &amp; TESOUROS</h1><p>' + (S.nome ? S.nome : 'FICHA DE PERSONAGEM DIGITAL') + '</p></div>' + '<div class="tabs">' + tabs.map( (t, i) => '<div class="tab' + (i === tab ? ' active' : '') + '" onclick="tab=' + i + ';render()">' + t + '</div>').join('') + '</div>' + (tab === 0 ? tab0() : tab === 1 ? tab1() : tab === 2 ? tab2() : tab3());
             }
-            render();
-
+            // O acesso à Ficha exige login — nada é renderizado em #app até
+            // TT_AUTH.mountAuthGate confirmar uma sessão.
             if (window.TT_AUTH) {
-                TT_AUTH.mountWidget('#tt-auth');
-                TT_AUTH.onChange(function (session) {
-                    if (!session) return;
+                TT_AUTH.mountUserBadge('#tt-auth');
+                TT_AUTH.mountAuthGate('#tt-gate', function () {
+                    render();
                     TT_FICHA.mergeWithCloud(roster).then(function (merged) {
                         roster = merged;
                         if (curId && !roster.some(c => c.id === curId)) backToCatalogo();
