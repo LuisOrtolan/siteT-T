@@ -26,19 +26,26 @@ window.TT_SALA = (function () {
 
   // --- Ciclo de vida da sala ---
 
-  function createRoom(nome) {
+  function createRoom(nome, nomeExibicao) {
     return withSession(function (client, session) {
       const id = newRoomCode();
       const uid = session.user.id;
       return client.from('salas').insert({ id: id, nome: nome || 'Mesa sem nome', gm_id: uid })
         .then(function (res) {
-          if (res.error) return { ok: false, reason: 'error', error: res.error };
-          return Promise.all([
-            client.from('sala_participantes').insert({ sala_id: id, user_id: uid, nome_exibicao: 'Mestre', is_gm: true }),
-            client.from('sala_anotacoes').insert({ sala_id: id, conteudo: '' })
-          ]).then(function () {
-            return { ok: true, sala: { id: id, nome: nome, gm_id: uid } };
-          });
+          if (res.error) { console.error('Erro ao criar sala:', res.error); return { ok: false, reason: 'error', error: res.error }; }
+          // A política da sala_anotacoes exige que o participante já exista,
+          // então essa inserção precisa terminar ANTES da de anotações — não
+          // pode rodar em paralelo (Promise.all corre risco de ordem).
+          return client.from('sala_participantes')
+            .insert({ sala_id: id, user_id: uid, nome_exibicao: nomeExibicao || 'Mestre', is_gm: true })
+            .then(function (pres) {
+              if (pres.error) { console.error('Erro ao registrar participante:', pres.error); return { ok: false, reason: 'error', error: pres.error }; }
+              return client.from('sala_anotacoes').insert({ sala_id: id, conteudo: '' })
+                .then(function (nres) {
+                  if (nres.error) { console.error('Erro ao criar anotações da sala:', nres.error); return { ok: false, reason: 'error', error: nres.error }; }
+                  return { ok: true, sala: { id: id, nome: nome, gm_id: uid } };
+                });
+            });
         });
     });
   }
@@ -47,13 +54,14 @@ window.TT_SALA = (function () {
     return withSession(function (client, session) {
       const uid = session.user.id;
       return client.from('salas').select('*').eq('id', salaId).maybeSingle().then(function (res) {
-        if (res.error || !res.data) return { ok: false, reason: 'not-found' };
+        if (res.error) { console.error('Erro ao buscar sala:', res.error); return { ok: false, reason: 'error', error: res.error }; }
+        if (!res.data) return { ok: false, reason: 'not-found' };
         const sala = res.data;
         return client.from('sala_participantes')
           .upsert({ sala_id: salaId, user_id: uid, nome_exibicao: nomeExibicao || 'Aventureiro' }, { onConflict: 'sala_id,user_id' })
           .select().maybeSingle()
           .then(function (pres) {
-            if (pres.error) return { ok: false, reason: 'error', error: pres.error };
+            if (pres.error) { console.error('Erro ao entrar na sala:', pres.error); return { ok: false, reason: 'error', error: pres.error }; }
             return { ok: true, sala: sala, participante: pres.data };
           });
       });
