@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mesa Virtual — Trilhas &amp; Tesouros</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body { height: 100% }
+    body {
+      background: #0f1014;
+      color: #f5f5f7;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+    }
+    input, select, textarea, button { font-family: inherit }
+
+    #app { height: 100vh; display: flex; flex-direction: column }
+
+    .tt-auth-fixed {
+      position: fixed; top: 8px; right: 8px; z-index: 200;
+      background: #181a20; border: 1px solid #2a2d35; border-radius: 9px;
+      padding: 6px 8px; max-width: 220px;
+    }
+    .tt-auth-form { display: flex; gap: 4px }
+    .tt-auth-form input {
+      background: #0f1014; border: 1px solid #2a2d35; border-radius: 5px;
+      padding: 4px 6px; color: #f5f5f7; font-size: 11px; width: 120px;
+    }
+    .tt-auth-msg { font-size: 10px; color: #8a8fa0; margin-top: 3px }
+    .tt-auth-email { font-size: 11px; color: #b0b3c0; margin-right: 6px }
+    .btn-secondary { background: #c7a25a15; border-color: #c7a25a40; color: #c7a25a }
+    .btn-secondary:hover { background: #c7a25a25 }
+
+    .btn {
+      background: #1f2230; border: 1px solid #2a2d35; border-radius: 6px;
+      color: #f5f5f7; font-size: 12px; padding: 6px 10px; cursor: pointer;
+      transition: background .15s;
+    }
+    .btn:hover { background: #2a2d3e }
+    .btn.gold { background: #c7a25a15; border-color: #c7a25a40; color: #c7a25a }
+    .btn.gold:hover { background: #c7a25a25 }
+    .btn.on { background: #c7a25a30; border-color: #c7a25a; color: #c7a25a }
+    .btn.red { background: #d0606018; border-color: #d0606040; color: #d06060 }
+    .btn.red:hover { background: #d0606028 }
+    .btn:disabled { opacity: .4; cursor: default }
+
+    /* ---- Landing ---- */
+    .landing-wrap {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 16px; overflow-y: auto;
+    }
+    .landing-card { max-width: 420px; width: 100%; }
+    .tt-top { text-align: center; padding: 8px 0 18px }
+    .tt-top h1 { font-size: 18px; color: #c7a25a; letter-spacing: .08em; font-weight: normal }
+    .tt-top p { font-size: 11px; color: #5a5f70; margin-top: 4px }
+    .sec {
+      background: #181a20; border: 1px solid #2a2d35; border-radius: 9px;
+      padding: 14px; margin-bottom: 12px;
+    }
+    .sec-t { font-size: 12px; color: #c7a25a; margin-bottom: 8px; letter-spacing: .04em }
+    .fi {
+      width: 100%; background: #0f1014; border: 1px solid #2a2d35; border-radius: 6px;
+      padding: 8px 10px; color: #f5f5f7; font-size: 13px; margin-bottom: 8px;
+    }
+    .fi:focus { outline: none; border-color: #c7a25a60 }
+    .hint { font-size: 10px; color: #5a5f70; margin-top: 4px }
+    .err { font-size: 11px; color: #d06060; margin-top: 4px }
+
+    /* ---- Room layout ---- */
+    .room { flex: 1; display: flex; min-height: 0 }
+    .room-main { flex: 1; display: flex; flex-direction: column; min-width: 0 }
+    .room-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 8px 12px; border-bottom: 1px solid #1f2230; flex-wrap: wrap;
+    }
+    .room-header h1 { font-size: 14px; color: #c7a25a; font-weight: normal }
+    .room-code { font-size: 11px; color: #6b7080 }
+    .room-code b { color: #b0b3c0; letter-spacing: .1em }
+
+    .toolbar {
+      display: flex; align-items: center; gap: 6px; padding: 6px 10px;
+      border-bottom: 1px solid #1f2230; flex-wrap: wrap;
+    }
+    .toolbar input[type=color] {
+      width: 30px; height: 30px; border: 1px solid #2a2d35; border-radius: 6px;
+      background: none; padding: 0; cursor: pointer;
+    }
+    .toolbar input[type=range] { width: 80px }
+    .toolbar .lbl { font-size: 10px; color: #6b7080 }
+
+    .board-wrap { flex: 1; position: relative; overflow: hidden; background: #08090c }
+    .board-grid { position: absolute; inset: 0; }
+    .board-canvas { position: absolute; inset: 0; touch-action: none; cursor: crosshair }
+    .board-canvas.erase-mode { cursor: not-allowed }
+
+    .sidebar {
+      width: 320px; flex-shrink: 0; border-left: 1px solid #1f2230;
+      display: flex; flex-direction: column; overflow-y: auto;
+    }
+    .sidebar .sec { margin: 10px; margin-bottom: 0 }
+    .sidebar .sec:last-child { margin-bottom: 10px }
+
+    .notes-area {
+      width: 100%; min-height: 90px; background: #0f1014; border: 1px solid #2a2d35;
+      border-radius: 6px; padding: 8px; color: #f5f5f7; font-size: 12px; resize: vertical;
+    }
+    .notes-area:focus { outline: none; border-color: #c7a25a60 }
+
+    .dice-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px }
+    .dice-presets .btn { padding: 8px 4px; text-align: center }
+    .formula-row { display: flex; gap: 6px }
+    .formula-row input { flex: 1 }
+
+    .roll-log { max-height: 220px; overflow-y: auto; margin-top: 8px }
+    .roll-item { padding: 6px 0; border-bottom: 1px solid #1a1d24; font-size: 11px }
+    .roll-item:last-child { border-bottom: none }
+    .roll-item .who { color: #c7a25a }
+    .roll-item .formula { color: #6b7080 }
+    .roll-item .total { float: right; font-weight: bold; color: #f5f5f7 }
+    .roll-item .dice-detail { color: #5a5f70; font-size: 10px }
+
+    .participant-list { display: flex; flex-direction: column; gap: 4px }
+    .participant { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #b0b3c0 }
+    .participant .dot { width: 8px; height: 8px; border-radius: 50%; background: #3a8a3a; flex-shrink: 0 }
+    .participant .gm-tag { font-size: 9px; color: #c7a25a; border: 1px solid #c7a25a40; border-radius: 4px; padding: 0 4px }
+
+    @media (max-width: 760px) {
+      .room { flex-direction: column }
+      .sidebar { width: 100%; border-left: none; border-top: 1px solid #1f2230; max-height: 45vh }
+      .board-wrap { flex: 1 1 40vh }
+    }
+  </style>
+</head>
+<body>
+  <div id="tt-auth" class="tt-auth-fixed"></div>
+  <div id="app"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/dice.js"></script>
+  <script src="../js/sala-store.js"></script>
+  <script>
+    // ---------- Estado ----------
+    let view = 'landing';
+    let sala = null;
+    let meuUserId = null;
+    let meuNome = '';
+    let souGM = false;
+    let desenhos = [];
+    let rolagens = [];
+    let anotacoesTexto = '';
+    let notesTimer = null;
+    let participantes = {};
+    let channel = null;
+
+    let tool = 'traco';
+    let corAtual = '#c7a25a';
+    let espessuraAtual = 4;
+    let desenhando = false;
+    let pontosAtuais = [];
+    let previewEl = null;
+
+    const app = document.getElementById('app');
+
+    // ---------- Boot ----------
+    function boot() {
+      if (window.TT_AUTH) TT_AUTH.mountWidget('#tt-auth');
+      renderLanding();
+      const codigoUrl = new URLSearchParams(location.search).get('sala');
+      if (window.TT_AUTH) {
+        TT_AUTH.getSession().then(function (session) {
+          if (session) { meuUserId = session.user.id; }
+          if (view === 'landing') renderLanding(codigoUrl || '');
+        });
+        TT_AUTH.onChange(function (session) {
+          meuUserId = session ? session.user.id : null;
+          if (view === 'landing') renderLanding();
+        });
+      }
+    }
+
+    // ---------- Landing ----------
+    function renderLanding(codigoPreenchido) {
+      view = 'landing';
+      const logado = !!meuUserId;
+      app.innerHTML =
+        '<div class="landing-wrap"><div class="landing-card">' +
+        '<div class="tt-top"><h1>&#9876; MESA VIRTUAL</h1><p>Quadro colaborativo, anotações e dados — em tempo real</p></div>' +
+        (!logado
+          ? '<div class="sec"><div class="sec-t">Entre para continuar</div><p class="hint">Faça login (canto superior direito) pra criar ou entrar numa sala.</p></div>'
+          : '<div class="sec"><div class="sec-t">Criar sala</div>' +
+            '<input class="fi" id="ln-nomesala" placeholder="Nome da sala (ex: Caverna do Dragão)" maxlength="60">' +
+            '<input class="fi" id="ln-meunome1" placeholder="Seu nome de personagem" maxlength="40">' +
+            '<button class="btn gold" style="width:100%" onclick="doCreateRoom()">Criar sala</button>' +
+            '<div class="err" id="ln-err1"></div></div>' +
+            '<div class="sec"><div class="sec-t">Entrar com código</div>' +
+            '<input class="fi" id="ln-codigo" placeholder="Código da sala" maxlength="6" style="text-transform:uppercase" value="' + (codigoPreenchido || '') + '">' +
+            '<input class="fi" id="ln-meunome2" placeholder="Seu nome de personagem" maxlength="40">' +
+            '<button class="btn gold" style="width:100%" onclick="doJoinRoom()">Entrar</button>' +
+            '<div class="err" id="ln-err2"></div></div>') +
+        '</div></div>';
+    }
+
+    function doCreateRoom() {
+      const nomeSala = document.getElementById('ln-nomesala').value.trim();
+      const nome = document.getElementById('ln-meunome1').value.trim();
+      const err = document.getElementById('ln-err1');
+      if (!nome) { err.textContent = 'Digite seu nome de personagem.'; return; }
+      err.textContent = 'Criando...';
+      TT_SALA.createRoom(nomeSala).then(function (res) {
+        if (!res.ok) { err.textContent = 'Não deu pra criar a sala. Tente de novo.'; return; }
+        const client = TT_AUTH.getClient();
+        client.from('sala_participantes').update({ nome_exibicao: nome }).eq('sala_id', res.sala.id).eq('user_id', meuUserId).then(function () {
+          enterRoom(res.sala.id, nome);
+        });
+      });
+    }
+
+    function doJoinRoom() {
+      const codigo = document.getElementById('ln-codigo').value.trim().toUpperCase();
+      const nome = document.getElementById('ln-meunome2').value.trim();
+      const err = document.getElementById('ln-err2');
+      if (!codigo) { err.textContent = 'Digite o código da sala.'; return; }
+      if (!nome) { err.textContent = 'Digite seu nome de personagem.'; return; }
+      err.textContent = 'Entrando...';
+      TT_SALA.joinRoom(codigo, nome).then(function (res) {
+        if (!res.ok) { err.textContent = res.reason === 'not-found' ? 'Sala não encontrada.' : 'Não deu pra entrar. Tente de novo.'; return; }
+        enterRoom(codigo, nome);
+      });
+    }
+
+    function enterRoom(salaId, nome) {
+      meuNome = nome;
+      Promise.all([
+        TT_SALA.getRoom(salaId),
+        TT_SALA.listDrawings(salaId),
+        TT_SALA.listRecentRolls(salaId, 30),
+        TT_SALA.getNotes(salaId)
+      ]).then(function (r) {
+        sala = r[0];
+        desenhos = r[1];
+        rolagens = r[2];
+        anotacoesTexto = r[3];
+        souGM = sala && sala.gm_id === meuUserId;
+        renderRoom();
+        channel = TT_SALA.connect(salaId, meuNome, {
+          onDrawAdd: handleDrawAdd,
+          onDrawRemove: handleDrawRemove,
+          onDrawClear: handleDrawClear,
+          onRoll: handleRollBroadcast,
+          onNotesUpdate: handleNotesBroadcast,
+          onPresenceSync: handlePresenceSync
+        });
+      });
+    }
+
+    function leaveRoom() {
+      if (channel) TT_SALA.leave(channel);
+      channel = null;
+      sala = null; desenhos = []; rolagens = []; participantes = {};
+      history.replaceState(null, '', location.pathname);
+      renderLanding();
+    }
+
+    // ---------- Room shell ----------
+    function renderRoom() {
+      view = 'room';
+      const link = location.origin + location.pathname + '?sala=' + sala.id;
+      app.innerHTML =
+        '<div class="room">' +
+          '<div class="room-main">' +
+            '<div class="room-header">' +
+              '<div><h1>' + (sala.nome || 'Mesa sem nome') + '</h1>' +
+                '<span class="room-code">Código: <b>' + sala.id + '</b></span></div>' +
+              '<div style="display:flex;gap:6px">' +
+                '<button class="btn" onclick="copyLink()">&#128279; Copiar link</button>' +
+                '<button class="btn red" onclick="leaveRoom()">Sair</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="toolbar">' +
+              toolBtn('traco', '&#9998; Caneta') + toolBtn('linha', '&#8211; Linha') +
+              toolBtn('retangulo', '&#9633; Retângulo') + toolBtn('circulo', '&#9711; Círculo') +
+              toolBtn('apagar', '&#10060; Apagar') +
+              '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
+              '<span class="lbl">Espessura</span><input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
+              (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
+              '<span class="lbl" style="margin-left:auto">Grade:</span>' +
+              '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
+            '</div>' +
+            '<div class="board-wrap" id="board-wrap">' +
+              '<div class="board-grid" id="board-grid"></div>' +
+              '<canvas class="board-canvas" id="board-canvas"></canvas>' +
+            '</div>' +
+          '</div>' +
+          '<div class="sidebar">' +
+            '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
+              '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="Anotações da aventura, visíveis e editáveis por todo mundo...">' + escapeHtml(anotacoesTexto) + '</textarea></div>' +
+            '<div class="sec"><div class="sec-t">Dados</div>' +
+              '<div class="dice-presets">' +
+                ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd66', '3d6'].map(function (n) {
+                  return '<button class="btn gold" onclick="rollPresetClick(\'' + n + '\')">' + n + '</button>';
+                }).join('') +
+              '</div>' +
+              '<div class="formula-row"><input class="fi" id="formula-input" placeholder="ex: 2d6+3" style="margin-bottom:0" onkeydown="if(event.key===\'Enter\')rollFormulaClick()">' +
+              '<button class="btn gold" onclick="rollFormulaClick()">Rolar</button></div>' +
+              '<div class="err" id="formula-err"></div>' +
+              '<div class="roll-log" id="roll-log"></div>' +
+            '</div>' +
+            '<div class="sec"><div class="sec-t">Participantes</div><div class="participant-list" id="participant-list"></div></div>' +
+          '</div>' +
+        '</div>';
+
+      renderRollLog();
+      renderParticipants();
+      initCanvas();
+    }
+
+    function toolBtn(name, label) {
+      return '<button class="btn' + (tool === name ? ' on' : '') + '" onclick="setTool(\'' + name + '\')">' + label + '</button>';
+    }
+    function setTool(name) { tool = name; renderRoom(); }
+    function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+    function copyLink() {
+      const link = location.origin + location.pathname + '?sala=' + sala.id;
+      history.replaceState(null, '', link);
+      if (navigator.clipboard) navigator.clipboard.writeText(link).catch(function () {});
+    }
+
+    function toggleGrid() {
+      sala.grade_ativa = !sala.grade_ativa;
+      TT_SALA.updateGrid(sala.id, { ativa: sala.grade_ativa });
+      renderRoom();
+    }
+
+    // ---------- Canvas / desenho ----------
+    function initCanvas() {
+      const wrap = document.getElementById('board-wrap');
+      const canvas = document.getElementById('board-canvas');
+      const grid = document.getElementById('board-grid');
+      const g = sala.grade_tamanho || 50;
+      grid.style.backgroundImage =
+        'linear-gradient(to right, #2a2d3550 1px, transparent 1px),' +
+        'linear-gradient(to bottom, #2a2d3550 1px, transparent 1px)';
+      grid.style.backgroundSize = g + 'px ' + g + 'px';
+      grid.style.display = sala.grade_ativa ? 'block' : 'none';
+
+      function resize() {
+        canvas.width = wrap.clientWidth;
+        canvas.height = wrap.clientHeight;
+        redrawCanvas();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      canvas.classList.toggle('erase-mode', tool === 'apagar');
+      canvas.addEventListener('pointerdown', onPointerDown);
+      canvas.addEventListener('pointermove', onPointerMove);
+      canvas.addEventListener('pointerup', onPointerUp);
+      canvas.addEventListener('pointercancel', onPointerUp);
+    }
+
+    function canvasEl() { return document.getElementById('board-canvas'); }
+
+    function relPoint(evt) {
+      const c = canvasEl();
+      const r = c.getBoundingClientRect();
+      return { x: (evt.clientX - r.left) / r.width, y: (evt.clientY - r.top) / r.height };
+    }
+
+    function onPointerDown(evt) {
+      const p = relPoint(evt);
+      if (tool === 'apagar') {
+        const hit = hitTest(p);
+        if (hit) removeDrawingLocal(hit.id, true);
+        return;
+      }
+      desenhando = true;
+      canvasEl().setPointerCapture(evt.pointerId);
+      pontosAtuais = [p];
+      previewEl = { tipo: tool, pontos: [p, p], cor: corAtual, espessura: espessuraAtual };
+      redrawCanvas();
+    }
+
+    function onPointerMove(evt) {
+      if (!desenhando) return;
+      const p = relPoint(evt);
+      if (tool === 'traco') {
+        pontosAtuais.push(p);
+        previewEl = { tipo: 'traco', pontos: pontosAtuais, cor: corAtual, espessura: espessuraAtual };
+      } else {
+        previewEl = { tipo: tool, pontos: [pontosAtuais[0], p], cor: corAtual, espessura: espessuraAtual };
+      }
+      redrawCanvas();
+    }
+
+    function onPointerUp() {
+      if (!desenhando) return;
+      desenhando = false;
+      const finalEl = previewEl;
+      previewEl = null;
+      if (!finalEl) return;
+      TT_SALA.addDrawing(sala.id, finalEl).then(function (res) {
+        if (!res.ok) return;
+        desenhos.push(res.desenho);
+        redrawCanvas();
+        TT_SALA.broadcastDrawAdd(channel, res.desenho);
+      });
+    }
+
+    function removeDrawingLocal(id, sendRemote) {
+      desenhos = desenhos.filter(function (d) { return d.id !== id; });
+      redrawCanvas();
+      if (sendRemote) {
+        TT_SALA.removeDrawing(sala.id, id);
+        TT_SALA.broadcastDrawRemove(channel, id);
+      }
+    }
+
+    function doClearAll() {
+      if (!confirm('Apagar tudo que está desenhado nesta sala?')) return;
+      desenhos = [];
+      redrawCanvas();
+      TT_SALA.clearDrawings(sala.id);
+      TT_SALA.broadcastDrawClear(channel);
+    }
+
+    function redrawCanvas() {
+      const c = canvasEl();
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+      desenhos.forEach(function (d) { drawElement(ctx, d, c.width, c.height); });
+      if (previewEl) drawElement(ctx, previewEl, c.width, c.height);
+    }
+
+    function drawElement(ctx, d, w, h) {
+      const pts = d.pontos.map(function (p) { return { x: p.x * w, y: p.y * h }; });
+      ctx.strokeStyle = d.cor; ctx.fillStyle = d.cor;
+      ctx.lineWidth = d.espessura; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      if (d.tipo === 'traco') {
+        if (pts.length === 1) { ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, d.espessura / 2, 0, Math.PI * 2); ctx.fill(); return; }
+        ctx.beginPath();
+        pts.forEach(function (p, i) { i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+        ctx.stroke();
+      } else if (d.tipo === 'linha') {
+        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y); ctx.stroke();
+      } else if (d.tipo === 'retangulo') {
+        const x = Math.min(pts[0].x, pts[1].x), y = Math.min(pts[0].y, pts[1].y);
+        ctx.strokeRect(x, y, Math.abs(pts[1].x - pts[0].x), Math.abs(pts[1].y - pts[0].y));
+      } else if (d.tipo === 'circulo') {
+        const r = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, r, 0, Math.PI * 2); ctx.stroke();
+      }
+    }
+
+    // Pontos (fração) que compõem o "contorno" de um elemento, pra hit-test do apagador.
+    function outlinePoints(d) {
+      if (d.tipo === 'traco' || d.tipo === 'linha') return d.pontos;
+      if (d.tipo === 'retangulo') {
+        const [a, b] = d.pontos;
+        return [{ x: a.x, y: a.y }, { x: b.x, y: a.y }, { x: b.x, y: b.y }, { x: a.x, y: b.y }, { x: a.x, y: a.y }];
+      }
+      if (d.tipo === 'circulo') {
+        const [c0, edge] = d.pontos;
+        const r = Math.hypot(edge.x - c0.x, edge.y - c0.y);
+        const pts = [];
+        for (let i = 0; i <= 24; i++) {
+          const ang = (i / 24) * Math.PI * 2;
+          pts.push({ x: c0.x + r * Math.cos(ang), y: c0.y + r * Math.sin(ang) });
+        }
+        return pts;
+      }
+      return d.pontos;
+    }
+
+    function distToSegment(p, a, b) {
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const len2 = dx * dx + dy * dy;
+      let t = len2 ? ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const cx = a.x + t * dx, cy = a.y + t * dy;
+      return Math.hypot(p.x - cx, p.y - cy);
+    }
+
+    function hitTest(p) {
+      const c = canvasEl();
+      const thresholdFrac = 8 / Math.max(c.width, c.height);
+      let best = null, bestDist = Infinity;
+      desenhos.forEach(function (d) {
+        const pts = outlinePoints(d);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const dist = distToSegment(p, pts[i], pts[i + 1]);
+          if (dist < bestDist) { bestDist = dist; best = d; }
+        }
+        if (pts.length === 1) {
+          const dist = Math.hypot(p.x - pts[0].x, p.y - pts[0].y);
+          if (dist < bestDist) { bestDist = dist; best = d; }
+        }
+      });
+      return bestDist <= thresholdFrac + (best ? best.espessura / Math.max(c.width, c.height) : 0) ? best : null;
+    }
+
+    function handleDrawAdd(d) { desenhos.push(d); redrawCanvas(); }
+    function handleDrawRemove(id) { desenhos = desenhos.filter(function (d) { return d.id !== id; }); redrawCanvas(); }
+    function handleDrawClear() { desenhos = []; redrawCanvas(); }
+
+    // ---------- Anotações ----------
+    function onNotesInput() {
+      const val = document.getElementById('notes-area').value;
+      anotacoesTexto = val;
+      clearTimeout(notesTimer);
+      notesTimer = setTimeout(function () {
+        TT_SALA.saveNotes(sala.id, val);
+        TT_SALA.broadcastNotes(channel, val);
+      }, 1500);
+    }
+    function handleNotesBroadcast(conteudo) {
+      anotacoesTexto = conteudo;
+      const el = document.getElementById('notes-area');
+      if (el && document.activeElement !== el) el.value = conteudo;
+    }
+
+    // ---------- Dados ----------
+    function rollPresetClick(nome) { handleRollResult(TT_DICE.rollPreset(nome)); }
+    function rollFormulaClick() {
+      const input = document.getElementById('formula-input');
+      const err = document.getElementById('formula-err');
+      const r = TT_DICE.rollFormula(input.value);
+      if (r.error) { err.textContent = r.error; return; }
+      err.textContent = '';
+      input.value = '';
+      handleRollResult(r);
+    }
+    function handleRollResult(resultado) {
+      TT_SALA.logRoll(sala.id, meuNome, resultado).then(function (res) {
+        if (!res.ok) return;
+        rolagens.push(res.rolagem);
+        renderRollLog();
+        TT_SALA.broadcastRoll(channel, res.rolagem);
+      });
+    }
+    function handleRollBroadcast(rolagem) { rolagens.push(rolagem); renderRollLog(); }
+
+    function renderRollLog() {
+      const el = document.getElementById('roll-log');
+      if (!el) return;
+      const items = rolagens.slice().reverse().map(function (r) {
+        const detalhe = (r.resultado && r.resultado.dice) ? r.resultado.dice.join(', ') : '';
+        return '<div class="roll-item"><span class="total">' + r.total + '</span>' +
+          '<span class="who">' + escapeHtml(r.nome_exibicao) + '</span> · <span class="formula">' + escapeHtml(r.formula) + '</span>' +
+          (detalhe ? '<div class="dice-detail">[' + detalhe + ']</div>' : '') + '</div>';
+      }).join('');
+      el.innerHTML = items || '<p class="hint">Nenhuma rolagem ainda.</p>';
+    }
+
+    // ---------- Participantes (Presence) ----------
+    function handlePresenceSync(state) {
+      participantes = {};
+      Object.keys(state).forEach(function (key) {
+        (state[key] || []).forEach(function (meta) {
+          participantes[meta.user_id || key] = meta.nome_exibicao || '?';
+        });
+      });
+      renderParticipants();
+    }
+    function renderParticipants() {
+      const el = document.getElementById('participant-list');
+      if (!el) return;
+      const ids = Object.keys(participantes);
+      if (!ids.length) { el.innerHTML = '<p class="hint">Só você por aqui.</p>'; return; }
+      el.innerHTML = ids.map(function (id) {
+        const isGm = id === (sala && sala.gm_id);
+        return '<div class="participant"><span class="dot"></span>' + escapeHtml(participantes[id]) + (isGm ? '<span class="gm-tag">MESTRE</span>' : '') + '</div>';
+      }).join('');
+    }
+
+    boot();
+  </script>
+</body>
+</html>
