@@ -866,8 +866,16 @@
             }
 
             .back-row {
-                text-align: left;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
                 margin-bottom: 6px
+            }
+
+            .save-ind-inline {
+                font-size: 10px;
+                color: #6b7080
             }
 
             .char-list {
@@ -1094,6 +1102,25 @@
             };
             function saveRoster() {
                 TT_FICHA.saveRoster(roster);
+            }
+            function manualSave() {
+                saveRoster();
+                const el = document.getElementById('si2');
+                if (!el) return;
+                if (!window.TT_AUTH || !TT_AUTH.getClient()) {
+                    el.textContent = '✓ Salvo neste navegador';
+                    return;
+                }
+                el.textContent = 'Sincronizando…';
+                TT_AUTH.getSession().then(function (session) {
+                    if (!session) {
+                        el.textContent = '✓ Salvo neste navegador (faça login para sincronizar)';
+                        return;
+                    }
+                    TT_FICHA.flushCloudPush(roster).then(function (res) {
+                        el.textContent = (res && res.ok) ? '✓ Sincronizado com a nuvem' : '⚠ Falha ao sincronizar, tentando de novo em breve…';
+                    });
+                });
             }
             function save() {
                 saveRoster();
@@ -1566,7 +1593,7 @@
                     return;
                 }
                 const tabs = ['Personagem', 'Trilhas', 'Inventário', 'Notas'];
-                app.innerHTML = '<div class="tt-top"><div class="back-row"><button class="btn sm" onclick="backToCatalogo()">← Personagens</button></div>' + '<h1>⚔ TRILHAS &amp; TESOUROS</h1><p>' + (S.nome ? S.nome : 'FICHA DE PERSONAGEM DIGITAL') + '</p></div>' + '<div class="tabs">' + tabs.map( (t, i) => '<div class="tab' + (i === tab ? ' active' : '') + '" onclick="tab=' + i + ';render()">' + t + '</div>').join('') + '</div>' + (tab === 0 ? tab0() : tab === 1 ? tab1() : tab === 2 ? tab2() : tab3());
+                app.innerHTML = '<div class="tt-top"><div class="back-row"><button class="btn sm" onclick="backToCatalogo()">← Personagens</button>' + '<span style="display:flex;align-items:center;gap:6px"><span class="save-ind-inline" id="si2"></span><button class="btn gold sm" onclick="manualSave()">💾 Salvar</button></span></div>' + '<h1>⚔ TRILHAS &amp; TESOUROS</h1><p>' + (S.nome ? S.nome : 'FICHA DE PERSONAGEM DIGITAL') + '</p></div>' + '<div class="tabs">' + tabs.map( (t, i) => '<div class="tab' + (i === tab ? ' active' : '') + '" onclick="tab=' + i + ';render()">' + t + '</div>').join('') + '</div>' + (tab === 0 ? tab0() : tab === 1 ? tab1() : tab === 2 ? tab2() : tab3());
             }
             render();
 
