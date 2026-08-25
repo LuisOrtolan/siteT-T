@@ -134,6 +134,7 @@
 </head>
 <body>
   <div id="tt-auth" class="tt-auth-fixed"></div>
+  <div id="tt-gate"></div>
   <div id="app"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -165,41 +166,34 @@
     const app = document.getElementById('app');
 
     // ---------- Boot ----------
+    // O acesso à Mesa Virtual exige login — nada é renderizado em #app até
+    // TT_AUTH.mountAuthGate confirmar uma sessão.
     function boot() {
-      if (window.TT_AUTH) TT_AUTH.mountWidget('#tt-auth');
-      renderLanding();
+      if (!window.TT_AUTH) return;
+      TT_AUTH.mountUserBadge('#tt-auth');
       const codigoUrl = new URLSearchParams(location.search).get('sala');
-      if (window.TT_AUTH) {
-        TT_AUTH.getSession().then(function (session) {
-          if (session) { meuUserId = session.user.id; }
-          if (view === 'landing') renderLanding(codigoUrl || '');
-        });
-        TT_AUTH.onChange(function (session) {
-          meuUserId = session ? session.user.id : null;
-          if (view === 'landing') renderLanding();
-        });
-      }
+      TT_AUTH.mountAuthGate('#tt-gate', function (session) {
+        meuUserId = session.user.id;
+        if (view === 'landing') renderLanding(codigoUrl || '');
+      });
     }
 
     // ---------- Landing ----------
     function renderLanding(codigoPreenchido) {
       view = 'landing';
-      const logado = !!meuUserId;
       app.innerHTML =
         '<div class="landing-wrap"><div class="landing-card">' +
         '<div class="tt-top"><h1>&#9876; MESA VIRTUAL</h1><p>Quadro colaborativo, anotações e dados — em tempo real</p></div>' +
-        (!logado
-          ? '<div class="sec"><div class="sec-t">Entre para continuar</div><p class="hint">Faça login (canto superior direito) pra criar ou entrar numa sala.</p></div>'
-          : '<div class="sec"><div class="sec-t">Criar sala</div>' +
-            '<input class="fi" id="ln-nomesala" placeholder="Nome da sala (ex: Caverna do Dragão)" maxlength="60">' +
-            '<input class="fi" id="ln-meunome1" placeholder="Seu nome de personagem" maxlength="40">' +
-            '<button class="btn gold" style="width:100%" onclick="doCreateRoom()">Criar sala</button>' +
-            '<div class="err" id="ln-err1"></div></div>' +
-            '<div class="sec"><div class="sec-t">Entrar com código</div>' +
-            '<input class="fi" id="ln-codigo" placeholder="Código da sala" maxlength="6" style="text-transform:uppercase" value="' + (codigoPreenchido || '') + '">' +
-            '<input class="fi" id="ln-meunome2" placeholder="Seu nome de personagem" maxlength="40">' +
-            '<button class="btn gold" style="width:100%" onclick="doJoinRoom()">Entrar</button>' +
-            '<div class="err" id="ln-err2"></div></div>') +
+        '<div class="sec"><div class="sec-t">Criar sala</div>' +
+        '<input class="fi" id="ln-nomesala" placeholder="Nome da sala (ex: Caverna do Dragão)" maxlength="60">' +
+        '<input class="fi" id="ln-meunome1" placeholder="Seu nome de personagem" maxlength="40">' +
+        '<button class="btn gold" style="width:100%" onclick="doCreateRoom()">Criar sala</button>' +
+        '<div class="err" id="ln-err1"></div></div>' +
+        '<div class="sec"><div class="sec-t">Entrar com código</div>' +
+        '<input class="fi" id="ln-codigo" placeholder="Código da sala" maxlength="6" style="text-transform:uppercase" value="' + (codigoPreenchido || '') + '">' +
+        '<input class="fi" id="ln-meunome2" placeholder="Seu nome de personagem" maxlength="40">' +
+        '<button class="btn gold" style="width:100%" onclick="doJoinRoom()">Entrar</button>' +
+        '<div class="err" id="ln-err2"></div></div>' +
         '</div></div>';
     }
 
