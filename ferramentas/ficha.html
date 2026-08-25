@@ -327,6 +327,55 @@
                 font-weight: bold
             }
 
+            .btn-secondary {
+                background: #c7a25a15;
+                border-color: #c7a25a40;
+                color: #c7a25a
+            }
+
+            .btn-secondary:hover {
+                background: #c7a25a25
+            }
+
+            .tt-auth-fixed {
+                position: fixed;
+                top: 8px;
+                right: 8px;
+                z-index: 100;
+                background: #181a20;
+                border: 1px solid #2a2d35;
+                border-radius: 9px;
+                padding: 6px 8px;
+                max-width: 220px
+            }
+
+            .tt-auth-form {
+                display: flex;
+                gap: 4px
+            }
+
+            .tt-auth-form input {
+                background: #0f1014;
+                border: 1px solid #2a2d35;
+                border-radius: 5px;
+                padding: 4px 6px;
+                color: #f5f5f7;
+                font-size: 11px;
+                width: 120px
+            }
+
+            .tt-auth-msg {
+                font-size: 10px;
+                color: #8a8fa0;
+                margin-top: 3px
+            }
+
+            .tt-auth-email {
+                font-size: 11px;
+                color: #b0b3c0;
+                margin-right: 6px
+            }
+
             .toggle {
                 width: 36px;
                 height: 20px;
@@ -918,7 +967,11 @@
             }
         </style>
     <body>
+        <div id="tt-auth" class="tt-auth-fixed"></div>
         <div id="app"></div>
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+        <script src="../js/supabase-config.js"></script>
+        <script src="../js/auth.js"></script>
         <script src="../js/ficha-store.js"></script>
         <script>
             const TL = TT_FICHA.TL;
@@ -1516,6 +1569,18 @@
                 app.innerHTML = '<div class="tt-top"><div class="back-row"><button class="btn sm" onclick="backToCatalogo()">← Personagens</button></div>' + '<h1>⚔ TRILHAS &amp; TESOUROS</h1><p>' + (S.nome ? S.nome : 'FICHA DE PERSONAGEM DIGITAL') + '</p></div>' + '<div class="tabs">' + tabs.map( (t, i) => '<div class="tab' + (i === tab ? ' active' : '') + '" onclick="tab=' + i + ';render()">' + t + '</div>').join('') + '</div>' + (tab === 0 ? tab0() : tab === 1 ? tab1() : tab === 2 ? tab2() : tab3());
             }
             render();
+
+            if (window.TT_AUTH) {
+                TT_AUTH.mountWidget('#tt-auth');
+                TT_AUTH.onChange(function (session) {
+                    if (!session) return;
+                    TT_FICHA.mergeWithCloud(roster).then(function (merged) {
+                        roster = merged;
+                        if (curId && !roster.some(c => c.id === curId)) backToCatalogo();
+                        else render();
+                    });
+                });
+            }
         </script>
     </body>
 </html>

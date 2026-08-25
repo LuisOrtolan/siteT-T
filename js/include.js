@@ -1,6 +1,6 @@
 // Inclui header e footer reutilizáveis em todas as páginas
 function loadPartial(targetId, filePath, basePath) {
-  fetch(filePath)
+  return fetch(filePath)
     .then(function (response) {
       if (!response.ok) {
         throw new Error("Erro HTTP " + response.status);
@@ -26,7 +26,30 @@ function loadPartial(targetId, filePath, basePath) {
     });
 }
 
+function loadScript(src) {
+  return new Promise(function (resolve, reject) {
+    var s = document.createElement("script");
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function loadAuthWidget(basePath, headerReady) {
+  var scriptsReady = loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js")
+    .then(function () { return loadScript(basePath + "js/supabase-config.js"); })
+    .then(function () { return loadScript(basePath + "js/auth.js"); });
+
+  Promise.all([scriptsReady, headerReady])
+    .then(function () {
+      if (window.TT_AUTH) window.TT_AUTH.mountWidget("#tt-auth");
+    })
+    .catch(function (err) { console.error("Erro ao carregar autenticação:", err); });
+}
+
 function loadLayout(basePath) {
-  loadPartial("header", basePath + "partials/header.html", basePath);
+  var headerReady = loadPartial("header", basePath + "partials/header.html", basePath);
   loadPartial("footer", basePath + "partials/footer.html", basePath);
+  loadAuthWidget(basePath, headerReady);
 }

@@ -123,6 +123,44 @@ body {
   color: var(--accent);
 }
 
+.tt-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tt-auth-form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tt-auth-form input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  width: 170px;
+}
+
+.tt-auth-btn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.tt-auth-msg {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.tt-auth-email {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
 /* Layout */
 
 .container {

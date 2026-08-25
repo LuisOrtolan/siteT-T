@@ -35,8 +35,61 @@ window.TT_FICHA = (function () {
     return [];
   }
 
+  let _pushTimer=null;
+
+  function cloudPush(list){
+    if(!window.TT_AUTH) return;
+    window.TT_AUTH.getSession().then(function(session){
+      if(!session) return;
+      const client=window.TT_AUTH.getClient();
+      const uid=session.user.id;
+      const localIds=list.map(c=>c.id);
+      const rows=list.map(c=>({id:c.id,user_id:uid,ficha:c,updated_at:new Date().toISOString()}));
+      client.from('personagens').select('id').eq('user_id',uid).then(function(res){
+        const cloudIds=(res.data||[]).map(r=>r.id);
+        const toDelete=cloudIds.filter(id=>localIds.indexOf(id)===-1);
+        const ops=[];
+        if(rows.length) ops.push(client.from('personagens').upsert(rows));
+        if(toDelete.length) ops.push(client.from('personagens').delete().eq('user_id',uid).in('id',toDelete));
+        Promise.all(ops).catch(e=>console.error('Erro ao sincronizar com Supabase:',e));
+      });
+    });
+  }
+
+  function debouncedCloudPush(list){
+    clearTimeout(_pushTimer);
+    _pushTimer=setTimeout(()=>cloudPush(list),1500);
+  }
+
+  function cloudPull(){
+    if(!window.TT_AUTH) return Promise.resolve(null);
+    return window.TT_AUTH.getSession().then(function(session){
+      if(!session) return null;
+      const client=window.TT_AUTH.getClient();
+      return client.from('personagens').select('id,ficha').eq('user_id',session.user.id).then(function(res){
+        if(res.error){console.error('Erro ao buscar fichas do Supabase:',res.error);return null;}
+        return (res.data||[]).map(r=>normChar({...r.ficha,id:r.id}));
+      });
+    });
+  }
+
+  // Chamado ao logar: une o catálogo local com o da nuvem por id. Em caso de
+  // conflito mantém a versão local (evita sobrescrever o que já está na tela).
+  function mergeWithCloud(localList){
+    return cloudPull().then(function(cloudList){
+      if(!cloudList) return localList;
+      const localIds=localList.map(c=>c.id);
+      const merged=localList.slice();
+      cloudList.forEach(c=>{if(localIds.indexOf(c.id)===-1) merged.push(c);});
+      saveRoster(merged);
+      cloudPush(merged);
+      return merged;
+    });
+  }
+
   function saveRoster(list){
     try{localStorage.setItem(LS,JSON.stringify(list));}catch(e){}
+    debouncedCloudPush(list);
   }
 
   // Só usado pela ficha.html no boot: migra o formato antigo (1 personagem só) se existir.
@@ -66,5 +119,5 @@ window.TT_FICHA = (function () {
     return c;
   }
 
-  return {LS,LS_OLD,LS_ACTIVE,TL,def,newId,normChar,getRoster,saveRoster,migrateOld,getActiveId,setActiveId,clearActiveId,addCharacter};
+  return {LS,LS_OLD,LS_ACTIVE,TL,def,newId,normChar,getRoster,saveRoster,migrateOld,getActiveId,setActiveId,clearActiveId,addCharacter,cloudPull,cloudPush,mergeWithCloud};
 })();
