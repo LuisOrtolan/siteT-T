@@ -38,20 +38,20 @@ window.TT_FICHA = (function () {
   let _pushTimer=null;
 
   function cloudPush(list){
-    if(!window.TT_AUTH) return;
-    window.TT_AUTH.getSession().then(function(session){
-      if(!session) return;
+    if(!window.TT_AUTH) return Promise.resolve({ok:false,reason:'no-auth'});
+    return window.TT_AUTH.getSession().then(function(session){
+      if(!session) return {ok:false,reason:'logged-out'};
       const client=window.TT_AUTH.getClient();
       const uid=session.user.id;
       const localIds=list.map(c=>c.id);
       const rows=list.map(c=>({id:c.id,user_id:uid,ficha:c,updated_at:new Date().toISOString()}));
-      client.from('personagens').select('id').eq('user_id',uid).then(function(res){
+      return client.from('personagens').select('id').eq('user_id',uid).then(function(res){
         const cloudIds=(res.data||[]).map(r=>r.id);
         const toDelete=cloudIds.filter(id=>localIds.indexOf(id)===-1);
         const ops=[];
         if(rows.length) ops.push(client.from('personagens').upsert(rows));
         if(toDelete.length) ops.push(client.from('personagens').delete().eq('user_id',uid).in('id',toDelete));
-        Promise.all(ops).catch(e=>console.error('Erro ao sincronizar com Supabase:',e));
+        return Promise.all(ops).then(()=>({ok:true})).catch(e=>{console.error('Erro ao sincronizar com Supabase:',e);return {ok:false,reason:'error',error:e};});
       });
     });
   }
@@ -59,6 +59,12 @@ window.TT_FICHA = (function () {
   function debouncedCloudPush(list){
     clearTimeout(_pushTimer);
     _pushTimer=setTimeout(()=>cloudPush(list),1500);
+  }
+
+  // Ignora o debounce e sincroniza imediatamente (usado pelo botão "Salvar").
+  function flushCloudPush(list){
+    clearTimeout(_pushTimer);
+    return cloudPush(list);
   }
 
   function cloudPull(){
@@ -119,5 +125,5 @@ window.TT_FICHA = (function () {
     return c;
   }
 
-  return {LS,LS_OLD,LS_ACTIVE,TL,def,newId,normChar,getRoster,saveRoster,migrateOld,getActiveId,setActiveId,clearActiveId,addCharacter,cloudPull,cloudPush,mergeWithCloud};
+  return {LS,LS_OLD,LS_ACTIVE,TL,def,newId,normChar,getRoster,saveRoster,migrateOld,getActiveId,setActiveId,clearActiveId,addCharacter,cloudPull,cloudPush,flushCloudPush,mergeWithCloud};
 })();
