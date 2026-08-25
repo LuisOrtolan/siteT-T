@@ -46,12 +46,14 @@ create index if not exists sala_participantes_sala_id_idx on public.sala_partici
 
 alter table public.sala_participantes enable row level security;
 
-create policy "Participantes da sala se veem entre si"
+-- Restrita à própria linha (não a todas as da sala): uma política de select
+-- que subconsulta a MESMA tabela é recursiva no Postgres e quebra com
+-- "infinite recursion detected in policy". A lista de participantes na tela
+-- vem do Presence do canal de tempo real, não de uma leitura desta tabela,
+-- então isso não limita nenhuma funcionalidade atual.
+create policy "Usuário lê apenas a própria linha de participante"
   on public.sala_participantes for select
-  using (
-    exists (select 1 from public.sala_participantes p2
-            where p2.sala_id = sala_participantes.sala_id and p2.user_id = auth.uid())
-  );
+  using (auth.uid() = user_id);
 
 create policy "Usuário entra na sala por conta própria"
   on public.sala_participantes for insert
