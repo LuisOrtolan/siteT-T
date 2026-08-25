@@ -89,10 +89,12 @@
     .toolbar input[type=range] { width: 80px }
     .toolbar .lbl { font-size: 10px; color: #6b7080 }
 
-    .board-wrap { flex: 1; position: relative; overflow: hidden; background: #08090c }
+    .board-wrap { flex: 1; position: relative; overflow: auto; background: #08090c }
+    .board-inner { position: relative }
     .board-grid { position: absolute; inset: 0; }
     .board-canvas { position: absolute; inset: 0; touch-action: none; cursor: crosshair }
     .board-canvas.erase-mode { cursor: not-allowed }
+    .zoom-label { font-size: 11px; color: #b0b3c0; min-width: 34px; text-align: center }
 
     .sidebar {
       width: 320px; flex-shrink: 0; border-left: 1px solid #1f2230;
@@ -102,7 +104,7 @@
     .sidebar .sec:last-child { margin-bottom: 10px }
 
     .notes-area {
-      width: 100%; min-height: 90px; background: #0f1014; border: 1px solid #2a2d35;
+      width: 100%; min-height: 220px; background: #0f1014; border: 1px solid #2a2d35;
       border-radius: 6px; padding: 8px; color: #f5f5f7; font-size: 12px; resize: vertical;
     }
     .notes-area:focus { outline: none; border-color: #c7a25a60 }
@@ -162,6 +164,7 @@
     let desenhando = false;
     let pontosAtuais = [];
     let previewEl = null;
+    let zoom = 1;
 
     const app = document.getElementById('app');
 
@@ -290,13 +293,20 @@
               toolBtn('apagar', '&#10060; Apagar') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
               '<span class="lbl">Espessura</span><input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
+              '<span class="lbl">Zoom</span>' +
+              '<button class="btn" onclick="setZoom(zoom-0.25)">−</button>' +
+              '<span class="zoom-label" id="zoom-label">100%</span>' +
+              '<button class="btn" onclick="setZoom(zoom+0.25)">+</button>' +
+              '<button class="btn" onclick="setZoom(1)">Redefinir</button>' +
               (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
               '<span class="lbl" style="margin-left:auto">Grade:</span>' +
-              '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
+              '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" id="grid-toggle-btn" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
             '</div>' +
             '<div class="board-wrap" id="board-wrap">' +
-              '<div class="board-grid" id="board-grid"></div>' +
-              '<canvas class="board-canvas" id="board-canvas"></canvas>' +
+              '<div class="board-inner" id="board-inner">' +
+                '<div class="board-grid" id="board-grid"></div>' +
+                '<canvas class="board-canvas" id="board-canvas"></canvas>' +
+              '</div>' +
             '</div>' +
           '</div>' +
           '<div class="sidebar">' +
@@ -323,9 +333,19 @@
     }
 
     function toolBtn(name, label) {
-      return '<button class="btn' + (tool === name ? ' on' : '') + '" onclick="setTool(\'' + name + '\')">' + label + '</button>';
+      return '<button class="btn' + (tool === name ? ' on' : '') + '" data-tool="' + name + '" onclick="setTool(\'' + name + '\')">' + label + '</button>';
     }
-    function setTool(name) { tool = name; renderRoom(); }
+    // Só troca a ferramenta ativa — não recria o canvas nem o resto do DOM
+    // (recriar apagava traços que ainda não tinham sido confirmados, ver
+    // onPointerUp).
+    function setTool(name) {
+      tool = name;
+      document.querySelectorAll('.toolbar [data-tool]').forEach(function (b) {
+        b.classList.toggle('on', b.dataset.tool === name);
+      });
+      const c = canvasEl();
+      if (c) c.classList.toggle('erase-mode', tool === 'apagar');
+    }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
     function copyLink() {
@@ -337,14 +357,19 @@
     function toggleGrid() {
       sala.grade_ativa = !sala.grade_ativa;
       TT_SALA.updateGrid(sala.id, { ativa: sala.grade_ativa });
-      renderRoom();
+      const grid = document.getElementById('board-grid');
+      if (grid) grid.style.display = sala.grade_ativa ? 'block' : 'none';
+      const btn = document.getElementById('grid-toggle-btn');
+      if (btn) { btn.textContent = sala.grade_ativa ? 'Ligada' : 'Desligada'; btn.classList.toggle('on', sala.grade_ativa); }
     }
 
     // ---------- Canvas / desenho ----------
+    // Registrado uma única vez por entrada na sala (chamado só por
+    // renderRoom). Trocar de ferramenta, ligar/desligar grade e dar zoom NÃO
+    // chamam isso de novo — só mexem no canvas/DOM já existente.
     function initCanvas() {
-      const wrap = document.getElementById('board-wrap');
-      const canvas = document.getElementById('board-canvas');
       const grid = document.getElementById('board-grid');
+      const canvas = canvasEl();
       const g = sala.grade_tamanho || 50;
       grid.style.backgroundImage =
         'linear-gradient(to right, #2a2d3550 1px, transparent 1px),' +
@@ -352,19 +377,39 @@
       grid.style.backgroundSize = g + 'px ' + g + 'px';
       grid.style.display = sala.grade_ativa ? 'block' : 'none';
 
-      function resize() {
-        canvas.width = wrap.clientWidth;
-        canvas.height = wrap.clientHeight;
-        redrawCanvas();
-      }
-      resize();
-      window.addEventListener('resize', resize);
+      applyZoom();
+      window.addEventListener('resize', applyZoom);
 
       canvas.classList.toggle('erase-mode', tool === 'apagar');
       canvas.addEventListener('pointerdown', onPointerDown);
       canvas.addEventListener('pointermove', onPointerMove);
       canvas.addEventListener('pointerup', onPointerUp);
       canvas.addEventListener('pointercancel', onPointerUp);
+    }
+
+    // ---------- Zoom ----------
+    function setZoom(z) {
+      zoom = Math.max(0.5, Math.min(3, Math.round(z * 100) / 100));
+      applyZoom();
+    }
+
+    function applyZoom() {
+      const wrap = document.getElementById('board-wrap');
+      const inner = document.getElementById('board-inner');
+      if (!wrap || !inner) return;
+      // wrap.clientWidth/Height é o tamanho VISÍVEL do contêiner com scroll —
+      // não muda com o zoom, então serve de base estável pra calcular o
+      // tamanho do conteúdo em qualquer nível de zoom.
+      inner.style.width = Math.round(wrap.clientWidth * zoom) + 'px';
+      inner.style.height = Math.round(wrap.clientHeight * zoom) + 'px';
+      const canvas = canvasEl();
+      if (canvas) {
+        canvas.width = inner.clientWidth;
+        canvas.height = inner.clientHeight;
+        redrawCanvas();
+      }
+      const label = document.getElementById('zoom-label');
+      if (label) label.textContent = Math.round(zoom * 100) + '%';
     }
 
     function canvasEl() { return document.getElementById('board-canvas'); }
@@ -407,10 +452,15 @@
       const finalEl = previewEl;
       previewEl = null;
       if (!finalEl) return;
+      // Desenho otimista: entra no array local (única fonte usada por
+      // redrawCanvas) na hora, antes de qualquer chamada de rede — assim o
+      // traço nunca depende da nuvem pra continuar visível na tela de quem
+      // desenhou, mesmo se a gravação remota for lenta ou falhar.
+      finalEl.id = TT_SALA.newDrawId();
+      desenhos.push(finalEl);
+      redrawCanvas();
       TT_SALA.addDrawing(sala.id, finalEl).then(function (res) {
-        if (!res.ok) return;
-        desenhos.push(res.desenho);
-        redrawCanvas();
+        if (!res.ok) { console.error('Desenho não sincronizou com a nuvem (ficou salvo só neste navegador por enquanto):', res); return; }
         TT_SALA.broadcastDrawAdd(channel, res.desenho);
       });
     }
@@ -540,8 +590,14 @@
       handleRollResult(r);
     }
     function handleRollResult(resultado) {
+      const err = document.getElementById('formula-err');
       TT_SALA.logRoll(sala.id, meuNome, resultado).then(function (res) {
-        if (!res.ok) return;
+        if (!res.ok || !res.rolagem) {
+          console.error('Falha ao registrar rolagem:', res);
+          if (err) err.textContent = describeFail(res, 'Não deu pra registrar a rolagem. Tente de novo.');
+          return;
+        }
+        if (err) err.textContent = '';
         rolagens.push(res.rolagem);
         renderRollLog();
         TT_SALA.broadcastRoll(channel, res.rolagem);
@@ -552,7 +608,7 @@
     function renderRollLog() {
       const el = document.getElementById('roll-log');
       if (!el) return;
-      const items = rolagens.slice().reverse().map(function (r) {
+      const items = rolagens.filter(Boolean).slice().reverse().map(function (r) {
         const detalhe = (r.resultado && r.resultado.dice) ? r.resultado.dice.join(', ') : '';
         return '<div class="roll-item"><span class="total">' + r.total + '</span>' +
           '<span class="who">' + escapeHtml(r.nome_exibicao) + '</span> · <span class="formula">' + escapeHtml(r.formula) + '</span>' +

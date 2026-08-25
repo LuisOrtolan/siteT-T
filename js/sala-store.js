@@ -100,7 +100,7 @@ window.TT_SALA = (function () {
   function addDrawing(salaId, d) {
     return withSession(function (client, session) {
       const row = {
-        id: newDrawId(), sala_id: salaId, autor_id: session.user.id,
+        id: d.id || newDrawId(), sala_id: salaId, autor_id: session.user.id,
         tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3
       };
       return client.from('sala_desenhos').insert(row).then(function (res) {
@@ -206,7 +206,7 @@ window.TT_SALA = (function () {
   }
 
   return {
-    newRoomCode, createRoom, joinRoom, getRoom, updateGrid,
+    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, updateGrid,
     listDrawings, addDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
     logRoll, listRecentRolls,
