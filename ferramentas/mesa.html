@@ -174,7 +174,15 @@
     let desenhando = false;
     let pontosAtuais = [];
     let previewEl = null;
-    let zoom = 1;
+    // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
+    // área visível quando o tamanho da célula está "natural" (zoom 1). No
+    // zoom mínimo (ZOOM_MIN = 1/MUNDO_POR_TELA), esse mapa inteiro cabe
+    // exatamente na tela; dar zoom vai aproximando e mostrando só uma parte
+    // dele, maior. Ver applyZoom().
+    const MUNDO_POR_TELA = 4;
+    const ZOOM_MIN = 1 / MUNDO_POR_TELA;
+    const ZOOM_MAX = 3;
+    let zoom = ZOOM_MIN;
     let panning = false;
     let panStart = null;
     let minhasSalas = [];
@@ -279,6 +287,7 @@
 
     function enterRoom(salaId, nome) {
       meuNome = nome;
+      zoom = ZOOM_MIN; // sempre começa vendo o mapa inteiro
       Promise.all([
         TT_SALA.getRoom(salaId),
         TT_SALA.listDrawings(salaId),
@@ -338,7 +347,7 @@
               '<button class="btn" onclick="setZoom(zoom-0.25)">−</button>' +
               '<span class="zoom-label" id="zoom-label">100%</span>' +
               '<button class="btn" onclick="setZoom(zoom+0.25)">+</button>' +
-              '<button class="btn" onclick="setZoom(1)">Redefinir</button>' +
+              '<button class="btn" onclick="setZoom(ZOOM_MIN)">Ver tudo</button>' +
               (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
               '<span class="lbl" style="margin-left:auto">Grade:</span>' +
               '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" id="grid-toggle-btn" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
@@ -447,7 +456,7 @@
     function setZoom(z, anchorClientX, anchorClientY) {
       const wrap = wrapEl();
       const inner = document.getElementById('board-inner');
-      const novoZoom = Math.max(0.5, Math.min(3, Math.round(z * 100) / 100));
+      const novoZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z * 100) / 100));
       if (!wrap || !inner) { zoom = novoZoom; applyZoom(); return; }
 
       const rect = wrap.getBoundingClientRect();
@@ -469,12 +478,14 @@
       const inner = document.getElementById('board-inner');
       if (!wrap || !inner) return;
       // wrap.clientWidth/Height é o tamanho VISÍVEL do contêiner com scroll —
-      // não muda com o zoom, então serve de base estável pra calcular o
-      // tamanho do conteúdo em qualquer nível de zoom. #board-inner encolhe
-      // de verdade abaixo de 100% (sem clamp): isso é o que garante que a
-      // grade e os traços sempre escalem exatamente juntos, no mesmo fator.
-      inner.style.width = Math.round(wrap.clientWidth * zoom) + 'px';
-      inner.style.height = Math.round(wrap.clientHeight * zoom) + 'px';
+      // não muda com o zoom, serve de base estável. O mapa (#board-inner) é
+      // MUNDO_POR_TELA vezes esse tamanho quando o zoom está "natural" (1);
+      // no ZOOM_MIN ele cai exatamente pro tamanho da tela (mapa inteiro
+      // visível, sem sobrar nem faltar nada), e cresce dali pra cima — nunca
+      // fica menor que a tela. Grade e traços escalam pelo mesmo `zoom`,
+      // então nunca dessincronizam.
+      inner.style.width = Math.round((wrap.clientWidth / ZOOM_MIN) * zoom) + 'px';
+      inner.style.height = Math.round((wrap.clientHeight / ZOOM_MIN) * zoom) + 'px';
       const grid = document.getElementById('board-grid');
       if (grid) {
         const g = Math.max(4, Math.round((sala.grade_tamanho || 50) * zoom));
