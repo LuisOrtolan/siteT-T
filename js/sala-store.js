@@ -76,6 +76,26 @@ window.TT_SALA = (function () {
     });
   }
 
+  // Salas em que o usuário já é participante (mestre ou jogador), pra
+  // mostrar uma lista de "retomar" na tela inicial em vez de precisar do
+  // código de novo toda vez.
+  function listMyRooms() {
+    return withSession(function (client, session) {
+      return client.from('sala_participantes')
+        .select('sala_id, nome_exibicao, joined_at, salas(id, nome, gm_id, created_at)')
+        .eq('user_id', session.user.id)
+        .order('joined_at', { ascending: false })
+        .then(function (res) {
+          if (res.error) { console.error('Erro ao listar minhas salas:', res.error); return []; }
+          return (res.data || [])
+            .filter(function (r) { return r.salas; })
+            .map(function (r) {
+              return { id: r.salas.id, nome: r.salas.nome, gm_id: r.salas.gm_id, meuNome: r.nome_exibicao, souGM: r.salas.gm_id === session.user.id };
+            });
+        });
+    }).then(function (r) { return Array.isArray(r) ? r : []; });
+  }
+
   function updateGrid(salaId, opts) {
     return withSession(function (client) {
       const patch = {};
@@ -206,7 +226,7 @@ window.TT_SALA = (function () {
   }
 
   return {
-    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, updateGrid,
+    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid,
     listDrawings, addDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
     logRoll, listRecentRolls,

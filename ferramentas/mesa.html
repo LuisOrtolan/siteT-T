@@ -67,8 +67,15 @@
     .hint { font-size: 10px; color: #5a5f70; margin-top: 4px }
     .err { font-size: 11px; color: #d06060; margin-top: 4px }
 
+    .room-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1a1d24 }
+    .room-item:last-child { border-bottom: none }
+    .room-item-info { display: flex; flex-direction: column; min-width: 0 }
+    .room-item-info b { font-size: 13px; color: #f5f5f7; font-weight: normal }
+    .room-item-meta { font-size: 10px; color: #6b7080 }
+
     /* ---- Room layout ---- */
-    .room { flex: 1; display: flex; min-height: 0 }
+    /* padding-top livra o cabeçalho do badge de login (fixo, top-right) */
+    .room { flex: 1; display: flex; min-height: 0; padding-top: 48px }
     .room-main { flex: 1; display: flex; flex-direction: column; min-width: 0 }
     .room-header {
       display: flex; align-items: center; justify-content: space-between; gap: 8px;
@@ -94,6 +101,8 @@
     .board-grid { position: absolute; inset: 0; }
     .board-canvas { position: absolute; inset: 0; touch-action: none; cursor: crosshair }
     .board-canvas.erase-mode { cursor: not-allowed }
+    .board-canvas.pan-mode { cursor: grab }
+    .board-canvas.pan-mode:active { cursor: grabbing }
     .zoom-label { font-size: 11px; color: #b0b3c0; min-width: 34px; text-align: center }
 
     .sidebar {
@@ -114,13 +123,14 @@
     .formula-row { display: flex; gap: 6px }
     .formula-row input { flex: 1 }
 
-    .roll-log { max-height: 220px; overflow-y: auto; margin-top: 8px }
-    .roll-item { padding: 6px 0; border-bottom: 1px solid #1a1d24; font-size: 11px }
-    .roll-item:last-child { border-bottom: none }
-    .roll-item .who { color: #c7a25a }
-    .roll-item .formula { color: #6b7080 }
-    .roll-item .total { float: right; font-weight: bold; color: #f5f5f7 }
-    .roll-item .dice-detail { color: #5a5f70; font-size: 10px }
+    .roll-log { max-height: 280px; overflow-y: auto; margin-top: 8px; display: flex; flex-direction: column; gap: 6px }
+    .roll-item { background: #0f1014; border: 1px solid #1a1d24; border-radius: 8px; padding: 6px 8px; font-size: 11px }
+    .roll-item-head { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; margin-bottom: 2px }
+    .roll-item-head .who { color: #c7a25a; font-weight: bold }
+    .roll-item-head .roll-time { color: #4a4f60; font-size: 9px; flex-shrink: 0 }
+    .roll-item-body { display: flex; justify-content: space-between; align-items: baseline; gap: 6px }
+    .roll-item-body .formula { color: #8a8fa0; overflow-wrap: anywhere }
+    .roll-item-body .total { font-weight: bold; color: #f5f5f7; font-size: 14px; flex-shrink: 0 }
 
     .participant-list { display: flex; flex-direction: column; gap: 4px }
     .participant { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #b0b3c0 }
@@ -165,6 +175,9 @@
     let pontosAtuais = [];
     let previewEl = null;
     let zoom = 1;
+    let panning = false;
+    let panStart = null;
+    let minhasSalas = [];
 
     const app = document.getElementById('app');
 
@@ -186,7 +199,9 @@
       view = 'landing';
       app.innerHTML =
         '<div class="landing-wrap"><div class="landing-card">' +
+        '<div class="back-row" style="margin-bottom:4px"><a class="btn" href="../index.html">&#8592; Site</a></div>' +
         '<div class="tt-top"><h1>&#9876; MESA VIRTUAL</h1><p>Quadro colaborativo, anotações e dados — em tempo real</p></div>' +
+        '<div class="sec" id="my-rooms-sec" style="display:none"><div class="sec-t">Minhas salas</div><div id="my-rooms-list"></div></div>' +
         '<div class="sec"><div class="sec-t">Criar sala</div>' +
         '<input class="fi" id="ln-nomesala" placeholder="Nome da sala (ex: Caverna do Dragão)" maxlength="60">' +
         '<input class="fi" id="ln-meunome1" placeholder="Seu nome de personagem" maxlength="40">' +
@@ -198,6 +213,29 @@
         '<button class="btn gold" style="width:100%" onclick="doJoinRoom()">Entrar</button>' +
         '<div class="err" id="ln-err2"></div></div>' +
         '</div></div>';
+      loadMyRooms();
+    }
+
+    function loadMyRooms() {
+      TT_SALA.listMyRooms().then(function (rooms) {
+        minhasSalas = rooms;
+        const sec = document.getElementById('my-rooms-sec');
+        const list = document.getElementById('my-rooms-list');
+        if (!sec || !list) return;
+        if (!rooms.length) { sec.style.display = 'none'; return; }
+        sec.style.display = 'block';
+        list.innerHTML = rooms.map(function (r) {
+          return '<div class="room-item"><div class="room-item-info"><b>' + escapeHtml(r.nome || 'Mesa sem nome') + '</b>' +
+            '<span class="room-item-meta">' + r.id + (r.souGM ? ' · você é o mestre' : '') + '</span></div>' +
+            '<button class="btn gold" onclick="resumeRoom(\'' + r.id + '\')">Retomar</button></div>';
+        }).join('');
+      });
+    }
+
+    function resumeRoom(salaId) {
+      const r = minhasSalas.find(function (x) { return x.id === salaId; });
+      if (!r) return;
+      enterRoom(salaId, r.meuNome);
     }
 
     // Traduz o motivo de uma falha do TT_SALA numa mensagem que ajuda a
@@ -244,7 +282,7 @@
       Promise.all([
         TT_SALA.getRoom(salaId),
         TT_SALA.listDrawings(salaId),
-        TT_SALA.listRecentRolls(salaId, 30),
+        TT_SALA.listRecentRolls(salaId, 100),
         TT_SALA.getNotes(salaId)
       ]).then(function (r) {
         sala = r[0];
@@ -280,8 +318,11 @@
         '<div class="room">' +
           '<div class="room-main">' +
             '<div class="room-header">' +
-              '<div><h1>' + (sala.nome || 'Mesa sem nome') + '</h1>' +
-                '<span class="room-code">Código: <b>' + sala.id + '</b></span></div>' +
+              '<div style="display:flex;align-items:center;gap:10px">' +
+                '<a class="btn" href="../index.html">&#8592; Site</a>' +
+                '<div><h1>' + (sala.nome || 'Mesa sem nome') + '</h1>' +
+                  '<span class="room-code">Código: <b>' + sala.id + '</b></span></div>' +
+              '</div>' +
               '<div style="display:flex;gap:6px">' +
                 '<button class="btn" onclick="copyLink()">&#128279; Copiar link</button>' +
                 '<button class="btn red" onclick="leaveRoom()">Sair</button>' +
@@ -290,7 +331,7 @@
             '<div class="toolbar">' +
               toolBtn('traco', '&#9998; Caneta') + toolBtn('linha', '&#8211; Linha') +
               toolBtn('retangulo', '&#9633; Retângulo') + toolBtn('circulo', '&#9711; Círculo') +
-              toolBtn('apagar', '&#10060; Apagar') +
+              toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
               '<span class="lbl">Espessura</span><input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
               '<span class="lbl">Zoom</span>' +
@@ -344,7 +385,10 @@
         b.classList.toggle('on', b.dataset.tool === name);
       });
       const c = canvasEl();
-      if (c) c.classList.toggle('erase-mode', tool === 'apagar');
+      if (c) {
+        c.classList.toggle('erase-mode', tool === 'apagar');
+        c.classList.toggle('pan-mode', tool === 'mover');
+      }
     }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -370,17 +414,22 @@
     function initCanvas() {
       const grid = document.getElementById('board-grid');
       const canvas = canvasEl();
-      const g = sala.grade_tamanho || 50;
+      const wrap = wrapEl();
       grid.style.backgroundImage =
         'linear-gradient(to right, #2a2d3550 1px, transparent 1px),' +
         'linear-gradient(to bottom, #2a2d3550 1px, transparent 1px)';
-      grid.style.backgroundSize = g + 'px ' + g + 'px';
       grid.style.display = sala.grade_ativa ? 'block' : 'none';
 
       applyZoom();
       window.addEventListener('resize', applyZoom);
+      // Zoom com a rolagem do mouse (roda pra cima = zoom in).
+      wrap.addEventListener('wheel', function (evt) {
+        evt.preventDefault();
+        setZoom(zoom + (evt.deltaY < 0 ? 0.15 : -0.15));
+      }, { passive: false });
 
       canvas.classList.toggle('erase-mode', tool === 'apagar');
+      canvas.classList.toggle('pan-mode', tool === 'mover');
       canvas.addEventListener('pointerdown', onPointerDown);
       canvas.addEventListener('pointermove', onPointerMove);
       canvas.addEventListener('pointerup', onPointerUp);
@@ -394,14 +443,22 @@
     }
 
     function applyZoom() {
-      const wrap = document.getElementById('board-wrap');
+      const wrap = wrapEl();
       const inner = document.getElementById('board-inner');
       if (!wrap || !inner) return;
       // wrap.clientWidth/Height é o tamanho VISÍVEL do contêiner com scroll —
       // não muda com o zoom, então serve de base estável pra calcular o
-      // tamanho do conteúdo em qualquer nível de zoom.
-      inner.style.width = Math.round(wrap.clientWidth * zoom) + 'px';
-      inner.style.height = Math.round(wrap.clientHeight * zoom) + 'px';
+      // tamanho do conteúdo em qualquer nível de zoom. Nunca encolhe abaixo
+      // do tamanho visível (Math.max) — senão sobra área sem grade/canvas
+      // quando o zoom é menor que 100%; nesse caso a grade só fica mais
+      // densa (mais quadradinhos visíveis) dentro da mesma área.
+      inner.style.width = Math.max(wrap.clientWidth, Math.round(wrap.clientWidth * zoom)) + 'px';
+      inner.style.height = Math.max(wrap.clientHeight, Math.round(wrap.clientHeight * zoom)) + 'px';
+      const grid = document.getElementById('board-grid');
+      if (grid) {
+        const g = Math.max(4, Math.round((sala.grade_tamanho || 50) * zoom));
+        grid.style.backgroundSize = g + 'px ' + g + 'px';
+      }
       const canvas = canvasEl();
       if (canvas) {
         canvas.width = inner.clientWidth;
@@ -413,6 +470,7 @@
     }
 
     function canvasEl() { return document.getElementById('board-canvas'); }
+    function wrapEl() { return document.getElementById('board-wrap'); }
 
     function relPoint(evt) {
       const c = canvasEl();
@@ -421,6 +479,12 @@
     }
 
     function onPointerDown(evt) {
+      if (tool === 'mover') {
+        panning = true;
+        panStart = { x: evt.clientX, y: evt.clientY, left: wrapEl().scrollLeft, top: wrapEl().scrollTop };
+        canvasEl().setPointerCapture(evt.pointerId);
+        return;
+      }
       const p = relPoint(evt);
       if (tool === 'apagar') {
         const hit = hitTest(p);
@@ -435,6 +499,13 @@
     }
 
     function onPointerMove(evt) {
+      if (tool === 'mover') {
+        if (!panning) return;
+        const wrap = wrapEl();
+        wrap.scrollLeft = panStart.left - (evt.clientX - panStart.x);
+        wrap.scrollTop = panStart.top - (evt.clientY - panStart.y);
+        return;
+      }
       if (!desenhando) return;
       const p = relPoint(evt);
       if (tool === 'traco') {
@@ -447,6 +518,7 @@
     }
 
     function onPointerUp() {
+      if (tool === 'mover') { panning = false; return; }
       if (!desenhando) return;
       desenhando = false;
       const finalEl = previewEl;
@@ -605,16 +677,25 @@
     }
     function handleRollBroadcast(rolagem) { rolagens.push(rolagem); renderRollLog(); }
 
+    // Ordem cronológica (mais antiga primeiro, como um chat) e auto-scroll
+    // pro fim só quando a pessoa já estava vendo o fim do log — não puxa a
+    // rolagem de quem está com scroll pra cima lendo o histórico.
     function renderRollLog() {
       const el = document.getElementById('roll-log');
       if (!el) return;
-      const items = rolagens.filter(Boolean).slice().reverse().map(function (r) {
-        const detalhe = (r.resultado && r.resultado.dice) ? r.resultado.dice.join(', ') : '';
-        return '<div class="roll-item"><span class="total">' + r.total + '</span>' +
-          '<span class="who">' + escapeHtml(r.nome_exibicao) + '</span> · <span class="formula">' + escapeHtml(r.formula) + '</span>' +
-          (detalhe ? '<div class="dice-detail">[' + detalhe + ']</div>' : '') + '</div>';
+      const jaEstavaNoFim = el.scrollHeight - el.scrollTop - el.clientHeight < 40;
+      const items = rolagens.filter(Boolean).map(function (r) {
+        const detalhe = (r.resultado && r.resultado.dice) ? ' [' + r.resultado.dice.join(', ') + ']' : '';
+        const hora = r.created_at ? new Date(r.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+        return '<div class="roll-item">' +
+          '<div class="roll-item-head"><span class="who">' + escapeHtml(r.nome_exibicao) + '</span>' +
+          (hora ? '<span class="roll-time">' + hora + '</span>' : '') + '</div>' +
+          '<div class="roll-item-body"><span class="formula">' + escapeHtml(r.formula) + escapeHtml(detalhe) + '</span>' +
+          '<span class="total">' + r.total + '</span></div>' +
+          '</div>';
       }).join('');
       el.innerHTML = items || '<p class="hint">Nenhuma rolagem ainda.</p>';
+      if (jaEstavaNoFim) el.scrollTop = el.scrollHeight;
     }
 
     // ---------- Participantes (Presence) ----------
