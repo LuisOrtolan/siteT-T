@@ -421,11 +421,12 @@
       grid.style.display = sala.grade_ativa ? 'block' : 'none';
 
       applyZoom();
-      window.addEventListener('resize', applyZoom);
-      // Zoom com a rolagem do mouse (roda pra cima = zoom in).
+      window.addEventListener('resize', function () { applyZoom(); });
+      // Zoom com a rolagem do mouse (roda pra cima = zoom in), ancorado no
+      // ponteiro — o ponto embaixo do mouse fica no mesmo lugar da tela.
       wrap.addEventListener('wheel', function (evt) {
         evt.preventDefault();
-        setZoom(zoom + (evt.deltaY < 0 ? 0.15 : -0.15));
+        setZoom(zoom + (evt.deltaY < 0 ? 0.15 : -0.15), evt.clientX, evt.clientY);
       }, { passive: false });
 
       canvas.classList.toggle('erase-mode', tool === 'apagar');
@@ -437,9 +438,30 @@
     }
 
     // ---------- Zoom ----------
-    function setZoom(z) {
-      zoom = Math.max(0.5, Math.min(3, Math.round(z * 100) / 100));
+    // O quadro (grade + traços) escala junto, sempre pelo MESMO fator —
+    // ambos são filhos de #board-inner e dimensionados a partir do mesmo
+    // zoom, então nunca dessincronizam. anchorClientX/Y (opcionais, em
+    // coordenadas de tela) é o ponto que deve continuar no mesmo lugar da
+    // tela depois do zoom mudar — sem isso, o conteúdo "pula" porque só o
+    // canto superior esquerdo do quadro fica fixo.
+    function setZoom(z, anchorClientX, anchorClientY) {
+      const wrap = wrapEl();
+      const inner = document.getElementById('board-inner');
+      const novoZoom = Math.max(0.5, Math.min(3, Math.round(z * 100) / 100));
+      if (!wrap || !inner) { zoom = novoZoom; applyZoom(); return; }
+
+      const rect = wrap.getBoundingClientRect();
+      const ancoraX = anchorClientX != null ? anchorClientX - rect.left : wrap.clientWidth / 2;
+      const ancoraY = anchorClientY != null ? anchorClientY - rect.top : wrap.clientHeight / 2;
+      const larguraAntes = inner.clientWidth || 1, alturaAntes = inner.clientHeight || 1;
+      const fracX = (wrap.scrollLeft + ancoraX) / larguraAntes;
+      const fracY = (wrap.scrollTop + ancoraY) / alturaAntes;
+
+      zoom = novoZoom;
       applyZoom();
+
+      wrap.scrollLeft = fracX * inner.clientWidth - ancoraX;
+      wrap.scrollTop = fracY * inner.clientHeight - ancoraY;
     }
 
     function applyZoom() {
@@ -448,12 +470,11 @@
       if (!wrap || !inner) return;
       // wrap.clientWidth/Height é o tamanho VISÍVEL do contêiner com scroll —
       // não muda com o zoom, então serve de base estável pra calcular o
-      // tamanho do conteúdo em qualquer nível de zoom. Nunca encolhe abaixo
-      // do tamanho visível (Math.max) — senão sobra área sem grade/canvas
-      // quando o zoom é menor que 100%; nesse caso a grade só fica mais
-      // densa (mais quadradinhos visíveis) dentro da mesma área.
-      inner.style.width = Math.max(wrap.clientWidth, Math.round(wrap.clientWidth * zoom)) + 'px';
-      inner.style.height = Math.max(wrap.clientHeight, Math.round(wrap.clientHeight * zoom)) + 'px';
+      // tamanho do conteúdo em qualquer nível de zoom. #board-inner encolhe
+      // de verdade abaixo de 100% (sem clamp): isso é o que garante que a
+      // grade e os traços sempre escalem exatamente juntos, no mesmo fator.
+      inner.style.width = Math.round(wrap.clientWidth * zoom) + 'px';
+      inner.style.height = Math.round(wrap.clientHeight * zoom) + 'px';
       const grid = document.getElementById('board-grid');
       if (grid) {
         const g = Math.max(4, Math.round((sala.grade_tamanho || 50) * zoom));
