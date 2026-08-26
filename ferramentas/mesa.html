@@ -235,7 +235,10 @@
         list.innerHTML = rooms.map(function (r) {
           return '<div class="room-item"><div class="room-item-info"><b>' + escapeHtml(r.nome || 'Mesa sem nome') + '</b>' +
             '<span class="room-item-meta">' + r.id + (r.souGM ? ' · você é o mestre' : '') + '</span></div>' +
-            '<button class="btn gold" onclick="resumeRoom(\'' + r.id + '\')">Retomar</button></div>';
+            '<div style="display:flex;gap:6px;flex-shrink:0">' +
+            '<button class="btn gold" onclick="resumeRoom(\'' + r.id + '\')">Retomar</button>' +
+            (r.souGM ? '<button class="btn red" onclick="confirmDeleteRoom(\'' + r.id + '\')">Excluir</button>' : '') +
+            '</div></div>';
         }).join('');
       });
     }
@@ -244,6 +247,16 @@
       const r = minhasSalas.find(function (x) { return x.id === salaId; });
       if (!r) return;
       enterRoom(salaId, r.meuNome);
+    }
+
+    function confirmDeleteRoom(salaId) {
+      const r = minhasSalas.find(function (x) { return x.id === salaId; });
+      const nome = r ? (r.nome || 'Mesa sem nome') : salaId;
+      if (!confirm('Apagar a sala "' + nome + '" (código ' + salaId + ')?\n\nIsso apaga o quadro, as anotações e as rolagens dela pra sempre. Não dá pra desfazer.')) return;
+      TT_SALA.deleteRoom(salaId).then(function (res) {
+        if (!res.ok) { console.error('Falha ao apagar sala:', res); alert('Não deu pra apagar a sala. Tente de novo.'); return; }
+        loadMyRooms();
+      });
     }
 
     // Traduz o motivo de uma falha do TT_SALA numa mensagem que ajuda a

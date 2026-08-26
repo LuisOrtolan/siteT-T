@@ -107,6 +107,17 @@ window.TT_SALA = (function () {
     });
   }
 
+  // Só o mestre consegue (RLS de salas exige gm_id = auth.uid()). Apaga a
+  // sala e, em cascata (FKs), participantes/desenhos/rolagens/anotações.
+  function deleteRoom(salaId) {
+    return withSession(function (client) {
+      return client.from('salas').delete().eq('id', salaId).then(function (res) {
+        if (res.error) { console.error('Erro ao apagar sala:', res.error); return { ok: false, reason: 'error', error: res.error }; }
+        return { ok: true };
+      });
+    });
+  }
+
   // --- Desenho ---
 
   function listDrawings(salaId) {
@@ -226,7 +237,7 @@ window.TT_SALA = (function () {
   }
 
   return {
-    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid,
+    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
     listDrawings, addDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
     logRoll, listRecentRolls,
