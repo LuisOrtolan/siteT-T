@@ -108,6 +108,12 @@
     .board-canvas.pan-mode:active { cursor: grabbing }
     .zoom-label { font-size: 11px; color: #b0b3c0; min-width: 34px; text-align: center }
 
+    .erase-cursor {
+      position: absolute; border: 1px solid #d06060; background: #d0606022;
+      border-radius: 50%; pointer-events: none; display: none; z-index: 5;
+      transform: translate(-50%, -50%);
+    }
+
     .sidebar {
       width: 320px; flex-shrink: 0; border-left: 1px solid #1f2230;
       display: flex; flex-direction: column; overflow-y: auto;
@@ -189,6 +195,7 @@
     let corAtual = '#c7a25a';
     let espessuraAtual = 4;
     let desenhando = false;
+    let apagando = false;
     let pontosAtuais = [];
     let previewEl = null;
     // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
@@ -376,7 +383,8 @@
               toolBtn('retangulo', '&#9633; Retângulo') + toolBtn('circulo', '&#9711; Círculo') +
               toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
-              '<span class="lbl">Espessura</span><input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
+              '<span class="lbl" id="thickness-label">' + (tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura') + '</span>' +
+              '<input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
               '<span class="lbl">Zoom</span>' +
               '<button class="btn" onclick="setZoom(zoom-0.25)">−</button>' +
               '<span class="zoom-label" id="zoom-label">100%</span>' +
@@ -390,6 +398,7 @@
               '<div class="board-inner" id="board-inner">' +
                 '<div class="board-grid" id="board-grid"></div>' +
                 '<canvas class="board-canvas" id="board-canvas"></canvas>' +
+                '<div class="erase-cursor" id="erase-cursor"></div>' +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -446,6 +455,10 @@
         c.classList.toggle('erase-mode', tool === 'apagar');
         c.classList.toggle('pan-mode', tool === 'mover');
       }
+      const lbl = document.getElementById('thickness-label');
+      if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
+      const cursor = document.getElementById('erase-cursor');
+      if (cursor && tool !== 'apagar') cursor.style.display = 'none';
     }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -485,6 +498,10 @@
         evt.preventDefault();
         setZoom(zoom + (evt.deltaY < 0 ? 0.15 : -0.15), evt.clientX, evt.clientY);
       }, { passive: false });
+      wrap.addEventListener('mouseleave', function () {
+        const cursor = document.getElementById('erase-cursor');
+        if (cursor) cursor.style.display = 'none';
+      });
 
       canvas.classList.toggle('erase-mode', tool === 'apagar');
       canvas.classList.toggle('pan-mode', tool === 'mover');
@@ -565,12 +582,13 @@
         canvasEl().setPointerCapture(evt.pointerId);
         return;
       }
-      const p = relPoint(evt);
       if (tool === 'apagar') {
-        const hit = hitTest(p);
-        if (hit) removeDrawingLocal(hit.id, true);
+        apagando = true;
+        canvasEl().setPointerCapture(evt.pointerId);
+        apagarNoPonto(relPoint(evt));
         return;
       }
+      const p = relPoint(evt);
       desenhando = true;
       canvasEl().setPointerCapture(evt.pointerId);
       pontosAtuais = [p];
@@ -586,6 +604,11 @@
         wrap.scrollTop = panStart.top - (evt.clientY - panStart.y);
         return;
       }
+      if (tool === 'apagar') {
+        updateEraseCursor(evt);
+        if (apagando) apagarNoPonto(relPoint(evt));
+        return;
+      }
       if (!desenhando) return;
       const p = relPoint(evt);
       if (tool === 'traco') {
@@ -599,6 +622,7 @@
 
     function onPointerUp() {
       if (tool === 'mover') { panning = false; return; }
+      if (tool === 'apagar') { apagando = false; return; }
       if (!desenhando) return;
       desenhando = false;
       const finalEl = previewEl;
@@ -649,8 +673,18 @@
       ctx.lineWidth = d.espessura; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
       if (d.tipo === 'traco') {
         if (pts.length === 1) { ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, d.espessura / 2, 0, Math.PI * 2); ctx.fill(); return; }
+        if (pts.length === 2) { ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y); ctx.stroke(); return; }
+        // Suaviza o traço livre com curvas quadráticas entre os pontos médios
+        // em vez de segmentos retos — é o que dá a sensação "fluida" de
+        // desenho à mão, sem mudar como os pontos são guardados/apagados.
         ctx.beginPath();
-        pts.forEach(function (p, i) { i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length - 1; i++) {
+          const mx = (pts[i].x + pts[i + 1].x) / 2;
+          const my = (pts[i].y + pts[i + 1].y) / 2;
+          ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+        }
+        ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
         ctx.stroke();
       } else if (d.tipo === 'linha') {
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); ctx.lineTo(pts[1].x, pts[1].y); ctx.stroke();
@@ -692,22 +726,102 @@
       return Math.hypot(p.x - cx, p.y - cy);
     }
 
-    function hitTest(p) {
+    // Só formas fechadas (retângulo/círculo) — traço e linha são apagados
+    // parcialmente por eraseAt() abaixo, não removidos inteiros num clique.
+    function hitTestFechado(p) {
       const c = canvasEl();
       const thresholdFrac = 8 / Math.max(c.width, c.height);
       let best = null, bestDist = Infinity;
       desenhos.forEach(function (d) {
+        if (d.tipo !== 'retangulo' && d.tipo !== 'circulo') return;
         const pts = outlinePoints(d);
         for (let i = 0; i < pts.length - 1; i++) {
           const dist = distToSegment(p, pts[i], pts[i + 1]);
           if (dist < bestDist) { bestDist = dist; best = d; }
         }
-        if (pts.length === 1) {
-          const dist = Math.hypot(p.x - pts[0].x, p.y - pts[0].y);
-          if (dist < bestDist) { bestDist = dist; best = d; }
-        }
       });
       return bestDist <= thresholdFrac + (best ? best.espessura / Math.max(c.width, c.height) : 0) ? best : null;
+    }
+
+    // Raio da borracha em pixels de tela — um pouco maior que a espessura
+    // do traço, pra ser fácil de acertar (igual no Owlbear: a borracha é
+    // sempre mais "gorda" que a caneta do mesmo tamanho).
+    function borrachaRaioPx() { return Math.max(espessuraAtual, 8) * 1.6; }
+
+    function updateEraseCursor(evt) {
+      const cursor = document.getElementById('erase-cursor');
+      if (!cursor) return;
+      const wrap = wrapEl();
+      const rect = wrap.getBoundingClientRect();
+      const raio = borrachaRaioPx();
+      cursor.style.width = cursor.style.height = (raio * 2) + 'px';
+      cursor.style.left = (evt.clientX - rect.left + wrap.scrollLeft) + 'px';
+      cursor.style.top = (evt.clientY - rect.top + wrap.scrollTop) + 'px';
+      cursor.style.display = 'block';
+    }
+
+    // Uma "linha" só tem 2 pontos (início/fim) — pra poder cortar num ponto
+    // arbitrário no meio dela, subdivide em pontos intermediários antes de
+    // aplicar a mesma lógica de apagamento por vértice usada no traço livre.
+    function densificarParaApagar(pts, tipo) {
+      if (tipo !== 'linha') return pts;
+      const [a, b] = pts;
+      const passos = 40;
+      const out = [];
+      for (let i = 0; i <= passos; i++) {
+        const t = i / passos;
+        out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+      }
+      return out;
+    }
+
+    // Apaga só a parte de traços/linhas que cai dentro do raio da borracha
+    // em `p`, cortando cada um em pedaços separados (0, 1 ou 2) em vez de
+    // remover o traço inteiro. Retângulo/círculo continuam sendo apagados
+    // inteiros, via hitTestFechado (chamada por apagarNoPonto).
+    function eraseAt(p) {
+      const c = canvasEl();
+      const raioFrac = borrachaRaioPx() / Math.max(c.width, c.height);
+      const mantidos = [];
+      const removidosIds = [];
+      const adicionados = [];
+
+      desenhos.forEach(function (d) {
+        if (d.tipo !== 'traco' && d.tipo !== 'linha') { mantidos.push(d); return; }
+        const pts = densificarParaApagar(d.pontos, d.tipo);
+        const fora = pts.map(function (pt) { return Math.hypot(pt.x - p.x, pt.y - p.y) > raioFrac; });
+        if (fora.every(Boolean)) { mantidos.push(d); return; }
+
+        removidosIds.push(d.id);
+        let atual = [];
+        for (let i = 0; i <= pts.length; i++) {
+          if (i < pts.length && fora[i]) { atual.push(pts[i]); continue; }
+          if (atual.length >= 2) {
+            const novo = { id: TT_SALA.newDrawId(), tipo: 'traco', pontos: atual, cor: d.cor, espessura: d.espessura };
+            mantidos.push(novo); adicionados.push(novo);
+          }
+          atual = [];
+        }
+      });
+
+      if (!removidosIds.length) return;
+      desenhos = mantidos;
+      redrawCanvas();
+      removidosIds.forEach(function (id) {
+        TT_SALA.removeDrawing(sala.id, id);
+        TT_SALA.broadcastDrawRemove(channel, id);
+      });
+      adicionados.forEach(function (novo) {
+        TT_SALA.addDrawing(sala.id, novo).then(function (res) {
+          if (res.ok) TT_SALA.broadcastDrawAdd(channel, res.desenho);
+        });
+      });
+    }
+
+    function apagarNoPonto(p) {
+      eraseAt(p);
+      const hit = hitTestFechado(p);
+      if (hit) removeDrawingLocal(hit.id, true);
     }
 
     function handleDrawAdd(d) { desenhos.push(d); redrawCanvas(); }
