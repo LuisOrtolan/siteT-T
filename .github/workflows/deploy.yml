@@ -19,6 +19,7 @@ jobs:
           port: ${{ secrets.VM_PORT || 22 }}
           script_stop: true
           script: |
-            cd "${{ secrets.VM_PATH }}"
+            VM_PATH=$(printf '%s' "${{ secrets.VM_PATH }}" | tr -d '[:space:]')
+            cd "$VM_PATH"
             git fetch origin main
             git reset --hard origin/main
