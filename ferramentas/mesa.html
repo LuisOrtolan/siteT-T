@@ -178,6 +178,24 @@
     .roll-item-body .formula { color: #8a8fa0; overflow-wrap: anywhere }
     .roll-item-body .total { font-weight: bold; color: #f5f5f7; font-size: 14px; flex-shrink: 0 }
 
+    .stats-backdrop {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, .6); z-index: 300;
+      display: none; align-items: center; justify-content: center; padding: 16px;
+    }
+    .stats-backdrop.aberto { display: flex }
+    .stats-modal {
+      background: #181a20; border: 1px solid #2a2d35; border-radius: 12px;
+      padding: 18px; max-width: 480px; width: 100%; max-height: 80vh; overflow-y: auto;
+    }
+    .stats-modal h3 {
+      color: #c7a25a; font-size: 14px; font-weight: normal; margin: 0 0 12px;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .stats-table { width: 100%; border-collapse: collapse; font-size: 12px }
+    .stats-table th, .stats-table td { padding: 6px 8px; text-align: right; border-bottom: 1px solid #1a1d24 }
+    .stats-table th:first-child, .stats-table td:first-child { text-align: left }
+    .stats-table th { color: #6b7080; font-weight: normal }
+
     .init-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px }
     .init-item {
       display: flex; align-items: center; gap: 8px; background: #0f1014; border: 1px solid #1a1d24;
@@ -484,7 +502,8 @@
             '</div>' +
             '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
               '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="Anotações da aventura, visíveis e editáveis por todo mundo...">' + escapeHtml(anotacoesTexto) + '</textarea></div>' +
-            '<div class="sec"><div class="sec-t">Dados</div>' +
+            '<div class="sec"><div class="sec-t" style="display:flex;justify-content:space-between;align-items:center">' +
+              '<span>Dados</span><button class="btn" style="padding:2px 8px;font-size:11px" onclick="abrirEstatisticas()">Estatísticas</button></div>' +
               '<div class="dice-presets">' +
                 ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd66', '3d6'].map(function (n) {
                   return '<button class="btn gold" onclick="rollPresetClick(\'' + n + '\')">' + n + '</button>';
@@ -496,6 +515,12 @@
               '<div class="roll-log" id="roll-log"></div>' +
             '</div>' +
             '<div class="sec"><div class="sec-t">Participantes</div><div class="participant-list" id="participant-list"></div></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="stats-backdrop" id="stats-backdrop" onclick="fecharEstatisticasSeFundo(event)">' +
+          '<div class="stats-modal">' +
+            '<h3><span>Estatísticas de rolagens</span><button class="btn" onclick="fecharEstatisticas()">&times;</button></h3>' +
+            '<div id="stats-content"></div>' +
           '</div>' +
         '</div>';
 
@@ -1366,6 +1391,45 @@
       if (jaEstavaNoFim) el.scrollTop = el.scrollHeight;
     }
 
+    // ---------- Estatísticas de rolagens ----------
+    // Popup sob demanda (não fica fixo na tela) com um resumo por jogador,
+    // calculado em cima do que já está carregado em `rolagens` — sem
+    // consulta nova ao banco.
+    function abrirEstatisticas() {
+      document.getElementById('stats-content').innerHTML = montarEstatisticasHtml();
+      document.getElementById('stats-backdrop').classList.add('aberto');
+    }
+    function fecharEstatisticas() {
+      document.getElementById('stats-backdrop').classList.remove('aberto');
+    }
+    function fecharEstatisticasSeFundo(evt) {
+      if (evt.target.id === 'stats-backdrop') fecharEstatisticas();
+    }
+    function montarEstatisticasHtml() {
+      const validas = rolagens.filter(Boolean);
+      if (!validas.length) return '<p class="hint">Nenhuma rolagem ainda nesta sessão.</p>';
+      const porJogador = {};
+      validas.forEach(function (r) {
+        const nome = r.nome_exibicao || '?';
+        if (!porJogador[nome]) porJogador[nome] = { rolagens: 0, soma: 0, min: Infinity, max: -Infinity };
+        const s = porJogador[nome];
+        s.rolagens++;
+        s.soma += r.total;
+        if (r.total < s.min) s.min = r.total;
+        if (r.total > s.max) s.max = r.total;
+      });
+      const nomes = Object.keys(porJogador).sort(function (a, b) { return porJogador[b].rolagens - porJogador[a].rolagens; });
+      const linhas = nomes.map(function (nome) {
+        const s = porJogador[nome];
+        const media = (s.soma / s.rolagens).toFixed(1);
+        return '<tr><td>' + escapeHtml(nome) + '</td><td>' + s.rolagens + '</td><td>' + s.soma + '</td><td>' + media + '</td><td>' + s.min + '</td><td>' + s.max + '</td></tr>';
+      }).join('');
+      return '<table class="stats-table">' +
+        '<thead><tr><th>Jogador</th><th>Rolagens</th><th>Soma</th><th>Média</th><th>Menor</th><th>Maior</th></tr></thead>' +
+        '<tbody>' + linhas + '</tbody></table>' +
+        '<p class="hint" style="margin-top:10px">Baseado nas ' + validas.length + ' rolagens carregadas nesta sessão.</p>';
+    }
+
     // ---------- Participantes (Presence) ----------
     function handlePresenceSync(state) {
       participantes = {};
@@ -1392,7 +1456,13 @@
     // texto (pra não interferir com apagar letra em Anotações/Iniciativa/
     // nome do token).
     document.addEventListener('keydown', function (evt) {
-      if (view !== 'room' || tool !== 'selecionar' || !selecionados.length) return;
+      if (view !== 'room') return;
+      if (evt.key === 'Escape') {
+        const backdrop = document.getElementById('stats-backdrop');
+        if (backdrop && backdrop.classList.contains('aberto')) fecharEstatisticas();
+        return;
+      }
+      if (tool !== 'selecionar' || !selecionados.length) return;
       if (evt.key !== 'Delete' && evt.key !== 'Backspace') return;
       const tag = (document.activeElement && document.activeElement.tagName) || '';
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
