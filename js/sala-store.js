@@ -141,6 +141,14 @@ window.TT_SALA = (function () {
     });
   }
 
+  function updateDrawing(salaId, id, pontos) {
+    return withSession(function (client) {
+      return client.from('sala_desenhos').update({ pontos: pontos }).eq('sala_id', salaId).eq('id', id).then(function (res) {
+        return { ok: !res.error };
+      });
+    });
+  }
+
   function removeDrawing(salaId, id) {
     return withSession(function (client) {
       return client.from('sala_desenhos').delete().eq('sala_id', salaId).eq('id', id).then(function (res) {
@@ -230,6 +238,7 @@ window.TT_SALA = (function () {
 
     channel.on('broadcast', { event: 'draw-add' }, function (msg) { if (handlers.onDrawAdd) handlers.onDrawAdd(msg.payload); });
     channel.on('broadcast', { event: 'draw-remove' }, function (msg) { if (handlers.onDrawRemove) handlers.onDrawRemove(msg.payload); });
+    channel.on('broadcast', { event: 'draw-update' }, function (msg) { if (handlers.onDrawUpdate) handlers.onDrawUpdate(msg.payload); });
     channel.on('broadcast', { event: 'draw-clear' }, function () { if (handlers.onDrawClear) handlers.onDrawClear(); });
     channel.on('broadcast', { event: 'roll' }, function (msg) { if (handlers.onRoll) handlers.onRoll(msg.payload); });
     channel.on('broadcast', { event: 'notes-update' }, function (msg) { if (handlers.onNotesUpdate) handlers.onNotesUpdate(msg.payload); });
@@ -251,6 +260,7 @@ window.TT_SALA = (function () {
 
   function broadcastDrawAdd(channel, desenho) { if (channel) channel.send({ type: 'broadcast', event: 'draw-add', payload: desenho }); }
   function broadcastDrawRemove(channel, id) { if (channel) channel.send({ type: 'broadcast', event: 'draw-remove', payload: id }); }
+  function broadcastDrawUpdate(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'draw-update', payload: payload }); }
   function broadcastDrawClear(channel) { if (channel) channel.send({ type: 'broadcast', event: 'draw-clear', payload: {} }); }
   function broadcastRoll(channel, rolagem) { if (channel) channel.send({ type: 'broadcast', event: 'roll', payload: rolagem }); }
   function broadcastNotes(channel, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: conteudo }); }
@@ -262,11 +272,11 @@ window.TT_SALA = (function () {
 
   return {
     newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
-    listDrawings, addDrawing, removeDrawing, clearDrawings,
+    listDrawings, addDrawing, updateDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
     getInitiative, saveInitiative,
     logRoll, listRecentRolls,
     connect, leave,
-    broadcastDrawAdd, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative
+    broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative
   };
 })();
