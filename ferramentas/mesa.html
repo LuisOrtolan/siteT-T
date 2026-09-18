@@ -100,6 +100,8 @@
     .toolbar .lbl { font-size: 10px; color: #6b7080 }
 
     .board-wrap { flex: 1; position: relative; overflow: auto; background: #08090c }
+    .board-wrap.fundo-claro { background: #ffffff }
+    .board-wrap.fundo-cinza { background: #dcdce0 }
     .board-inner { position: relative }
     .board-grid { position: absolute; inset: 0; }
     .board-canvas { position: absolute; inset: 0; touch-action: none; cursor: crosshair }
@@ -399,7 +401,9 @@
               '<button class="btn" onclick="setZoom(zoom+0.25)">+</button>' +
               '<button class="btn" onclick="setZoom(ZOOM_MIN)">Ver tudo</button>' +
               (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
-              '<span class="lbl" style="margin-left:auto">Grade:</span>' +
+              '<span class="lbl" style="margin-left:auto">Fundo:</span>' +
+              '<button class="btn" id="fundo-toggle-btn" onclick="cycleFundo()" ' + (souGM ? '' : 'disabled') + '>' + fundoLabel(sala.fundo) + '</button>' +
+              '<span class="lbl">Grade:</span>' +
               '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" id="grid-toggle-btn" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
             '</div>' +
             '<div class="board-wrap" id="board-wrap">' +
@@ -487,6 +491,37 @@
       if (btn) { btn.textContent = sala.grade_ativa ? 'Ligada' : 'Desligada'; btn.classList.toggle('on', sala.grade_ativa); }
     }
 
+    // ---------- Fundo do quadro ----------
+    function fundoLabel(fundo) {
+      if (fundo === 'claro') return 'Claro';
+      if (fundo === 'cinza') return 'Cinza';
+      return 'Escuro';
+    }
+    // A cor da grade precisa se inverter conforme o fundo — linhas claras
+    // somem num fundo claro, e vice-versa.
+    function aplicarFundo() {
+      const wrap = wrapEl();
+      const grid = document.getElementById('board-grid');
+      if (!wrap || !grid) return;
+      wrap.classList.remove('fundo-claro', 'fundo-cinza');
+      const escuro = sala.fundo === 'claro' || sala.fundo === 'cinza';
+      if (sala.fundo === 'claro') wrap.classList.add('fundo-claro');
+      else if (sala.fundo === 'cinza') wrap.classList.add('fundo-cinza');
+      const corLinha = escuro ? 'rgba(0,0,0,0.15)' : '#2a2d3550';
+      grid.style.backgroundImage =
+        'linear-gradient(to right, ' + corLinha + ' 1px, transparent 1px),' +
+        'linear-gradient(to bottom, ' + corLinha + ' 1px, transparent 1px)';
+    }
+    function cycleFundo() {
+      const ordem = ['escuro', 'claro', 'cinza'];
+      const atual = ordem.indexOf(sala.fundo || 'escuro');
+      sala.fundo = ordem[(atual + 1) % ordem.length];
+      TT_SALA.updateGrid(sala.id, { fundo: sala.fundo });
+      aplicarFundo();
+      const btn = document.getElementById('fundo-toggle-btn');
+      if (btn) btn.textContent = fundoLabel(sala.fundo);
+    }
+
     // ---------- Canvas / desenho ----------
     // Registrado uma única vez por entrada na sala (chamado só por
     // renderRoom). Trocar de ferramenta, ligar/desligar grade e dar zoom NÃO
@@ -495,9 +530,7 @@
       const grid = document.getElementById('board-grid');
       const canvas = canvasEl();
       const wrap = wrapEl();
-      grid.style.backgroundImage =
-        'linear-gradient(to right, #2a2d3550 1px, transparent 1px),' +
-        'linear-gradient(to bottom, #2a2d3550 1px, transparent 1px)';
+      aplicarFundo();
       grid.style.display = sala.grade_ativa ? 'block' : 'none';
 
       applyZoom();
