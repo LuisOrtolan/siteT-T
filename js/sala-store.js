@@ -239,6 +239,34 @@ window.TT_SALA = (function () {
     });
   }
 
+  // --- Biblioteca pessoal de tokens (não é por sala — por usuário) ---
+
+  function listMyTokens() {
+    return withSession(function (client, session) {
+      return client.from('meus_tokens').select('*').eq('user_id', session.user.id)
+        .order('created_at', { ascending: false })
+        .then(function (res) { return res.data || []; });
+    }).then(function (r) { return Array.isArray(r) ? r : []; });
+  }
+
+  function saveMyToken(nome, imagemUrl) {
+    return withSession(function (client, session) {
+      const row = { id: newTokenId(), user_id: session.user.id, nome: nome || '', imagem_url: imagemUrl };
+      return client.from('meus_tokens').insert(row).then(function (res) {
+        if (res.error) return { ok: false, reason: 'error', error: res.error };
+        return { ok: true, token: row };
+      });
+    });
+  }
+
+  function deleteMyToken(id) {
+    return withSession(function (client) {
+      return client.from('meus_tokens').delete().eq('id', id).then(function (res) {
+        return { ok: !res.error };
+      });
+    });
+  }
+
   // --- Iniciativa ---
 
   function getInitiative(salaId) {
@@ -338,6 +366,7 @@ window.TT_SALA = (function () {
     getNotes, saveNotes,
     getInitiative, saveInitiative,
     uploadTokenImage, listTokens, addToken, updateToken, removeToken,
+    listMyTokens, saveMyToken, deleteMyToken,
     logRoll, listRecentRolls,
     connect, leave,
     broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative,
