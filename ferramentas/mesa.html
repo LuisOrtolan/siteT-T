@@ -222,10 +222,11 @@
     let apagando = false;
     let pontosAtuais = [];
     let previewEl = null;
-    let selecionadoId = null;
+    let selecionados = [];          // array de ids
     let arrastandoSelecao = false;
     let arrastarOrigem = null;
-    let pontosOriginaisSelecao = null;
+    let pontosOriginaisSelecao = null; // { id: [pontos originais...] }
+    let retanguloSelecao = null;    // {x0,y0,x1,y1} fração, durante o arraste do laço
     let tokens = [];
     let arrastandoToken = null;
     // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
@@ -392,7 +393,7 @@
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = [];
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
-      selecionadoId = null; arrastandoSelecao = false; arrastandoToken = null;
+      selecionados = []; arrastandoSelecao = false; retanguloSelecao = null; arrastandoToken = null;
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -508,7 +509,7 @@
       if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
       const cursor = document.getElementById('erase-cursor');
       if (cursor && tool !== 'apagar') cursor.style.display = 'none';
-      if (tool !== 'selecionar' && selecionadoId) { selecionadoId = null; redrawCanvas(); }
+      if (tool !== 'selecionar' && selecionados.length) { selecionados = []; redrawCanvas(); }
     }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -673,11 +674,23 @@
       if (tool === 'selecionar') {
         const p0 = relPoint(evt);
         const hit = hitTestQualquer(p0);
-        selecionadoId = hit ? hit.id : null;
         if (hit) {
+          // Clicar num item que já faz parte da seleção arrasta o grupo
+          // inteiro; clicar num item de fora troca a seleção pra só ele.
+          if (selecionados.indexOf(hit.id) === -1) selecionados = [hit.id];
           arrastandoSelecao = true;
           arrastarOrigem = p0;
-          pontosOriginaisSelecao = hit.pontos.map(function (pt) { return { x: pt.x, y: pt.y }; });
+          pontosOriginaisSelecao = {};
+          selecionados.forEach(function (id) {
+            const d = desenhos.find(function (x) { return x.id === id; });
+            if (d) pontosOriginaisSelecao[id] = d.pontos.map(function (pt) { return { x: pt.x, y: pt.y }; });
+          });
+          canvasEl().setPointerCapture(evt.pointerId);
+        } else {
+          // Clicar em área vazia começa um retângulo de seleção (laço): tudo
+          // que estiver dentro dele quando soltar o botão entra na seleção.
+          selecionados = [];
+          retanguloSelecao = { x0: p0.x, y0: p0.y, x1: p0.x, y1: p0.y };
           canvasEl().setPointerCapture(evt.pointerId);
         }
         redrawCanvas();
@@ -705,12 +718,18 @@
         return;
       }
       if (tool === 'selecionar') {
-        if (!arrastandoSelecao) return;
         const p = relPoint(evt);
-        const dx = p.x - arrastarOrigem.x, dy = p.y - arrastarOrigem.y;
-        const d = desenhos.find(function (x) { return x.id === selecionadoId; });
-        if (d) {
-          d.pontos = pontosOriginaisSelecao.map(function (pt) { return { x: pt.x + dx, y: pt.y + dy }; });
+        if (arrastandoSelecao) {
+          const dx = p.x - arrastarOrigem.x, dy = p.y - arrastarOrigem.y;
+          selecionados.forEach(function (id) {
+            const d = desenhos.find(function (x) { return x.id === id; });
+            const orig = pontosOriginaisSelecao[id];
+            if (d && orig) d.pontos = orig.map(function (pt) { return { x: pt.x + dx, y: pt.y + dy }; });
+          });
+          redrawCanvas();
+        } else if (retanguloSelecao) {
+          retanguloSelecao.x1 = p.x;
+          retanguloSelecao.y1 = p.y;
           redrawCanvas();
         }
         return;
@@ -730,12 +749,28 @@
       if (tool === 'mover') { panning = false; return; }
       if (tool === 'apagar') { apagando = false; return; }
       if (tool === 'selecionar') {
-        if (!arrastandoSelecao) return;
-        arrastandoSelecao = false;
-        const d = desenhos.find(function (x) { return x.id === selecionadoId; });
-        if (d) {
-          TT_SALA.updateDrawing(sala.id, d.id, d.pontos);
-          TT_SALA.broadcastDrawUpdate(channel, { id: d.id, pontos: d.pontos });
+        if (arrastandoSelecao) {
+          arrastandoSelecao = false;
+          selecionados.forEach(function (id) {
+            const d = desenhos.find(function (x) { return x.id === id; });
+            if (d) {
+              TT_SALA.updateDrawing(sala.id, id, d.pontos);
+              TT_SALA.broadcastDrawUpdate(channel, { id: id, pontos: d.pontos });
+            }
+          });
+        } else if (retanguloSelecao) {
+          const rx0 = Math.min(retanguloSelecao.x0, retanguloSelecao.x1);
+          const rx1 = Math.max(retanguloSelecao.x0, retanguloSelecao.x1);
+          const ry0 = Math.min(retanguloSelecao.y0, retanguloSelecao.y1);
+          const ry1 = Math.max(retanguloSelecao.y0, retanguloSelecao.y1);
+          // Ignora arrastos quase nulos (clique parado) — já foi tratado
+          // como "desmarcar tudo" no pointerdown.
+          if (rx1 - rx0 > 0.003 || ry1 - ry0 > 0.003) {
+            const ret = { x0: rx0, y0: ry0, x1: rx1, y1: ry1 };
+            selecionados = desenhos.filter(function (d) { return retangulosSeSobrepoe(bboxDoDesenho(d), ret); }).map(function (d) { return d.id; });
+          }
+          retanguloSelecao = null;
+          redrawCanvas();
         }
         return;
       }
@@ -781,10 +816,38 @@
       ctx.clearRect(0, 0, c.width, c.height);
       desenhos.forEach(function (d) { drawElement(ctx, d, c.width, c.height); });
       if (previewEl) drawElement(ctx, previewEl, c.width, c.height);
-      if (selecionadoId) {
-        const sel = desenhos.find(function (d) { return d.id === selecionadoId; });
+      selecionados.forEach(function (id) {
+        const sel = desenhos.find(function (d) { return d.id === id; });
         if (sel) desenharDestaqueSelecao(ctx, sel, c.width, c.height);
-      }
+      });
+      if (retanguloSelecao) desenharRetanguloSelecao(ctx, c.width, c.height);
+    }
+
+    // Retângulo semitransparente que acompanha o arraste do laço de seleção.
+    function desenharRetanguloSelecao(ctx, w, h) {
+      const x0 = Math.min(retanguloSelecao.x0, retanguloSelecao.x1) * w;
+      const y0 = Math.min(retanguloSelecao.y0, retanguloSelecao.y1) * h;
+      const x1 = Math.max(retanguloSelecao.x0, retanguloSelecao.x1) * w;
+      const y1 = Math.max(retanguloSelecao.y0, retanguloSelecao.y1) * h;
+      ctx.save();
+      ctx.fillStyle = 'rgba(199,162,90,0.12)';
+      ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.strokeStyle = '#c7a25a';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.restore();
+    }
+
+    // Bounding box (fração) de um desenho, pra testar sobreposição com o
+    // retângulo do laço de seleção.
+    function bboxDoDesenho(d) {
+      const pts = outlinePoints(d);
+      const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
+      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+    }
+    function retangulosSeSobrepoe(a, b) {
+      return a.x0 <= b.x1 && a.x1 >= b.x0 && a.y0 <= b.y1 && a.y1 >= b.y0;
     }
 
     // Retângulo tracejado ao redor do desenho selecionado, com uma margem
