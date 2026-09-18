@@ -1419,14 +1419,16 @@
     }
 
     // ---------- Estatísticas de rolagens ----------
-    // Popup sob demanda (não fica fixo na tela) com a média de cada dado
-    // principal (d4/d6/d8/d10/d12/d20), somando todo mundo junto (não separa
-    // por jogador — todos veem a mesma estatística da mesa toda), calculado
-    // em cima do que já está carregado em `rolagens` — sem consulta nova ao
-    // banco. Reaproveita TT_DICE.parseFormula pra saber, mesmo numa fórmula
-    // livre como "2d6+1d4", quantos valores de resultado.dice pertencem a
-    // cada tipo de dado (a ordem dos valores segue a ordem dos termos da
-    // fórmula, igual TT_DICE.rollFormula monta esse array).
+    // Popup sob demanda (não fica fixo na tela) com uma matriz dado x
+    // jogador: uma linha por dado principal (d4/d6/d8/d10/d12/d20), uma
+    // coluna por jogador, com a média dos valores individuais que aquele
+    // jogador rolou daquele dado. Todo mundo vê a mesma tabela cheia (não
+    // é um recorte "só o meu"), calculado em cima do que já está carregado
+    // em `rolagens` — sem consulta nova ao banco. Reaproveita
+    // TT_DICE.parseFormula pra saber, mesmo numa fórmula livre como
+    // "2d6+1d4", quantos valores de resultado.dice pertencem a cada tipo
+    // de dado (a ordem dos valores segue a ordem dos termos da fórmula,
+    // igual TT_DICE.rollFormula monta esse array).
     const DADOS_PRINCIPAIS = [4, 6, 8, 10, 12, 20];
     function abrirEstatisticas() {
       document.getElementById('stats-content').innerHTML = montarEstatisticasHtml();
@@ -1440,32 +1442,44 @@
     }
     function montarEstatisticasHtml() {
       const validas = rolagens.filter(Boolean);
-      const porDado = {};
-      DADOS_PRINCIPAIS.forEach(function (faces) { porDado[faces] = { rolagens: 0, soma: 0 }; });
+      // matriz[faces][nomeJogador] = { rolagens, soma }
+      const matriz = {};
+      DADOS_PRINCIPAIS.forEach(function (faces) { matriz[faces] = {}; });
+      const totalPorJogador = {};
       validas.forEach(function (r) {
         const termos = TT_DICE.parseFormula(r.formula);
         if (!termos || !r.resultado || !r.resultado.dice) return;
+        const nome = r.nome_exibicao || '?';
         let i = 0;
         termos.forEach(function (t) {
           if (!t.faces) return;
           for (let k = 0; k < t.n; k++) {
             const bruto = r.resultado.dice[i++];
             if (bruto === undefined) return;
-            if (porDado[t.faces]) { porDado[t.faces].rolagens++; porDado[t.faces].soma += Math.abs(bruto); }
+            if (!matriz[t.faces]) return;
+            if (!matriz[t.faces][nome]) matriz[t.faces][nome] = { rolagens: 0, soma: 0 };
+            matriz[t.faces][nome].rolagens++;
+            matriz[t.faces][nome].soma += Math.abs(bruto);
+            totalPorJogador[nome] = (totalPorJogador[nome] || 0) + 1;
           }
         });
       });
-      const totalRolagens = DADOS_PRINCIPAIS.reduce(function (acc, faces) { return acc + porDado[faces].rolagens; }, 0);
-      if (!totalRolagens) return '<p class="hint">Nenhuma rolagem de d4/d6/d8/d10/d12/d20 ainda nesta sessão.</p>';
+      const jogadores = Object.keys(totalPorJogador).sort(function (a, b) { return totalPorJogador[b] - totalPorJogador[a]; });
+      if (!jogadores.length) return '<p class="hint">Nenhuma rolagem de d4/d6/d8/d10/d12/d20 ainda nesta sessão.</p>';
+      const cabecalho = '<th>Dado</th>' + jogadores.map(function (nome) { return '<th>' + escapeHtml(nome) + '</th>'; }).join('');
       const linhas = DADOS_PRINCIPAIS.map(function (faces) {
-        const s = porDado[faces];
-        const media = s.rolagens ? (s.soma / s.rolagens).toFixed(1) : '—';
-        return '<tr><td>d' + faces + '</td><td>' + media + '</td></tr>';
+        const celulas = jogadores.map(function (nome) {
+          const s = matriz[faces][nome];
+          const media = s ? (s.soma / s.rolagens).toFixed(1) : '—';
+          return '<td>' + media + '</td>';
+        }).join('');
+        return '<tr><td>d' + faces + '</td>' + celulas + '</tr>';
       }).join('');
-      return '<table class="stats-table">' +
-        '<thead><tr><th>Dado</th><th>Média</th></tr></thead>' +
-        '<tbody>' + linhas + '</tbody></table>' +
-        '<p class="hint" style="margin-top:10px">Baseado em ' + totalRolagens + ' rolagens de dados (de todos os jogadores) nesta sessão.</p>';
+      const totalRolagens = Object.keys(totalPorJogador).reduce(function (acc, nome) { return acc + totalPorJogador[nome]; }, 0);
+      return '<div style="overflow-x:auto"><table class="stats-table">' +
+        '<thead><tr>' + cabecalho + '</tr></thead>' +
+        '<tbody>' + linhas + '</tbody></table></div>' +
+        '<p class="hint" style="margin-top:10px">Baseado em ' + totalRolagens + ' rolagens de dados nesta sessão.</p>';
     }
 
     // ---------- Participantes (Presence) ----------
