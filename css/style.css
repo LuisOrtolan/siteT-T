@@ -281,6 +281,22 @@ body {
   color: var(--text-muted);
 }
 
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 320px;
+}
+
+.form-stack input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.9rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+}
+
 /* Trilhas grid */
 
 .trilhas-grid {

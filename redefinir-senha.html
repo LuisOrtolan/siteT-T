@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trilhas &amp; Tesouros - Redefinir senha</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="header"></div>
+
+  <main class="container">
+    <section class="section-card" style="max-width: 420px">
+      <h1>Redefinir senha</h1>
+      <p id="rs-status">Verificando link...</p>
+      <form id="rs-form" class="form-stack" style="display: none">
+        <input type="password" id="rs-senha" placeholder="Nova senha" required minlength="6" />
+        <input type="password" id="rs-confirmar" placeholder="Confirmar nova senha" required minlength="6" />
+        <button type="submit" class="btn">Salvar nova senha</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+  <script src="js/include.js"></script>
+  <script>
+    loadLayout("");
+  </script>
+  <script>
+    function whenAuthReady(cb) {
+      if (window.TT_AUTH) { cb(); return; }
+      setTimeout(function () { whenAuthReady(cb); }, 50);
+    }
+
+    whenAuthReady(function () {
+      var client = TT_AUTH.getClient();
+      var statusEl = document.getElementById('rs-status');
+      var formEl = document.getElementById('rs-form');
+
+      if (!client) {
+        statusEl.textContent = 'Login não configurado neste site.';
+        return;
+      }
+
+      var linkValido = false;
+      TT_AUTH.onPasswordRecovery(function () {
+        linkValido = true;
+        formEl.style.display = '';
+        statusEl.textContent = '';
+      });
+
+      // Se depois de alguns segundos o evento de recuperação não chegou, o
+      // link era inválido/expirado (ou a página foi aberta direto, sem vir
+      // do email).
+      setTimeout(function () {
+        if (!linkValido) {
+          statusEl.textContent = 'Link inválido ou expirado. Peça um novo link de redefinição na página de login.';
+        }
+      }, 2500);
+
+      formEl.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var senha = document.getElementById('rs-senha').value;
+        var confirmar = document.getElementById('rs-confirmar').value;
+        if (senha.length < 6) { statusEl.textContent = 'A senha precisa ter pelo menos 6 caracteres.'; return; }
+        if (senha !== confirmar) { statusEl.textContent = 'As senhas não coincidem.'; return; }
+        statusEl.textContent = 'Salvando...';
+        TT_AUTH.updatePassword(senha).then(function (res) {
+          if (res.error) { statusEl.textContent = res.error.message; return; }
+          statusEl.textContent = 'Senha alterada! Você já pode fazer login normalmente.';
+          formEl.style.display = 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

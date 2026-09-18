@@ -50,9 +50,38 @@ window.TT_AUTH = (function () {
     c.auth.onAuthStateChange(function (_event, session) { cb(session); });
   }
 
+  // Envia o email de "esqueci minha senha". O link leva pra
+  // redefinir-senha.html, que estabelece uma sessão de recuperação e deixa
+  // a pessoa escolher uma senha nova.
+  function resetPasswordForEmail(email) {
+    var c = getClient();
+    if (!c) return Promise.reject(new Error('Supabase não configurado.'));
+    return c.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/redefinir-senha.html' });
+  }
+
+  // Dispara quando a pessoa chega em redefinir-senha.html vindo de um link
+  // de recuperação válido (Supabase já estabelece a sessão a partir do
+  // token na URL antes de emitir esse evento).
+  function onPasswordRecovery(cb) {
+    var c = getClient();
+    if (!c) return;
+    c.auth.onAuthStateChange(function (event, session) {
+      if (event === 'PASSWORD_RECOVERY') cb(session);
+    });
+  }
+
+  function updatePassword(newPassword) {
+    var c = getClient();
+    if (!c) return Promise.reject(new Error('Supabase não configurado.'));
+    return c.auth.updateUser({ password: newPassword });
+  }
+
   function loginSignupFields(idPrefix, mode) {
-    return '<input type="email" id="' + idPrefix + '-email" placeholder="seu@email.com" required />' +
-      '<input type="password" id="' + idPrefix + '-senha" placeholder="senha" required minlength="6" />';
+    var html = '<input type="email" id="' + idPrefix + '-email" placeholder="seu@email.com" required />';
+    if (mode !== 'recover') {
+      html += '<input type="password" id="' + idPrefix + '-senha" placeholder="senha" required minlength="6" />';
+    }
+    return html;
   }
 
   function submitLoginSignup(idPrefix, mode) {
@@ -63,6 +92,12 @@ window.TT_AUTH = (function () {
     return action;
   }
 
+  function submitRecover(idPrefix) {
+    var email = document.getElementById(idPrefix + '-email').value.trim();
+    if (!email) return Promise.resolve({ error: { message: 'Preencha o email.' } });
+    return resetPasswordForEmail(email);
+  }
+
   // ---- Widget compacto (cabeçalho do site) ----
   function mountWidget(containerSelector) {
     var el = document.querySelector(containerSelector);
@@ -71,19 +106,32 @@ window.TT_AUTH = (function () {
     if (!c) { el.innerHTML = ''; return; }
     var mode = 'login';
 
+    function widgetLinks(mode) {
+      if (mode === 'signup') return 'Já tem conta? <a href="#" data-mode="login">Entrar</a>';
+      if (mode === 'recover') return '<a href="#" data-mode="login">Voltar</a>';
+      return 'Sem conta? <a href="#" data-mode="signup">Criar conta</a> · <a href="#" data-mode="recover">Esqueci minha senha</a>';
+    }
+
     function renderLoggedOut() {
+      var submitLabel = mode === 'login' ? 'Entrar' : mode === 'signup' ? 'Criar' : 'Enviar link';
       el.innerHTML =
         '<form class="tt-auth-form" id="tt-auth-form">' +
         loginSignupFields('tt-auth', mode) +
-        '<button type="submit" class="btn btn-secondary tt-auth-btn">' + (mode === 'login' ? 'Entrar' : 'Criar') + '</button>' +
+        '<button type="submit" class="btn btn-secondary tt-auth-btn">' + submitLabel + '</button>' +
         '</form>' +
-        '<p class="tt-auth-msg" id="tt-auth-msg">' +
-        (mode === 'login' ? 'Sem conta? <a href="#" id="tt-auth-switch">Criar conta</a>' : 'Já tem conta? <a href="#" id="tt-auth-switch">Entrar</a>') +
-        '</p>';
+        '<p class="tt-auth-msg" id="tt-auth-msg">' + widgetLinks(mode) + '</p>';
 
       el.querySelector('#tt-auth-form').addEventListener('submit', function (ev) {
         ev.preventDefault();
         var msg = el.querySelector('#tt-auth-msg');
+        if (mode === 'recover') {
+          msg.textContent = 'Enviando...';
+          submitRecover('tt-auth').then(function (res) {
+            if (res.error) { msg.textContent = res.error.message; return; }
+            msg.textContent = 'Link enviado! Confira seu email.';
+          });
+          return;
+        }
         msg.textContent = mode === 'login' ? 'Entrando...' : 'Criando conta...';
         submitLoginSignup('tt-auth', mode).then(function (res) {
           if (res.error) { msg.textContent = res.error.message; return; }
@@ -92,8 +140,13 @@ window.TT_AUTH = (function () {
           }
         });
       });
-      var switchLink = el.querySelector('#tt-auth-switch');
-      if (switchLink) switchLink.addEventListener('click', function (ev) { ev.preventDefault(); mode = mode === 'login' ? 'signup' : 'login'; renderLoggedOut(); });
+      el.querySelector('#tt-auth-msg').addEventListener('click', function (ev) {
+        var novoModo = ev.target.getAttribute('data-mode');
+        if (!novoModo) return;
+        ev.preventDefault();
+        mode = novoModo;
+        renderLoggedOut();
+      });
     }
 
     function renderLoggedIn(session) {
@@ -143,17 +196,33 @@ window.TT_AUTH = (function () {
     // entre "entrar"/"criar conta" — nunca durante o envio, porque isso
     // limparia os campos antes de submit() conseguir ler o que a pessoa
     // digitou).
+    function gateTitle(mode) {
+      if (mode === 'signup') return 'CRIAR CONTA';
+      if (mode === 'recover') return 'REDEFINIR SENHA';
+      return 'ENTRAR';
+    }
+
+    function gateSubmitLabel(mode) {
+      if (mode === 'signup') return 'Criar conta';
+      if (mode === 'recover') return 'Enviar link';
+      return 'Entrar';
+    }
+
+    function gateLinks(mode) {
+      if (mode === 'signup') return 'Já tem conta? <a href="#" data-mode="login" style="color:#c7a25a">Entrar</a>';
+      if (mode === 'recover') return '<a href="#" data-mode="login" style="color:#c7a25a">Voltar para login</a>';
+      return 'Não tem conta? <a href="#" data-mode="signup" style="color:#c7a25a">Criar uma</a> · <a href="#" data-mode="recover" style="color:#c7a25a">Esqueci minha senha</a>';
+    }
+
     function render() {
       el.style.cssText = 'position:fixed;inset:0;z-index:150;background:#0f1014;display:flex;align-items:center;justify-content:center;padding:16px';
       el.innerHTML =
         '<div style="max-width:340px;width:100%;background:#181a20;border:1px solid #2a2d35;border-radius:12px;padding:22px;font-family:Georgia,serif;color:#f5f5f7;box-sizing:border-box">' +
-        '<h2 style="color:#c7a25a;font-size:16px;font-weight:normal;text-align:center;margin:0 0 14px;letter-spacing:.05em">' + (mode === 'login' ? 'ENTRAR' : 'CRIAR CONTA') + '</h2>' +
+        '<h2 style="color:#c7a25a;font-size:16px;font-weight:normal;text-align:center;margin:0 0 14px;letter-spacing:.05em">' + gateTitle(mode) + '</h2>' +
         '<div id="tt-gate-fields" style="display:flex;flex-direction:column;gap:8px"></div>' +
-        '<button id="tt-gate-submit" style="width:100%;background:#c7a25a15;border:1px solid #c7a25a40;color:#c7a25a;border-radius:6px;padding:9px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:10px">' + (mode === 'login' ? 'Entrar' : 'Criar conta') + '</button>' +
+        '<button id="tt-gate-submit" style="width:100%;background:#c7a25a15;border:1px solid #c7a25a40;color:#c7a25a;border-radius:6px;padding:9px;font-size:13px;cursor:pointer;font-family:inherit;margin-top:10px">' + gateSubmitLabel(mode) + '</button>' +
         '<p id="tt-gate-msg" style="font-size:11px;color:#d06060;text-align:center;min-height:14px;margin:8px 0 0"></p>' +
-        '<p style="font-size:11px;color:#6b7080;text-align:center;margin:4px 0 0">' +
-        (mode === 'login' ? 'Não tem conta? <a href="#" id="tt-gate-switch" style="color:#c7a25a">Criar uma</a>' : 'Já tem conta? <a href="#" id="tt-gate-switch" style="color:#c7a25a">Entrar</a>') +
-        '</p></div>';
+        '<p id="tt-gate-links" style="font-size:11px;color:#6b7080;text-align:center;margin:4px 0 0">' + gateLinks(mode) + '</p></div>';
 
       var fields = el.querySelector('#tt-gate-fields');
       fields.innerHTML = loginSignupFields('tt-gate', mode);
@@ -161,7 +230,13 @@ window.TT_AUTH = (function () {
         inp.style.cssText = 'width:100%;background:#0f1014;border:1px solid #2a2d35;border-radius:6px;padding:9px 10px;color:#f5f5f7;font-size:13px;box-sizing:border-box;font-family:inherit';
         inp.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') submit(); });
       });
-      el.querySelector('#tt-gate-switch').addEventListener('click', function (ev) { ev.preventDefault(); mode = mode === 'login' ? 'signup' : 'login'; render(); });
+      el.querySelector('#tt-gate-links').addEventListener('click', function (ev) {
+        var novoModo = ev.target.getAttribute('data-mode');
+        if (!novoModo) return;
+        ev.preventDefault();
+        mode = novoModo;
+        render();
+      });
       el.querySelector('#tt-gate-submit').addEventListener('click', submit);
     }
 
@@ -171,6 +246,14 @@ window.TT_AUTH = (function () {
     }
 
     function submit() {
+      if (mode === 'recover') {
+        setMsg('Enviando...', '#8a8fa0');
+        submitRecover('tt-gate').then(function (res) {
+          if (res.error) { setMsg(res.error.message); return; }
+          setMsg('Link enviado! Confira seu email.', '#8a8fa0');
+        });
+        return;
+      }
       setMsg(mode === 'login' ? 'Entrando...' : 'Criando conta...', '#8a8fa0');
       submitLoginSignup('tt-gate', mode).then(function (res) {
         if (res.error) { setMsg(res.error.message); return; }
@@ -196,6 +279,7 @@ window.TT_AUTH = (function () {
     getClient: getClient, getSession: getSession,
     signInWithPassword: signInWithPassword, signUpWithPassword: signUpWithPassword,
     signOut: signOut, onChange: onChange,
+    resetPasswordForEmail: resetPasswordForEmail, onPasswordRecovery: onPasswordRecovery, updatePassword: updatePassword,
     mountWidget: mountWidget, mountUserBadge: mountUserBadge, mountAuthGate: mountAuthGate
   };
 })();
