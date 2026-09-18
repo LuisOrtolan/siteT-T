@@ -1419,9 +1419,15 @@
     }
 
     // ---------- Estatísticas de rolagens ----------
-    // Popup sob demanda (não fica fixo na tela) com um resumo por jogador,
-    // calculado em cima do que já está carregado em `rolagens` — sem
-    // consulta nova ao banco.
+    // Popup sob demanda (não fica fixo na tela) com a média de cada dado
+    // principal (d4/d6/d8/d10/d12/d20), somando todo mundo junto (não separa
+    // por jogador — todos veem a mesma estatística da mesa toda), calculado
+    // em cima do que já está carregado em `rolagens` — sem consulta nova ao
+    // banco. Reaproveita TT_DICE.parseFormula pra saber, mesmo numa fórmula
+    // livre como "2d6+1d4", quantos valores de resultado.dice pertencem a
+    // cada tipo de dado (a ordem dos valores segue a ordem dos termos da
+    // fórmula, igual TT_DICE.rollFormula monta esse array).
+    const DADOS_PRINCIPAIS = [4, 6, 8, 10, 12, 20];
     function abrirEstatisticas() {
       document.getElementById('stats-content').innerHTML = montarEstatisticasHtml();
       document.getElementById('stats-backdrop').classList.add('aberto');
@@ -1434,27 +1440,32 @@
     }
     function montarEstatisticasHtml() {
       const validas = rolagens.filter(Boolean);
-      if (!validas.length) return '<p class="hint">Nenhuma rolagem ainda nesta sessão.</p>';
-      const porJogador = {};
+      const porDado = {};
+      DADOS_PRINCIPAIS.forEach(function (faces) { porDado[faces] = { rolagens: 0, soma: 0 }; });
       validas.forEach(function (r) {
-        const nome = r.nome_exibicao || '?';
-        if (!porJogador[nome]) porJogador[nome] = { rolagens: 0, soma: 0, min: Infinity, max: -Infinity };
-        const s = porJogador[nome];
-        s.rolagens++;
-        s.soma += r.total;
-        if (r.total < s.min) s.min = r.total;
-        if (r.total > s.max) s.max = r.total;
+        const termos = TT_DICE.parseFormula(r.formula);
+        if (!termos || !r.resultado || !r.resultado.dice) return;
+        let i = 0;
+        termos.forEach(function (t) {
+          if (!t.faces) return;
+          for (let k = 0; k < t.n; k++) {
+            const bruto = r.resultado.dice[i++];
+            if (bruto === undefined) return;
+            if (porDado[t.faces]) { porDado[t.faces].rolagens++; porDado[t.faces].soma += Math.abs(bruto); }
+          }
+        });
       });
-      const nomes = Object.keys(porJogador).sort(function (a, b) { return porJogador[b].rolagens - porJogador[a].rolagens; });
-      const linhas = nomes.map(function (nome) {
-        const s = porJogador[nome];
-        const media = (s.soma / s.rolagens).toFixed(1);
-        return '<tr><td>' + escapeHtml(nome) + '</td><td>' + s.rolagens + '</td><td>' + s.soma + '</td><td>' + media + '</td><td>' + s.min + '</td><td>' + s.max + '</td></tr>';
+      const totalRolagens = DADOS_PRINCIPAIS.reduce(function (acc, faces) { return acc + porDado[faces].rolagens; }, 0);
+      if (!totalRolagens) return '<p class="hint">Nenhuma rolagem de d4/d6/d8/d10/d12/d20 ainda nesta sessão.</p>';
+      const linhas = DADOS_PRINCIPAIS.map(function (faces) {
+        const s = porDado[faces];
+        const media = s.rolagens ? (s.soma / s.rolagens).toFixed(1) : '—';
+        return '<tr><td>d' + faces + '</td><td>' + media + '</td></tr>';
       }).join('');
       return '<table class="stats-table">' +
-        '<thead><tr><th>Jogador</th><th>Rolagens</th><th>Soma</th><th>Média</th><th>Menor</th><th>Maior</th></tr></thead>' +
+        '<thead><tr><th>Dado</th><th>Média</th></tr></thead>' +
         '<tbody>' + linhas + '</tbody></table>' +
-        '<p class="hint" style="margin-top:10px">Baseado nas ' + validas.length + ' rolagens carregadas nesta sessão.</p>';
+        '<p class="hint" style="margin-top:10px">Baseado em ' + totalRolagens + ' rolagens de dados (de todos os jogadores) nesta sessão.</p>';
     }
 
     // ---------- Participantes (Presence) ----------
