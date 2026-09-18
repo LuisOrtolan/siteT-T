@@ -810,7 +810,8 @@
           // como "desmarcar tudo" no pointerdown.
           if (rx1 - rx0 > 0.003 || ry1 - ry0 > 0.003) {
             const ret = { x0: rx0, y0: ry0, x1: rx1, y1: ry1 };
-            selecionados = desenhos.filter(function (d) { return retangulosSeSobrepoe(bboxDoDesenho(d), ret); }).map(function (d) { return d.id; });
+            const cnv = canvasEl();
+            selecionados = desenhos.filter(function (d) { return retangulosSeSobrepoe(bboxDoDesenho(d, cnv.width, cnv.height), ret); }).map(function (d) { return d.id; });
           }
           retanguloSelecao = null;
           redrawCanvas();
@@ -833,15 +834,6 @@
         if (!res.ok) { console.error('Desenho não sincronizou com a nuvem (ficou salvo só neste navegador por enquanto):', res); return; }
         TT_SALA.broadcastDrawAdd(channel, res.desenho);
       });
-    }
-
-    function removeDrawingLocal(id, sendRemote) {
-      desenhos = desenhos.filter(function (d) { return d.id !== id; });
-      redrawCanvas();
-      if (sendRemote) {
-        TT_SALA.removeDrawing(sala.id, id);
-        TT_SALA.broadcastDrawRemove(channel, id);
-      }
     }
 
     function doClearAll() {
@@ -884,8 +876,8 @@
 
     // Bounding box (fração) de um desenho, pra testar sobreposição com o
     // retângulo do laço de seleção.
-    function bboxDoDesenho(d) {
-      const pts = outlinePoints(d);
+    function bboxDoDesenho(d, w, h) {
+      const pts = outlinePoints(d, w, h);
       const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
       return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
     }
@@ -910,7 +902,7 @@
     // Retângulo tracejado ao redor do desenho selecionado, com uma margem
     // (padding) pra ficar visível mesmo em traços finos.
     function desenharDestaqueSelecao(ctx, d, w, h) {
-      const pts = outlinePoints(d).map(function (p) { return { x: p.x * w, y: p.y * h }; });
+      const pts = outlinePoints(d, w, h).map(function (p) { return { x: p.x * w, y: p.y * h }; });
       const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
       const pad = 10;
       const x = Math.min.apply(null, xs) - pad, y = Math.min.apply(null, ys) - pad;
@@ -954,8 +946,16 @@
       }
     }
 
-    // Pontos (fração) que compõem o "contorno" de um elemento, pra hit-test do apagador.
-    function outlinePoints(d) {
+    // Pontos (fração) que compõem o "contorno" de um elemento, pra hit-test,
+    // destaque de seleção e apagador. w/h (dimensões reais do canvas em
+    // pixels) importam pro círculo: o quadro quase nunca é quadrado, então
+    // um raio calculado a partir de 2 pontos em fração precisa ser
+    // convertido pra pixels antes de aplicar seno/cosseno — senão o
+    // "círculo" aproximado sai elíptico, gerando cliques/apagões fora do
+    // lugar perto do topo/base dele. w/h têm um fallback de 1 só pra não
+    // quebrar se algum chamador esquecer de passar (fica com a distorção
+    // de antes, mas não trava).
+    function outlinePoints(d, w, h) {
       if (d.tipo === 'traco' || d.tipo === 'linha') return d.pontos;
       if (d.tipo === 'retangulo') {
         const [a, b] = d.pontos;
@@ -963,11 +963,12 @@
       }
       if (d.tipo === 'circulo') {
         const [c0, edge] = d.pontos;
-        const r = Math.hypot(edge.x - c0.x, edge.y - c0.y);
+        const ww = w || 1, hh = h || 1;
+        const raioPx = Math.hypot((edge.x - c0.x) * ww, (edge.y - c0.y) * hh);
         const pts = [];
         for (let i = 0; i <= 24; i++) {
           const ang = (i / 24) * Math.PI * 2;
-          pts.push({ x: c0.x + r * Math.cos(ang), y: c0.y + r * Math.sin(ang) });
+          pts.push({ x: c0.x + (raioPx * Math.cos(ang)) / ww, y: c0.y + (raioPx * Math.sin(ang)) / hh });
         }
         return pts;
       }
@@ -991,30 +992,13 @@
       const thresholdFrac = 10 / Math.max(c.width, c.height);
       let best = null, bestDist = Infinity;
       desenhos.forEach(function (d) {
-        const pts = outlinePoints(d);
+        const pts = outlinePoints(d, c.width, c.height);
         for (let i = 0; i < pts.length - 1; i++) {
           const dist = distToSegment(p, pts[i], pts[i + 1]);
           if (dist < bestDist) { bestDist = dist; best = d; }
         }
         if (pts.length === 1) {
           const dist = Math.hypot(p.x - pts[0].x, p.y - pts[0].y);
-          if (dist < bestDist) { bestDist = dist; best = d; }
-        }
-      });
-      return bestDist <= thresholdFrac + (best ? best.espessura / Math.max(c.width, c.height) : 0) ? best : null;
-    }
-
-    // Só formas fechadas (retângulo/círculo) — traço e linha são apagados
-    // parcialmente por eraseAt() abaixo, não removidos inteiros num clique.
-    function hitTestFechado(p) {
-      const c = canvasEl();
-      const thresholdFrac = 8 / Math.max(c.width, c.height);
-      let best = null, bestDist = Infinity;
-      desenhos.forEach(function (d) {
-        if (d.tipo !== 'retangulo' && d.tipo !== 'circulo') return;
-        const pts = outlinePoints(d);
-        for (let i = 0; i < pts.length - 1; i++) {
-          const dist = distToSegment(p, pts[i], pts[i + 1]);
           if (dist < bestDist) { bestDist = dist; best = d; }
         }
       });
@@ -1038,13 +1022,12 @@
       cursor.style.display = 'block';
     }
 
-    // Uma "linha" só tem 2 pontos (início/fim) — pra poder cortar num ponto
-    // arbitrário no meio dela, subdivide em pontos intermediários antes de
-    // aplicar a mesma lógica de apagamento por vértice usada no traço livre.
-    function densificarParaApagar(pts, tipo) {
-      if (tipo !== 'linha') return pts;
-      const [a, b] = pts;
-      const passos = 40;
+    // Subdivide em pontos intermediários antes de aplicar a lógica de
+    // apagamento por vértice usada no traço livre — sem isso, formas com
+    // poucos pontos de controle (linha: só início/fim; retângulo/círculo:
+    // só o contorno original de outlinePoints) só poderiam ser cortadas
+    // bem em cima de um desses pontos, não em qualquer lugar da borda.
+    function amostrarSegmento(a, b, passos) {
       const out = [];
       for (let i = 0; i <= passos; i++) {
         const t = i / passos;
@@ -1052,34 +1035,80 @@
       }
       return out;
     }
+    function densificarParaApagar(d, w, h) {
+      if (d.tipo === 'traco') return d.pontos;
+      if (d.tipo === 'linha') return amostrarSegmento(d.pontos[0], d.pontos[1], 40);
+      // retângulo/círculo: outlinePoints já devolve um contorno fechado
+      // (o último ponto repete o primeiro) — subdivide cada segmento dele.
+      const contorno = outlinePoints(d, w, h);
+      const passos = d.tipo === 'circulo' ? 4 : 20;
+      const out = [];
+      for (let i = 0; i < contorno.length - 1; i++) {
+        out.push.apply(out, amostrarSegmento(contorno[i], contorno[i + 1], passos));
+      }
+      return out;
+    }
 
-    // Apaga só a parte de traços/linhas que cai dentro do raio da borracha
-    // em `p`, cortando cada um em pedaços separados (0, 1 ou 2) em vez de
-    // remover o traço inteiro. Retângulo/círculo continuam sendo apagados
-    // inteiros, via hitTestFechado (chamada por apagarNoPonto).
+    // Quebra pts/fora em pedaços contíguos de pontos mantidos (>=2 pontos).
+    // Pra formas FECHADAS (retângulo/círculo), o array de pontos sempre
+    // começa e termina no mesmo lugar (é um laço) — sem girar o array pra
+    // começar logo depois de um trecho apagado, um corte único no meio do
+    // contorno "quebraria" o laço em 2 pedaços que só parecem 1 (as pontas
+    // ficam vizinhas), gerando um traço a mais à toa. Girando, o corte
+    // sempre cai exatamente na emenda do array, e sobra 1 pedaço só.
+    function pedacosMantidos(pts, fora, fechado) {
+      let ptsScan = pts, foraScan = fora;
+      if (fechado) {
+        const idxApagado = fora.indexOf(false);
+        const n = pts.length;
+        ptsScan = []; foraScan = [];
+        for (let i = 0; i < n; i++) {
+          const idx = (idxApagado + 1 + i) % n;
+          ptsScan.push(pts[idx]);
+          foraScan.push(fora[idx]);
+        }
+      }
+      const pedacos = [];
+      let atual = [];
+      for (let i = 0; i <= ptsScan.length; i++) {
+        if (i < ptsScan.length && foraScan[i]) { atual.push(ptsScan[i]); continue; }
+        if (atual.length >= 2) pedacos.push(atual);
+        atual = [];
+      }
+      return pedacos;
+    }
+
+    // Apaga só a parte de qualquer desenho (traço, linha, retângulo ou
+    // círculo) que cai dentro do raio da borracha em `p`, cortando em
+    // pedaços separados em vez de remover o desenho inteiro. Retângulo e
+    // círculo viram um ou mais traços abertos depois de cortados — uma
+    // forma fechada com um pedaço faltando não é mais um "retângulo" nem
+    // um "círculo", é só o contorno que sobrou.
     function eraseAt(p) {
       const c = canvasEl();
-      const raioFrac = borrachaRaioPx() / Math.max(c.width, c.height);
+      const raioPx = borrachaRaioPx();
       const mantidos = [];
       const removidosIds = [];
       const adicionados = [];
 
       desenhos.forEach(function (d) {
-        if (d.tipo !== 'traco' && d.tipo !== 'linha') { mantidos.push(d); return; }
-        const pts = densificarParaApagar(d.pontos, d.tipo);
-        const fora = pts.map(function (pt) { return Math.hypot(pt.x - p.x, pt.y - p.y) > raioFrac; });
+        const pts = densificarParaApagar(d, c.width, c.height);
+        // Distância em pixels de verdade (escalando x e y pelas dimensões
+        // reais do canvas antes do hypot) — o quadro quase nunca é
+        // quadrado, então comparar direto as frações x/y sem escalar
+        // distorce a distância (fica "elíptica" em vez de circular),
+        // mais perceptível justamente ao apagar um círculo.
+        const fora = pts.map(function (pt) {
+          return Math.hypot((pt.x - p.x) * c.width, (pt.y - p.y) * c.height) > raioPx;
+        });
         if (fora.every(Boolean)) { mantidos.push(d); return; }
 
         removidosIds.push(d.id);
-        let atual = [];
-        for (let i = 0; i <= pts.length; i++) {
-          if (i < pts.length && fora[i]) { atual.push(pts[i]); continue; }
-          if (atual.length >= 2) {
-            const novo = { id: TT_SALA.newDrawId(), tipo: 'traco', pontos: atual, cor: d.cor, espessura: d.espessura };
-            mantidos.push(novo); adicionados.push(novo);
-          }
-          atual = [];
-        }
+        const fechado = d.tipo === 'retangulo' || d.tipo === 'circulo';
+        pedacosMantidos(pts, fora, fechado).forEach(function (atual) {
+          const novo = { id: TT_SALA.newDrawId(), tipo: 'traco', pontos: atual, cor: d.cor, espessura: d.espessura };
+          mantidos.push(novo); adicionados.push(novo);
+        });
       });
 
       if (!removidosIds.length) return;
@@ -1098,8 +1127,6 @@
 
     function apagarNoPonto(p) {
       eraseAt(p);
-      const hit = hitTestFechado(p);
-      if (hit) removeDrawingLocal(hit.id, true);
     }
 
     function handleDrawAdd(d) { desenhos.push(d); redrawCanvas(); }
