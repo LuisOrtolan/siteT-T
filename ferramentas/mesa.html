@@ -135,6 +135,19 @@
     .roll-item-body .formula { color: #8a8fa0; overflow-wrap: anywhere }
     .roll-item-body .total { font-weight: bold; color: #f5f5f7; font-size: 14px; flex-shrink: 0 }
 
+    .init-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px }
+    .init-item {
+      display: flex; align-items: center; gap: 8px; background: #0f1014; border: 1px solid #1a1d24;
+      border-radius: 6px; padding: 6px 8px; font-size: 12px;
+    }
+    .init-item.on { border-color: #c7a25a; background: #c7a25a12 }
+    .init-valor { color: #c7a25a; font-weight: bold; min-width: 22px; text-align: center }
+    .init-nome { flex: 1; color: #f5f5f7; overflow-wrap: anywhere }
+    .init-item .btn { padding: 2px 8px; font-size: 11px }
+    .init-add-row { display: flex; gap: 6px }
+    .init-add-row .fi { flex: 1; margin-bottom: 0 }
+    .init-add-row input[type=number] { flex: none; width: 72px }
+
     .participant-list { display: flex; flex-direction: column; gap: 4px }
     .participant { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #b0b3c0 }
     .participant .dot { width: 8px; height: 8px; border-radius: 50%; background: #3a8a3a; flex-shrink: 0 }
@@ -168,6 +181,7 @@
     let rolagens = [];
     let anotacoesTexto = '';
     let notesTimer = null;
+    let iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
     let participantes = {};
     let channel = null;
 
@@ -308,12 +322,14 @@
         TT_SALA.getRoom(salaId),
         TT_SALA.listDrawings(salaId),
         TT_SALA.listRecentRolls(salaId, 100),
-        TT_SALA.getNotes(salaId)
+        TT_SALA.getNotes(salaId),
+        TT_SALA.getInitiative(salaId)
       ]).then(function (r) {
         sala = r[0];
         desenhos = r[1];
         rolagens = r[2];
         anotacoesTexto = r[3];
+        iniciativa = r[4];
         souGM = sala && sala.gm_id === meuUserId;
         renderRoom();
         channel = TT_SALA.connect(salaId, meuNome, {
@@ -322,6 +338,7 @@
           onDrawClear: handleDrawClear,
           onRoll: handleRollBroadcast,
           onNotesUpdate: handleNotesBroadcast,
+          onInitiativeUpdate: handleInitiativeBroadcast,
           onPresenceSync: handlePresenceSync
         });
       });
@@ -331,6 +348,7 @@
       if (channel) TT_SALA.leave(channel);
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {};
+      iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -376,6 +394,19 @@
             '</div>' +
           '</div>' +
           '<div class="sidebar">' +
+            '<div class="sec"><div class="sec-t" style="display:flex;justify-content:space-between;align-items:center">' +
+              '<span>Iniciativa</span><span class="hint" id="initiative-round" style="margin:0">Rodada 1</span></div>' +
+              '<div class="init-list" id="initiative-list"></div>' +
+              '<div class="init-add-row">' +
+                '<input class="fi" id="init-nome" placeholder="Nome" onkeydown="if(event.key===\'Enter\')addCombatente()">' +
+                '<input class="fi" id="init-valor" type="number" placeholder="Iniciativa" onkeydown="if(event.key===\'Enter\')addCombatente()">' +
+              '</div>' +
+              '<div style="display:flex;gap:6px;margin-top:8px">' +
+                '<button class="btn gold" style="flex:1" onclick="addCombatente()">+ Adicionar</button>' +
+                '<button class="btn" onclick="proximoTurno()">Próximo &#8594;</button>' +
+                '<button class="btn red" onclick="limparIniciativa()">Limpar</button>' +
+              '</div>' +
+            '</div>' +
             '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
               '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="Anotações da aventura, visíveis e editáveis por todo mundo...">' + escapeHtml(anotacoesTexto) + '</textarea></div>' +
             '<div class="sec"><div class="sec-t">Dados</div>' +
@@ -395,6 +426,7 @@
 
       renderRollLog();
       renderParticipants();
+      renderInitiative();
       initCanvas();
     }
 
@@ -696,6 +728,83 @@
       anotacoesTexto = conteudo;
       const el = document.getElementById('notes-area');
       if (el && document.activeElement !== el) el.value = conteudo;
+    }
+
+    // ---------- Iniciativa ----------
+    // Estado: { combatentes: [{id, nome, valor}], turnoId, rodada }. turnoId
+    // (em vez de um índice) sobrevive a adições/remoções sem precisar
+    // recalcular posição — só o combatente daquele id importa.
+    function newInitId() { return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+    function iniciativaOrdenada() {
+      return iniciativa.combatentes.slice().sort(function (a, b) { return b.valor - a.valor; });
+    }
+    function saveAndBroadcastInitiative() {
+      TT_SALA.saveInitiative(sala.id, iniciativa);
+      TT_SALA.broadcastInitiative(channel, iniciativa);
+    }
+    function addCombatente() {
+      const nomeInput = document.getElementById('init-nome');
+      const valorInput = document.getElementById('init-valor');
+      const nome = nomeInput.value.trim();
+      const valor = parseInt(valorInput.value, 10);
+      if (!nome || isNaN(valor)) return;
+      // turnoId só é definido quando "Próximo" é clicado pela primeira vez
+      // (ver proximoTurno) — se fosse fixado aqui, no primeiro combatente
+      // adicionado, ficaria "preso" nele mesmo depois que alguém com
+      // iniciativa maior entrasse na lista.
+      iniciativa.combatentes.push({ id: newInitId(), nome: nome, valor: valor });
+      nomeInput.value = ''; valorInput.value = '';
+      nomeInput.focus();
+      renderInitiative();
+      saveAndBroadcastInitiative();
+    }
+    function removeCombatente(id) {
+      iniciativa.combatentes = iniciativa.combatentes.filter(function (c) { return c.id !== id; });
+      if (iniciativa.turnoId === id) {
+        const ord = iniciativaOrdenada();
+        iniciativa.turnoId = ord.length ? ord[0].id : null;
+      }
+      renderInitiative();
+      saveAndBroadcastInitiative();
+    }
+    function proximoTurno() {
+      const ord = iniciativaOrdenada();
+      if (!ord.length) return;
+      const idxAtual = ord.findIndex(function (c) { return c.id === iniciativa.turnoId; });
+      if (idxAtual === -1) {
+        iniciativa.turnoId = ord[0].id;
+      } else {
+        const proximo = (idxAtual + 1) % ord.length;
+        if (proximo === 0) iniciativa.rodada = (iniciativa.rodada || 1) + 1;
+        iniciativa.turnoId = ord[proximo].id;
+      }
+      renderInitiative();
+      saveAndBroadcastInitiative();
+    }
+    function limparIniciativa() {
+      if (!confirm('Limpar a lista de iniciativa?')) return;
+      iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
+      renderInitiative();
+      saveAndBroadcastInitiative();
+    }
+    function handleInitiativeBroadcast(estado) {
+      iniciativa = estado;
+      renderInitiative();
+    }
+    function renderInitiative() {
+      const el = document.getElementById('initiative-list');
+      if (!el) return;
+      const roundEl = document.getElementById('initiative-round');
+      if (roundEl) roundEl.textContent = 'Rodada ' + (iniciativa.rodada || 1);
+      const ord = iniciativaOrdenada();
+      if (!ord.length) { el.innerHTML = '<p class="hint">Nenhum combatente ainda.</p>'; return; }
+      el.innerHTML = ord.map(function (c) {
+        return '<div class="init-item' + (c.id === iniciativa.turnoId ? ' on' : '') + '">' +
+          '<span class="init-valor">' + c.valor + '</span>' +
+          '<span class="init-nome">' + escapeHtml(c.nome) + '</span>' +
+          '<button class="btn red" onclick="removeCombatente(\'' + c.id + '\')">&times;</button>' +
+          '</div>';
+      }).join('');
     }
 
     // ---------- Dados ----------
