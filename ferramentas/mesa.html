@@ -106,6 +106,7 @@
     .board-canvas.erase-mode { cursor: not-allowed }
     .board-canvas.pan-mode { cursor: grab }
     .board-canvas.pan-mode:active { cursor: grabbing }
+    .board-canvas.select-mode { cursor: pointer }
     .zoom-label { font-size: 11px; color: #b0b3c0; min-width: 34px; text-align: center }
 
     .erase-cursor {
@@ -198,6 +199,10 @@
     let apagando = false;
     let pontosAtuais = [];
     let previewEl = null;
+    let selecionadoId = null;
+    let arrastandoSelecao = false;
+    let arrastarOrigem = null;
+    let pontosOriginaisSelecao = null;
     // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
     // área visível quando o tamanho da célula está "natural" (zoom 1). No
     // zoom mínimo (ZOOM_MIN = 1/MUNDO_POR_TELA), esse mapa inteiro cabe
@@ -343,6 +348,7 @@
           onDrawAdd: handleDrawAdd,
           onDrawRemove: handleDrawRemove,
           onDrawClear: handleDrawClear,
+          onDrawUpdate: handleDrawUpdate,
           onRoll: handleRollBroadcast,
           onNotesUpdate: handleNotesBroadcast,
           onInitiativeUpdate: handleInitiativeBroadcast,
@@ -356,6 +362,7 @@
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {};
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
+      selecionadoId = null; arrastandoSelecao = false;
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -379,9 +386,10 @@
               '</div>' +
             '</div>' +
             '<div class="toolbar">' +
+              toolBtn('selecionar', '&#8598; Selecionar') +
               toolBtn('traco', '&#9998; Caneta') + toolBtn('linha', '&#8211; Linha') +
               toolBtn('retangulo', '&#9633; Retângulo') + toolBtn('circulo', '&#9711; Círculo') +
-              toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover') +
+              toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover mapa') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
               '<span class="lbl" id="thickness-label">' + (tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura') + '</span>' +
               '<input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
@@ -454,11 +462,13 @@
       if (c) {
         c.classList.toggle('erase-mode', tool === 'apagar');
         c.classList.toggle('pan-mode', tool === 'mover');
+        c.classList.toggle('select-mode', tool === 'selecionar');
       }
       const lbl = document.getElementById('thickness-label');
       if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
       const cursor = document.getElementById('erase-cursor');
       if (cursor && tool !== 'apagar') cursor.style.display = 'none';
+      if (tool !== 'selecionar' && selecionadoId) { selecionadoId = null; redrawCanvas(); }
     }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -505,6 +515,7 @@
 
       canvas.classList.toggle('erase-mode', tool === 'apagar');
       canvas.classList.toggle('pan-mode', tool === 'mover');
+      canvas.classList.toggle('select-mode', tool === 'selecionar');
       canvas.addEventListener('pointerdown', onPointerDown);
       canvas.addEventListener('pointermove', onPointerMove);
       canvas.addEventListener('pointerup', onPointerUp);
@@ -588,6 +599,19 @@
         apagarNoPonto(relPoint(evt));
         return;
       }
+      if (tool === 'selecionar') {
+        const p0 = relPoint(evt);
+        const hit = hitTestQualquer(p0);
+        selecionadoId = hit ? hit.id : null;
+        if (hit) {
+          arrastandoSelecao = true;
+          arrastarOrigem = p0;
+          pontosOriginaisSelecao = hit.pontos.map(function (pt) { return { x: pt.x, y: pt.y }; });
+          canvasEl().setPointerCapture(evt.pointerId);
+        }
+        redrawCanvas();
+        return;
+      }
       const p = relPoint(evt);
       desenhando = true;
       canvasEl().setPointerCapture(evt.pointerId);
@@ -609,6 +633,17 @@
         if (apagando) apagarNoPonto(relPoint(evt));
         return;
       }
+      if (tool === 'selecionar') {
+        if (!arrastandoSelecao) return;
+        const p = relPoint(evt);
+        const dx = p.x - arrastarOrigem.x, dy = p.y - arrastarOrigem.y;
+        const d = desenhos.find(function (x) { return x.id === selecionadoId; });
+        if (d) {
+          d.pontos = pontosOriginaisSelecao.map(function (pt) { return { x: pt.x + dx, y: pt.y + dy }; });
+          redrawCanvas();
+        }
+        return;
+      }
       if (!desenhando) return;
       const p = relPoint(evt);
       if (tool === 'traco') {
@@ -623,6 +658,16 @@
     function onPointerUp() {
       if (tool === 'mover') { panning = false; return; }
       if (tool === 'apagar') { apagando = false; return; }
+      if (tool === 'selecionar') {
+        if (!arrastandoSelecao) return;
+        arrastandoSelecao = false;
+        const d = desenhos.find(function (x) { return x.id === selecionadoId; });
+        if (d) {
+          TT_SALA.updateDrawing(sala.id, d.id, d.pontos);
+          TT_SALA.broadcastDrawUpdate(channel, { id: d.id, pontos: d.pontos });
+        }
+        return;
+      }
       if (!desenhando) return;
       desenhando = false;
       const finalEl = previewEl;
@@ -665,6 +710,27 @@
       ctx.clearRect(0, 0, c.width, c.height);
       desenhos.forEach(function (d) { drawElement(ctx, d, c.width, c.height); });
       if (previewEl) drawElement(ctx, previewEl, c.width, c.height);
+      if (selecionadoId) {
+        const sel = desenhos.find(function (d) { return d.id === selecionadoId; });
+        if (sel) desenharDestaqueSelecao(ctx, sel, c.width, c.height);
+      }
+    }
+
+    // Retângulo tracejado ao redor do desenho selecionado, com uma margem
+    // (padding) pra ficar visível mesmo em traços finos.
+    function desenharDestaqueSelecao(ctx, d, w, h) {
+      const pts = outlinePoints(d).map(function (p) { return { x: p.x * w, y: p.y * h }; });
+      const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
+      const pad = 10;
+      const x = Math.min.apply(null, xs) - pad, y = Math.min.apply(null, ys) - pad;
+      const largura = Math.max.apply(null, xs) - Math.min.apply(null, xs) + pad * 2;
+      const altura = Math.max.apply(null, ys) - Math.min.apply(null, ys) + pad * 2;
+      ctx.save();
+      ctx.strokeStyle = '#c7a25a';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(x, y, largura, altura);
+      ctx.restore();
     }
 
     function drawElement(ctx, d, w, h) {
@@ -724,6 +790,27 @@
       t = Math.max(0, Math.min(1, t));
       const cx = a.x + t * dx, cy = a.y + t * dy;
       return Math.hypot(p.x - cx, p.y - cy);
+    }
+
+    // Qualquer tipo de desenho (traço/linha/retângulo/círculo) — usado pela
+    // ferramenta "Selecionar", que precisa poder pegar qualquer coisa no
+    // quadro, diferente da borracha (que trata traço/linha à parte).
+    function hitTestQualquer(p) {
+      const c = canvasEl();
+      const thresholdFrac = 10 / Math.max(c.width, c.height);
+      let best = null, bestDist = Infinity;
+      desenhos.forEach(function (d) {
+        const pts = outlinePoints(d);
+        for (let i = 0; i < pts.length - 1; i++) {
+          const dist = distToSegment(p, pts[i], pts[i + 1]);
+          if (dist < bestDist) { bestDist = dist; best = d; }
+        }
+        if (pts.length === 1) {
+          const dist = Math.hypot(p.x - pts[0].x, p.y - pts[0].y);
+          if (dist < bestDist) { bestDist = dist; best = d; }
+        }
+      });
+      return bestDist <= thresholdFrac + (best ? best.espessura / Math.max(c.width, c.height) : 0) ? best : null;
     }
 
     // Só formas fechadas (retângulo/círculo) — traço e linha são apagados
@@ -827,6 +914,10 @@
     function handleDrawAdd(d) { desenhos.push(d); redrawCanvas(); }
     function handleDrawRemove(id) { desenhos = desenhos.filter(function (d) { return d.id !== id; }); redrawCanvas(); }
     function handleDrawClear() { desenhos = []; redrawCanvas(); }
+    function handleDrawUpdate(payload) {
+      const d = desenhos.find(function (x) { return x.id === payload.id; });
+      if (d) { d.pontos = payload.pontos; redrawCanvas(); }
+    }
 
     // ---------- Anotações ----------
     function onNotesInput() {

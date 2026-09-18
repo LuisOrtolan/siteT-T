@@ -105,6 +105,17 @@ create policy "Participantes apagam desenhos da sala"
             where p.sala_id = sala_desenhos.sala_id and p.user_id = auth.uid())
   );
 
+create policy "Participantes movem desenhos da sala"
+  on public.sala_desenhos for update
+  using (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_desenhos.sala_id and p.user_id = auth.uid())
+  )
+  with check (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_desenhos.sala_id and p.user_id = auth.uid())
+  );
+
 
 create table if not exists public.sala_rolagens (
   id bigint generated always as identity primary key,
