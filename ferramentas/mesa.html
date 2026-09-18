@@ -138,6 +138,19 @@
       margin-top: 3px; white-space: nowrap;
     }
 
+    .token-lib { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px }
+    .token-lib-item { position: relative; width: 40px; height: 40px }
+    .token-lib-item img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 2px solid #2a2d35; cursor: pointer; display: block;
+    }
+    .token-lib-item img:hover { border-color: #c7a25a }
+    .token-lib-del {
+      position: absolute; top: -4px; right: -4px; width: 14px; height: 14px; border-radius: 50%;
+      background: #d06060; color: #fff; border: none; font-size: 9px; line-height: 14px;
+      cursor: pointer; padding: 0;
+    }
+
     .sidebar {
       width: 320px; flex-shrink: 0; border-left: 1px solid #1f2230;
       display: flex; flex-direction: column; overflow-y: auto;
@@ -229,6 +242,7 @@
     let retanguloSelecao = null;    // {x0,y0,x1,y1} fração, durante o arraste do laço
     let tokens = [];
     let arrastandoToken = null;
+    let meusTokensSalvos = [];
     // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
     // área visível quando o tamanho da célula está "natural" (zoom 1). No
     // zoom mínimo (ZOOM_MIN = 1/MUNDO_POR_TELA), esse mapa inteiro cabe
@@ -362,7 +376,8 @@
         TT_SALA.listRecentRolls(salaId, 100),
         TT_SALA.getNotes(salaId),
         TT_SALA.getInitiative(salaId),
-        TT_SALA.listTokens(salaId)
+        TT_SALA.listTokens(salaId),
+        TT_SALA.listMyTokens()
       ]).then(function (r) {
         sala = r[0];
         desenhos = r[1];
@@ -370,6 +385,7 @@
         anotacoesTexto = r[3];
         iniciativa = r[4];
         tokens = r[5];
+        meusTokensSalvos = r[6];
         souGM = sala && sala.gm_id === meuUserId;
         renderRoom();
         channel = TT_SALA.connect(salaId, meuNome, {
@@ -391,7 +407,7 @@
     function leaveRoom() {
       if (channel) TT_SALA.leave(channel);
       channel = null;
-      sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = [];
+      sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = []; meusTokensSalvos = [];
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
       selecionados = []; arrastandoSelecao = false; retanguloSelecao = null; arrastandoToken = null;
       history.replaceState(null, '', location.pathname);
@@ -464,6 +480,7 @@
               '<button class="btn gold" style="width:100%" onclick="document.getElementById(\'token-file-input\').click()">+ Adicionar token</button>' +
               '<div class="hint">Arraste um token pelo mapa pra mover. O × no canto apaga.</div>' +
               '<div class="err" id="token-err"></div>' +
+              '<div class="token-lib" id="token-library"></div>' +
             '</div>' +
             '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
               '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="Anotações da aventura, visíveis e editáveis por todo mundo...">' + escapeHtml(anotacoesTexto) + '</textarea></div>' +
@@ -485,6 +502,7 @@
       renderRollLog();
       renderParticipants();
       renderInitiative();
+      renderTokenLibrary();
       initCanvas();
     }
 
@@ -850,6 +868,20 @@
       return a.x0 <= b.x1 && a.x1 >= b.x0 && a.y0 <= b.y1 && a.y1 >= b.y0;
     }
 
+    // Apaga tudo que estiver selecionado (tecla Delete/Backspace, ver o
+    // listener de teclado perto do boot() no fim do arquivo).
+    function apagarSelecionados() {
+      const ids = selecionados.slice();
+      if (!ids.length) return;
+      desenhos = desenhos.filter(function (d) { return ids.indexOf(d.id) === -1; });
+      selecionados = [];
+      redrawCanvas();
+      ids.forEach(function (id) {
+        TT_SALA.removeDrawing(sala.id, id);
+        TT_SALA.broadcastDrawRemove(channel, id);
+      });
+    }
+
     // Retângulo tracejado ao redor do desenho selecionado, com uma margem
     // (padding) pra ficar visível mesmo em traços finos.
     function desenharDestaqueSelecao(ctx, d, w, h) {
@@ -1141,6 +1173,10 @@
         TT_SALA.addToken(sala.id, novo).then(function (res2) {
           if (res2.ok) TT_SALA.broadcastTokenAdd(channel, novo);
         });
+        // Salva na biblioteca pessoal pra reusar depois sem subir de novo.
+        TT_SALA.saveMyToken(nome, res.url).then(function (res3) {
+          if (res3.ok) { meusTokensSalvos.unshift(res3.token); renderTokenLibrary(); }
+        });
       });
     }
 
@@ -1149,6 +1185,37 @@
       renderTokens();
       TT_SALA.removeToken(sala.id, id);
       TT_SALA.broadcastTokenRemove(channel, id);
+    }
+
+    // ---------- Biblioteca pessoal de tokens ----------
+    function renderTokenLibrary() {
+      const el = document.getElementById('token-library');
+      if (!el) return;
+      el.innerHTML = meusTokensSalvos.map(function (t) {
+        return '<div class="token-lib-item" title="' + escapeHtml(t.nome || 'Token') + ' (clique pra usar)">' +
+          '<img src="' + t.imagem_url + '" alt="' + escapeHtml(t.nome || '') + '" onclick="usarTokenSalvo(\'' + t.id + '\')">' +
+          '<button class="token-lib-del" title="Remover da biblioteca" onclick="apagarTokenSalvo(\'' + t.id + '\')">&times;</button>' +
+          '</div>';
+      }).join('');
+    }
+    // Cria um novo token na mesa reaproveitando uma imagem já salva — sem
+    // upload novo.
+    function usarTokenSalvo(id) {
+      const salvo = meusTokensSalvos.find(function (t) { return t.id === id; });
+      if (!salvo) return;
+      const novo = { id: TT_SALA.newTokenId(), nome: salvo.nome, imagem_url: salvo.imagem_url, x: 0.5, y: 0.5, tamanho: 56 };
+      tokens.push(novo);
+      renderTokens();
+      TT_SALA.addToken(sala.id, novo).then(function (res) {
+        if (res.ok) TT_SALA.broadcastTokenAdd(channel, novo);
+      });
+    }
+    // Só remove da biblioteca (lista de reuso) — não mexe em tokens já
+    // colocados em alguma mesa.
+    function apagarTokenSalvo(id) {
+      meusTokensSalvos = meusTokensSalvos.filter(function (t) { return t.id !== id; });
+      renderTokenLibrary();
+      TT_SALA.deleteMyToken(id);
     }
 
     function handleTokenAdd(t) { tokens.push(t); renderTokens(); }
@@ -1319,6 +1386,19 @@
         return '<div class="participant"><span class="dot"></span>' + escapeHtml(participantes[id]) + (isGm ? '<span class="gm-tag">MESTRE</span>' : '') + '</div>';
       }).join('');
     }
+
+    // Delete/Backspace apaga o que estiver selecionado no laço — só quando
+    // a ferramenta "Selecionar" está ativa e o foco não está num campo de
+    // texto (pra não interferir com apagar letra em Anotações/Iniciativa/
+    // nome do token).
+    document.addEventListener('keydown', function (evt) {
+      if (view !== 'room' || tool !== 'selecionar' || !selecionados.length) return;
+      if (evt.key !== 'Delete' && evt.key !== 'Backspace') return;
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      evt.preventDefault();
+      apagarSelecionados();
+    });
 
     boot();
   </script>
