@@ -117,6 +117,27 @@
       transform: translate(-50%, -50%);
     }
 
+    .token-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4 }
+    .token {
+      position: absolute; pointer-events: auto; cursor: grab; text-align: center;
+      transform: translate(-50%, -50%); user-select: none;
+    }
+    .token.dragging { cursor: grabbing; opacity: .85 }
+    .token img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 2px solid #c7a25a; box-shadow: 0 2px 10px rgba(0, 0, 0, .6); display: block;
+      pointer-events: none;
+    }
+    .token-del {
+      position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; border-radius: 50%;
+      background: #d06060; color: #fff; border: none; font-size: 11px; line-height: 16px;
+      cursor: pointer; padding: 0;
+    }
+    .token-nome {
+      display: block; font-size: 10px; color: #f5f5f7; text-shadow: 0 1px 3px #000;
+      margin-top: 3px; white-space: nowrap;
+    }
+
     .sidebar {
       width: 320px; flex-shrink: 0; border-left: 1px solid #1f2230;
       display: flex; flex-direction: column; overflow-y: auto;
@@ -205,6 +226,8 @@
     let arrastandoSelecao = false;
     let arrastarOrigem = null;
     let pontosOriginaisSelecao = null;
+    let tokens = [];
+    let arrastandoToken = null;
     // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
     // área visível quando o tamanho da célula está "natural" (zoom 1). No
     // zoom mínimo (ZOOM_MIN = 1/MUNDO_POR_TELA), esse mapa inteiro cabe
@@ -337,13 +360,15 @@
         TT_SALA.listDrawings(salaId),
         TT_SALA.listRecentRolls(salaId, 100),
         TT_SALA.getNotes(salaId),
-        TT_SALA.getInitiative(salaId)
+        TT_SALA.getInitiative(salaId),
+        TT_SALA.listTokens(salaId)
       ]).then(function (r) {
         sala = r[0];
         desenhos = r[1];
         rolagens = r[2];
         anotacoesTexto = r[3];
         iniciativa = r[4];
+        tokens = r[5];
         souGM = sala && sala.gm_id === meuUserId;
         renderRoom();
         channel = TT_SALA.connect(salaId, meuNome, {
@@ -354,6 +379,9 @@
           onRoll: handleRollBroadcast,
           onNotesUpdate: handleNotesBroadcast,
           onInitiativeUpdate: handleInitiativeBroadcast,
+          onTokenAdd: handleTokenAdd,
+          onTokenUpdate: handleTokenUpdate,
+          onTokenRemove: handleTokenRemove,
           onPresenceSync: handlePresenceSync
         });
       });
@@ -362,9 +390,9 @@
     function leaveRoom() {
       if (channel) TT_SALA.leave(channel);
       channel = null;
-      sala = null; desenhos = []; rolagens = []; participantes = {};
+      sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = [];
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
-      selecionadoId = null; arrastandoSelecao = false;
+      selecionadoId = null; arrastandoSelecao = false; arrastandoToken = null;
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -410,6 +438,7 @@
               '<div class="board-inner" id="board-inner">' +
                 '<div class="board-grid" id="board-grid"></div>' +
                 '<canvas class="board-canvas" id="board-canvas"></canvas>' +
+                '<div class="token-layer" id="board-tokens"></div>' +
                 '<div class="erase-cursor" id="erase-cursor"></div>' +
               '</div>' +
             '</div>' +
@@ -427,6 +456,13 @@
                 '<button class="btn" onclick="proximoTurno()">Próximo &#8594;</button>' +
                 '<button class="btn red" onclick="limparIniciativa()">Limpar</button>' +
               '</div>' +
+            '</div>' +
+            '<div class="sec"><div class="sec-t">Tokens</div>' +
+              '<input type="file" id="token-file-input" accept="image/*" style="display:none" onchange="onTokenFileChosen(event)">' +
+              '<input class="fi" id="token-nome-input" placeholder="Nome (opcional)">' +
+              '<button class="btn gold" style="width:100%" onclick="document.getElementById(\'token-file-input\').click()">+ Adicionar token</button>' +
+              '<div class="hint">Arraste um token pelo mapa pra mover. O × no canto apaga.</div>' +
+              '<div class="err" id="token-err"></div>' +
             '</div>' +
             '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
               '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="Anotações da aventura, visíveis e editáveis por todo mundo...">' + escapeHtml(anotacoesTexto) + '</textarea></div>' +
@@ -532,6 +568,7 @@
       const wrap = wrapEl();
       aplicarFundo();
       grid.style.display = sala.grade_ativa ? 'block' : 'none';
+      initTokenLayer();
 
       applyZoom();
       window.addEventListener('resize', function () { applyZoom(); });
@@ -608,6 +645,7 @@
       }
       const label = document.getElementById('zoom-label');
       if (label) label.textContent = Math.round(zoom * 100) + '%';
+      renderTokens();
     }
 
     function canvasEl() { return document.getElementById('board-canvas'); }
@@ -950,6 +988,111 @@
     function handleDrawUpdate(payload) {
       const d = desenhos.find(function (x) { return x.id === payload.id; });
       if (d) { d.pontos = payload.pontos; redrawCanvas(); }
+    }
+
+    // ---------- Tokens ----------
+    // Tokens são <img> posicionadas por cima do canvas (não desenhadas nele)
+    // — arrastáveis por conta própria, independente da ferramenta ativa no
+    // quadro (igual a maioria dos VTTs: o token é uma camada à parte).
+    function initTokenLayer() {
+      const layer = document.getElementById('board-tokens');
+      if (!layer) return;
+      layer.addEventListener('pointerdown', function (evt) {
+        if (evt.target.classList.contains('token-del')) return;
+        const el = evt.target.closest('.token');
+        if (!el) return;
+        const id = el.dataset.id;
+        const tok = tokens.find(function (t) { return t.id === id; });
+        if (!tok) return;
+        arrastandoToken = { id: id, startX: evt.clientX, startY: evt.clientY, origX: tok.x, origY: tok.y };
+        layer.setPointerCapture(evt.pointerId);
+        el.classList.add('dragging');
+      });
+      layer.addEventListener('pointermove', function (evt) {
+        if (!arrastandoToken) return;
+        const inner = document.getElementById('board-inner');
+        const tok = tokens.find(function (t) { return t.id === arrastandoToken.id; });
+        if (!tok || !inner) return;
+        tok.x = arrastandoToken.origX + (evt.clientX - arrastandoToken.startX) / inner.clientWidth;
+        tok.y = arrastandoToken.origY + (evt.clientY - arrastandoToken.startY) / inner.clientHeight;
+        posicionarTokenEl(tok);
+      });
+      layer.addEventListener('pointerup', function (evt) {
+        if (!arrastandoToken) return;
+        const id = arrastandoToken.id;
+        layer.releasePointerCapture(evt.pointerId);
+        arrastandoToken = null;
+        const el = layer.querySelector('.token[data-id="' + id + '"]');
+        if (el) el.classList.remove('dragging');
+        const tok = tokens.find(function (t) { return t.id === id; });
+        if (tok) {
+          TT_SALA.updateToken(sala.id, id, { x: tok.x, y: tok.y });
+          TT_SALA.broadcastTokenUpdate(channel, { id: id, x: tok.x, y: tok.y });
+        }
+      });
+    }
+
+    function renderTokens() {
+      const layer = document.getElementById('board-tokens');
+      const inner = document.getElementById('board-inner');
+      if (!layer || !inner) return;
+      layer.innerHTML = tokens.map(function (t) {
+        return '<div class="token" data-id="' + t.id + '">' +
+          '<img src="' + t.imagem_url + '" alt="' + escapeHtml(t.nome || '') + '" draggable="false">' +
+          '<button class="token-del" title="Remover token" onclick="removerToken(\'' + t.id + '\')">&times;</button>' +
+          (t.nome ? '<span class="token-nome">' + escapeHtml(t.nome) + '</span>' : '') +
+          '</div>';
+      }).join('');
+      tokens.forEach(posicionarTokenEl);
+    }
+
+    function posicionarTokenEl(t) {
+      const inner = document.getElementById('board-inner');
+      const el = document.querySelector('.token[data-id="' + t.id + '"]');
+      if (!inner || !el) return;
+      // Tamanho mínimo pra continuar clicável/arrastável em zoom baixo — sem
+      // isso, num zoom bem afastado o token encolhe tanto que o botão de
+      // remover (que fica no cantinho dele) acaba cobrindo o token inteiro.
+      const tamanhoPx = Math.max((t.tamanho || 56) * zoom, 28);
+      el.style.left = (t.x * inner.clientWidth) + 'px';
+      el.style.top = (t.y * inner.clientHeight) + 'px';
+      el.style.width = tamanhoPx + 'px';
+      el.style.height = tamanhoPx + 'px';
+    }
+
+    function onTokenFileChosen(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      evt.target.value = ''; // permite escolher o mesmo arquivo de novo depois
+      if (!file) return;
+      const err = document.getElementById('token-err');
+      if (file.size > 5 * 1024 * 1024) { if (err) err.textContent = 'Imagem muito grande (máx. 5MB).'; return; }
+      const nome = (document.getElementById('token-nome-input').value || '').trim();
+      if (err) err.textContent = 'Enviando...';
+      TT_SALA.uploadTokenImage(sala.id, file).then(function (res) {
+        if (!res.ok) { if (err) err.textContent = describeFail(res, 'Não deu pra enviar a imagem.'); return; }
+        const novo = { id: TT_SALA.newTokenId(), nome: nome, imagem_url: res.url, x: 0.5, y: 0.5, tamanho: 56 };
+        tokens.push(novo);
+        renderTokens();
+        if (err) err.textContent = '';
+        document.getElementById('token-nome-input').value = '';
+        TT_SALA.addToken(sala.id, novo).then(function (res2) {
+          if (res2.ok) TT_SALA.broadcastTokenAdd(channel, novo);
+        });
+      });
+    }
+
+    function removerToken(id) {
+      tokens = tokens.filter(function (t) { return t.id !== id; });
+      renderTokens();
+      TT_SALA.removeToken(sala.id, id);
+      TT_SALA.broadcastTokenRemove(channel, id);
+    }
+
+    function handleTokenAdd(t) { tokens.push(t); renderTokens(); }
+    function handleTokenRemove(id) { tokens = tokens.filter(function (t) { return t.id !== id; }); renderTokens(); }
+    function handleTokenUpdate(payload) {
+      const t = tokens.find(function (x) { return x.id === payload.id; });
+      if (t) { t.x = payload.x; t.y = payload.y; posicionarTokenEl(t); }
     }
 
     // ---------- Anotações ----------
