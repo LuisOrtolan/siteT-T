@@ -10,6 +10,7 @@ create table if not exists public.salas (
   gm_id uuid not null references auth.users(id) on delete cascade,
   grade_tamanho int not null default 50,         -- px por célula da grade
   grade_ativa boolean not null default true,
+  fundo text not null default 'escuro',          -- 'escuro' | 'claro' | 'cinza'
   created_at timestamptz not null default now()
 );
 

@@ -101,6 +101,7 @@ window.TT_SALA = (function () {
       const patch = {};
       if (typeof opts.ativa === 'boolean') patch.grade_ativa = opts.ativa;
       if (typeof opts.tamanho === 'number') patch.grade_tamanho = opts.tamanho;
+      if (typeof opts.fundo === 'string') patch.fundo = opts.fundo;
       return client.from('salas').update(patch).eq('id', salaId).then(function (res) {
         return { ok: !res.error };
       });
