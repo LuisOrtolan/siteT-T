@@ -15,6 +15,10 @@ window.TT_SALA = (function () {
     return 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
   }
 
+  function newTokenId() {
+    return 't' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
   function withSession(fn) {
     if (!window.TT_AUTH) return Promise.resolve({ ok: false, reason: 'no-auth' });
     return window.TT_AUTH.getSession().then(function (session) {
@@ -184,6 +188,57 @@ window.TT_SALA = (function () {
     });
   }
 
+  // --- Tokens (imagem de personagem/monstro) ---
+
+  function uploadTokenImage(salaId, file) {
+    return withSession(function (client) {
+      const ext = ((file.name || '').split('.').pop() || 'png').toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+      const path = salaId + '/' + newTokenId() + '.' + ext;
+      return client.storage.from('tokens').upload(path, file).then(function (res) {
+        if (res.error) { console.error('Erro ao enviar imagem do token:', res.error); return { ok: false, reason: 'error', error: res.error }; }
+        const pub = client.storage.from('tokens').getPublicUrl(path);
+        return { ok: true, url: pub.data.publicUrl };
+      });
+    });
+  }
+
+  function listTokens(salaId) {
+    return withSession(function (client) {
+      return client.from('sala_tokens').select('*').eq('sala_id', salaId).order('created_at').then(function (res) {
+        return res.data || [];
+      });
+    }).then(function (r) { return Array.isArray(r) ? r : []; });
+  }
+
+  function addToken(salaId, t) {
+    return withSession(function (client, session) {
+      const row = {
+        id: t.id || newTokenId(), sala_id: salaId, autor_id: session.user.id,
+        nome: t.nome || '', imagem_url: t.imagem_url, x: t.x, y: t.y, tamanho: t.tamanho || 56
+      };
+      return client.from('sala_tokens').insert(row).then(function (res) {
+        if (res.error) return { ok: false, reason: 'error', error: res.error };
+        return { ok: true, token: row };
+      });
+    });
+  }
+
+  function updateToken(salaId, id, patch) {
+    return withSession(function (client) {
+      return client.from('sala_tokens').update(patch).eq('sala_id', salaId).eq('id', id).then(function (res) {
+        return { ok: !res.error };
+      });
+    });
+  }
+
+  function removeToken(salaId, id) {
+    return withSession(function (client) {
+      return client.from('sala_tokens').delete().eq('sala_id', salaId).eq('id', id).then(function (res) {
+        return { ok: !res.error };
+      });
+    });
+  }
+
   // --- Iniciativa ---
 
   function getInitiative(salaId) {
@@ -244,6 +299,9 @@ window.TT_SALA = (function () {
     channel.on('broadcast', { event: 'roll' }, function (msg) { if (handlers.onRoll) handlers.onRoll(msg.payload); });
     channel.on('broadcast', { event: 'notes-update' }, function (msg) { if (handlers.onNotesUpdate) handlers.onNotesUpdate(msg.payload); });
     channel.on('broadcast', { event: 'initiative-update' }, function (msg) { if (handlers.onInitiativeUpdate) handlers.onInitiativeUpdate(msg.payload); });
+    channel.on('broadcast', { event: 'token-add' }, function (msg) { if (handlers.onTokenAdd) handlers.onTokenAdd(msg.payload); });
+    channel.on('broadcast', { event: 'token-update' }, function (msg) { if (handlers.onTokenUpdate) handlers.onTokenUpdate(msg.payload); });
+    channel.on('broadcast', { event: 'token-remove' }, function (msg) { if (handlers.onTokenRemove) handlers.onTokenRemove(msg.payload); });
     channel.on('presence', { event: 'sync' }, function () {
       if (handlers.onPresenceSync) handlers.onPresenceSync(channel.presenceState());
     });
@@ -266,18 +324,23 @@ window.TT_SALA = (function () {
   function broadcastRoll(channel, rolagem) { if (channel) channel.send({ type: 'broadcast', event: 'roll', payload: rolagem }); }
   function broadcastNotes(channel, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: conteudo }); }
   function broadcastInitiative(channel, estado) { if (channel) channel.send({ type: 'broadcast', event: 'initiative-update', payload: estado }); }
+  function broadcastTokenAdd(channel, token) { if (channel) channel.send({ type: 'broadcast', event: 'token-add', payload: token }); }
+  function broadcastTokenUpdate(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'token-update', payload: payload }); }
+  function broadcastTokenRemove(channel, id) { if (channel) channel.send({ type: 'broadcast', event: 'token-remove', payload: id }); }
 
   function leave(channel) {
     if (channel) channel.unsubscribe();
   }
 
   return {
-    newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
+    newRoomCode, newDrawId, newTokenId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
     listDrawings, addDrawing, updateDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
     getInitiative, saveInitiative,
+    uploadTokenImage, listTokens, addToken, updateToken, removeToken,
     logRoll, listRecentRolls,
     connect, leave,
-    broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative
+    broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative,
+    broadcastTokenAdd, broadcastTokenUpdate, broadcastTokenRemove
   };
 })();
