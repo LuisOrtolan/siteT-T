@@ -175,6 +175,28 @@ window.TT_SALA = (function () {
     });
   }
 
+  // --- Iniciativa ---
+
+  function getInitiative(salaId) {
+    return withSession(function (client) {
+      return client.from('sala_iniciativa').select('*').eq('sala_id', salaId).maybeSingle().then(function (res) {
+        const row = res.data;
+        return { combatentes: (row && row.combatentes) || [], turnoId: row ? row.turno_id : null, rodada: (row && row.rodada) || 1 };
+      });
+    }).then(function (r) { return r || { combatentes: [], turnoId: null, rodada: 1 }; });
+  }
+
+  function saveInitiative(salaId, estado) {
+    return withSession(function (client, session) {
+      return client.from('sala_iniciativa')
+        .upsert({
+          sala_id: salaId, combatentes: estado.combatentes, turno_id: estado.turnoId, rodada: estado.rodada,
+          atualizado_por: session.user.id, updated_at: new Date().toISOString()
+        }, { onConflict: 'sala_id' })
+        .then(function (res) { return { ok: !res.error }; });
+    });
+  }
+
   // --- Rolagens ---
 
   function logRoll(salaId, nomeExibicao, resultado) {
@@ -211,6 +233,7 @@ window.TT_SALA = (function () {
     channel.on('broadcast', { event: 'draw-clear' }, function () { if (handlers.onDrawClear) handlers.onDrawClear(); });
     channel.on('broadcast', { event: 'roll' }, function (msg) { if (handlers.onRoll) handlers.onRoll(msg.payload); });
     channel.on('broadcast', { event: 'notes-update' }, function (msg) { if (handlers.onNotesUpdate) handlers.onNotesUpdate(msg.payload); });
+    channel.on('broadcast', { event: 'initiative-update' }, function (msg) { if (handlers.onInitiativeUpdate) handlers.onInitiativeUpdate(msg.payload); });
     channel.on('presence', { event: 'sync' }, function () {
       if (handlers.onPresenceSync) handlers.onPresenceSync(channel.presenceState());
     });
@@ -231,6 +254,7 @@ window.TT_SALA = (function () {
   function broadcastDrawClear(channel) { if (channel) channel.send({ type: 'broadcast', event: 'draw-clear', payload: {} }); }
   function broadcastRoll(channel, rolagem) { if (channel) channel.send({ type: 'broadcast', event: 'roll', payload: rolagem }); }
   function broadcastNotes(channel, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: conteudo }); }
+  function broadcastInitiative(channel, estado) { if (channel) channel.send({ type: 'broadcast', event: 'initiative-update', payload: estado }); }
 
   function leave(channel) {
     if (channel) channel.unsubscribe();
@@ -240,8 +264,9 @@ window.TT_SALA = (function () {
     newRoomCode, newDrawId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
     listDrawings, addDrawing, removeDrawing, clearDrawings,
     getNotes, saveNotes,
+    getInitiative, saveInitiative,
     logRoll, listRecentRolls,
     connect, leave,
-    broadcastDrawAdd, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes
+    broadcastDrawAdd, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative
   };
 })();
