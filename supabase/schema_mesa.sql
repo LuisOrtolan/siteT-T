@@ -149,9 +149,13 @@ create policy "Participantes registram suas rolagens"
   );
 
 
+-- 4 abas visíveis e editáveis por todo mundo na sala (uma coluna cada).
 create table if not exists public.sala_anotacoes (
   sala_id text primary key references public.salas(id) on delete cascade,
-  conteudo text not null default '',
+  geral text not null default '',
+  equipamentos text not null default '',
+  tesouro text not null default '',
+  historia text not null default '',
   atualizado_por uuid references auth.users(id) on delete set null,
   updated_at timestamptz not null default now()
 );
@@ -181,6 +185,45 @@ create policy "Participantes editam as anotações da sala"
   with check (
     exists (select 1 from public.sala_participantes p
             where p.sala_id = sala_anotacoes.sala_id and p.user_id = auth.uid())
+  );
+
+
+-- Aba "GM" das anotações — tabela separada (em vez de mais uma coluna em
+-- sala_anotacoes) porque RLS do Postgres protege linha inteira, não coluna
+-- por coluna; pra isolar de verdade o conteúdo do mestre, ele precisa estar
+-- numa linha que a política já barra pra quem não é mestre.
+create table if not exists public.sala_anotacoes_gm (
+  sala_id text primary key references public.salas(id) on delete cascade,
+  conteudo text not null default '',
+  atualizado_por uuid references auth.users(id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.sala_anotacoes_gm enable row level security;
+
+create policy "Mestre lê as próprias anotações"
+  on public.sala_anotacoes_gm for select
+  using (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_anotacoes_gm.sala_id and p.user_id = auth.uid() and p.is_gm)
+  );
+
+create policy "Mestre cria as próprias anotações"
+  on public.sala_anotacoes_gm for insert
+  with check (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_anotacoes_gm.sala_id and p.user_id = auth.uid() and p.is_gm)
+  );
+
+create policy "Mestre edita as próprias anotações"
+  on public.sala_anotacoes_gm for update
+  using (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_anotacoes_gm.sala_id and p.user_id = auth.uid() and p.is_gm)
+  )
+  with check (
+    exists (select 1 from public.sala_participantes p
+            where p.sala_id = sala_anotacoes_gm.sala_id and p.user_id = auth.uid() and p.is_gm)
   );
 
 

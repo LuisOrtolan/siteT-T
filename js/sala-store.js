@@ -44,7 +44,7 @@ window.TT_SALA = (function () {
             .insert({ sala_id: id, user_id: uid, nome_exibicao: nomeExibicao || 'Mestre', is_gm: true })
             .then(function (pres) {
               if (pres.error) { console.error('Erro ao registrar participante:', pres.error); return { ok: false, reason: 'error', error: pres.error }; }
-              return client.from('sala_anotacoes').insert({ sala_id: id, conteudo: '' })
+              return client.from('sala_anotacoes').insert({ sala_id: id })
                 .then(function (nres) {
                   if (nres.error) { console.error('Erro ao criar anotações da sala:', nres.error); return { ok: false, reason: 'error', error: nres.error }; }
                   return { ok: true, sala: { id: id, nome: nome, gm_id: uid } };
@@ -171,18 +171,43 @@ window.TT_SALA = (function () {
   }
 
   // --- Anotações ---
+  // 4 abas visíveis por todo mundo, uma coluna cada em sala_anotacoes. A
+  // aba do mestre (GM) mora numa tabela separada (sala_anotacoes_gm) com
+  // política de RLS que só deixa o próprio mestre ler/escrever — ver
+  // getNotesGM/saveNotesGM logo abaixo.
 
   function getNotes(salaId) {
     return withSession(function (client) {
       return client.from('sala_anotacoes').select('*').eq('sala_id', salaId).maybeSingle().then(function (res) {
-        return (res.data && res.data.conteudo) || '';
+        const row = res.data || {};
+        return { geral: row.geral || '', equipamentos: row.equipamentos || '', tesouro: row.tesouro || '', historia: row.historia || '' };
       });
+    }).then(function (r) { return r || { geral: '', equipamentos: '', tesouro: '', historia: '' }; });
+  }
+
+  function saveNotes(salaId, aba, conteudo) {
+    return withSession(function (client, session) {
+      const row = { sala_id: salaId, atualizado_por: session.user.id, updated_at: new Date().toISOString() };
+      row[aba] = conteudo;
+      return client.from('sala_anotacoes').upsert(row, { onConflict: 'sala_id' })
+        .then(function (res) { return { ok: !res.error }; });
     });
   }
 
-  function saveNotes(salaId, conteudo) {
+  // Só retorna algo (e só deixa salvar) pra quem é mestre da sala — RLS de
+  // sala_anotacoes_gm filtra por sala_participantes.is_gm. Pra quem não é
+  // mestre, a select simplesmente não devolve linha nenhuma (não é erro).
+  function getNotesGM(salaId) {
+    return withSession(function (client) {
+      return client.from('sala_anotacoes_gm').select('*').eq('sala_id', salaId).maybeSingle().then(function (res) {
+        return (res.data && res.data.conteudo) || '';
+      });
+    }).then(function (r) { return r || ''; });
+  }
+
+  function saveNotesGM(salaId, conteudo) {
     return withSession(function (client, session) {
-      return client.from('sala_anotacoes')
+      return client.from('sala_anotacoes_gm')
         .upsert({ sala_id: salaId, conteudo: conteudo, atualizado_por: session.user.id, updated_at: new Date().toISOString() }, { onConflict: 'sala_id' })
         .then(function (res) { return { ok: !res.error }; });
     });
@@ -350,7 +375,7 @@ window.TT_SALA = (function () {
   function broadcastDrawUpdate(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'draw-update', payload: payload }); }
   function broadcastDrawClear(channel) { if (channel) channel.send({ type: 'broadcast', event: 'draw-clear', payload: {} }); }
   function broadcastRoll(channel, rolagem) { if (channel) channel.send({ type: 'broadcast', event: 'roll', payload: rolagem }); }
-  function broadcastNotes(channel, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: conteudo }); }
+  function broadcastNotes(channel, aba, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: { aba: aba, conteudo: conteudo } }); }
   function broadcastInitiative(channel, estado) { if (channel) channel.send({ type: 'broadcast', event: 'initiative-update', payload: estado }); }
   function broadcastTokenAdd(channel, token) { if (channel) channel.send({ type: 'broadcast', event: 'token-add', payload: token }); }
   function broadcastTokenUpdate(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'token-update', payload: payload }); }
@@ -363,7 +388,7 @@ window.TT_SALA = (function () {
   return {
     newRoomCode, newDrawId, newTokenId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
     listDrawings, addDrawing, updateDrawing, removeDrawing, clearDrawings,
-    getNotes, saveNotes,
+    getNotes, saveNotes, getNotesGM, saveNotesGM,
     getInitiative, saveInitiative,
     uploadTokenImage, listTokens, addToken, updateToken, removeToken,
     listMyTokens, saveMyToken, deleteMyToken,
