@@ -74,7 +74,7 @@ create table if not exists public.sala_desenhos (
   id text primary key,
   sala_id text not null references public.salas(id) on delete cascade,
   autor_id uuid references auth.users(id) on delete set null,
-  tipo text not null,                            -- 'traco' | 'linha' | 'retangulo' | 'circulo'
+  tipo text not null,                            -- 'traco' | 'linha' | 'retangulo' | 'trapezio' | 'circulo' | 'triangulo' | 'pentagono' | 'hexagono'
   pontos jsonb not null,                          -- array de {x,y} fracionários (0..1)
   cor text not null default '#c7a25a',
   espessura int not null default 3,
