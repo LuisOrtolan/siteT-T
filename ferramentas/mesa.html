@@ -98,6 +98,14 @@
     }
     .toolbar input[type=range] { width: 80px }
     .toolbar .lbl { font-size: 10px; color: #6b7080 }
+    .shapes-dropdown { position: relative; display: inline-block }
+    .shapes-menu {
+      position: absolute; top: 100%; left: 0; margin-top: 4px; z-index: 50;
+      display: none; flex-direction: column; gap: 2px; min-width: 150px;
+      background: #181a20; border: 1px solid #2a2d35; border-radius: 8px; padding: 4px;
+    }
+    .shapes-menu.aberto { display: flex }
+    .shapes-menu .btn { text-align: left }
 
     .board-wrap { flex: 1; position: relative; overflow: auto; background: #08090c }
     .board-wrap.fundo-claro { background: #ffffff }
@@ -466,7 +474,7 @@
             '<div class="toolbar">' +
               toolBtn('selecionar', '&#8598; Selecionar') +
               toolBtn('traco', '&#9998; Caneta') + toolBtn('linha', '&#8211; Linha') +
-              toolBtn('retangulo', '&#9633; Retângulo') + toolBtn('circulo', '&#9711; Círculo') +
+              formasDropdownHtml() +
               toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover mapa') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
               '<span class="lbl" id="thickness-label">' + (tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura') + '</span>' +
@@ -551,6 +559,35 @@
     function toolBtn(name, label) {
       return '<button class="btn' + (tool === name ? ' on' : '') + '" data-tool="' + name + '" onclick="setTool(\'' + name + '\')">' + label + '</button>';
     }
+    // "Formas" agrupa as ferramentas de forma fechada num menu suspenso só
+    // pra não lotar a barra de ferramentas conforme mais formas são
+    // adicionadas. SHAPE_LABELS define a ordem e o rótulo de cada uma.
+    const SHAPE_LABELS = {
+      retangulo: '&#9633; Retângulo',
+      circulo: '&#9711; Círculo',
+      triangulo: '&#9651; Triângulo',
+      trapezio: 'Trapézio',
+      pentagono: '&#11040; Pentágono',
+      hexagono: '&#11041; Hexágono'
+    };
+    const SHAPE_TOOLS = Object.keys(SHAPE_LABELS);
+    function formasDropdownHtml() {
+      return '<div class="shapes-dropdown">' +
+        '<button class="btn' + (SHAPE_TOOLS.indexOf(tool) !== -1 ? ' on' : '') + '" id="formas-btn" onclick="toggleFormasMenu(event)">&#9635; Formas &#9662;</button>' +
+        '<div class="shapes-menu" id="formas-menu">' +
+          SHAPE_TOOLS.map(function (id) { return toolBtn(id, SHAPE_LABELS[id]); }).join('') +
+        '</div>' +
+      '</div>';
+    }
+    function toggleFormasMenu(evt) {
+      if (evt) evt.stopPropagation();
+      const menu = document.getElementById('formas-menu');
+      if (menu) menu.classList.toggle('aberto');
+    }
+    function fecharFormasMenu() {
+      const menu = document.getElementById('formas-menu');
+      if (menu) menu.classList.remove('aberto');
+    }
     // Só troca a ferramenta ativa — não recria o canvas nem o resto do DOM
     // (recriar apagava traços que ainda não tinham sido confirmados, ver
     // onPointerUp).
@@ -559,6 +596,9 @@
       document.querySelectorAll('.toolbar [data-tool]').forEach(function (b) {
         b.classList.toggle('on', b.dataset.tool === name);
       });
+      const formasBtn = document.getElementById('formas-btn');
+      if (formasBtn) formasBtn.classList.toggle('on', SHAPE_TOOLS.indexOf(name) !== -1);
+      if (SHAPE_TOOLS.indexOf(name) !== -1) fecharFormasMenu();
       const c = canvasEl();
       if (c) {
         c.classList.toggle('erase-mode', tool === 'apagar');
@@ -957,38 +997,80 @@
       } else if (d.tipo === 'retangulo') {
         const x = Math.min(pts[0].x, pts[1].x), y = Math.min(pts[0].y, pts[1].y);
         ctx.strokeRect(x, y, Math.abs(pts[1].x - pts[0].x), Math.abs(pts[1].y - pts[0].y));
+      } else if (d.tipo === 'trapezio') {
+        const [x0, x1] = [Math.min(pts[0].x, pts[1].x), Math.max(pts[0].x, pts[1].x)];
+        const [y0, y1] = [Math.min(pts[0].y, pts[1].y), Math.max(pts[0].y, pts[1].y)];
+        const inset = (x1 - x0) * TRAPEZIO_INSET;
+        ctx.beginPath();
+        ctx.moveTo(x0 + inset, y0); ctx.lineTo(x1 - inset, y0); ctx.lineTo(x1, y1); ctx.lineTo(x0, y1);
+        ctx.closePath(); ctx.stroke();
       } else if (d.tipo === 'circulo') {
+        // Único caso desenhado com ctx.arc (curva de verdade) em vez de um
+        // polígono de poucos lados — as outras formas "de centro+raio"
+        // (triângulo/pentágono/hexágono) usam POLIGONO_LADOS logo abaixo.
         const r = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
         ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, r, 0, Math.PI * 2); ctx.stroke();
+      } else if (POLIGONO_LADOS[d.tipo]) {
+        const n = POLIGONO_LADOS[d.tipo];
+        const raio = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+        const anguloBase = Math.atan2(pts[1].y - pts[0].y, pts[1].x - pts[0].x);
+        ctx.beginPath();
+        for (let i = 0; i < n; i++) {
+          const ang = anguloBase + (i / n) * Math.PI * 2;
+          const x = pts[0].x + raio * Math.cos(ang), y = pts[0].y + raio * Math.sin(ang);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath(); ctx.stroke();
       }
     }
 
+    // Formas "de centro+raio" (o 2º ponto define o raio e, por causa do
+    // atan2, também o ângulo de partida — arrastar pra um lado gira a forma
+    // pra esse lado) aproximadas por um polígono regular de N lados.
+    // circulo usa N alto o bastante (24) que ninguém percebe as quinas; as
+    // outras (triângulo/pentágono/hexágono) usam o N de verdade da forma.
+    const POLIGONO_LADOS = { circulo: 24, triangulo: 3, pentagono: 5, hexagono: 6 };
+    // Trapézio é "de caixa" como o retângulo (2 pontos = cantos opostos),
+    // só que a borda de cima é mais estreita que a de baixo — INSET é a
+    // fração de cada lado que "recua" na borda de cima.
+    const TRAPEZIO_INSET = 0.2;
+
+    // w/h (dimensões reais do canvas em pixels) importam pras formas de
+    // centro+raio: o quadro quase nunca é quadrado, então um raio calculado
+    // a partir de 2 pontos em fração precisa ser convertido pra pixels
+    // antes de aplicar seno/cosseno — senão a forma sai "esticada",
+    // gerando cliques/apagões fora do lugar perto do topo/base dela. w/h
+    // têm um fallback de 1 só pra não quebrar se algum chamador esquecer
+    // de passar (fica com a distorção de antes, mas não trava).
+    function pontosPoligonoRegular(c0, edge, n, w, h) {
+      const ww = w || 1, hh = h || 1;
+      const dx = (edge.x - c0.x) * ww, dy = (edge.y - c0.y) * hh;
+      const raioPx = Math.hypot(dx, dy);
+      const anguloBase = Math.atan2(dy, dx);
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const ang = anguloBase + (i / n) * Math.PI * 2;
+        pts.push({ x: c0.x + (raioPx * Math.cos(ang)) / ww, y: c0.y + (raioPx * Math.sin(ang)) / hh });
+      }
+      return pts;
+    }
+
     // Pontos (fração) que compõem o "contorno" de um elemento, pra hit-test,
-    // destaque de seleção e apagador. w/h (dimensões reais do canvas em
-    // pixels) importam pro círculo: o quadro quase nunca é quadrado, então
-    // um raio calculado a partir de 2 pontos em fração precisa ser
-    // convertido pra pixels antes de aplicar seno/cosseno — senão o
-    // "círculo" aproximado sai elíptico, gerando cliques/apagões fora do
-    // lugar perto do topo/base dele. w/h têm um fallback de 1 só pra não
-    // quebrar se algum chamador esquecer de passar (fica com a distorção
-    // de antes, mas não trava).
+    // destaque de seleção e apagador.
     function outlinePoints(d, w, h) {
       if (d.tipo === 'traco' || d.tipo === 'linha') return d.pontos;
       if (d.tipo === 'retangulo') {
         const [a, b] = d.pontos;
         return [{ x: a.x, y: a.y }, { x: b.x, y: a.y }, { x: b.x, y: b.y }, { x: a.x, y: b.y }, { x: a.x, y: a.y }];
       }
-      if (d.tipo === 'circulo') {
-        const [c0, edge] = d.pontos;
-        const ww = w || 1, hh = h || 1;
-        const raioPx = Math.hypot((edge.x - c0.x) * ww, (edge.y - c0.y) * hh);
-        const pts = [];
-        for (let i = 0; i <= 24; i++) {
-          const ang = (i / 24) * Math.PI * 2;
-          pts.push({ x: c0.x + (raioPx * Math.cos(ang)) / ww, y: c0.y + (raioPx * Math.sin(ang)) / hh });
-        }
-        return pts;
+      if (d.tipo === 'trapezio') {
+        const [a, b] = d.pontos;
+        const x0 = Math.min(a.x, b.x), x1 = Math.max(a.x, b.x);
+        const y0 = Math.min(a.y, b.y), y1 = Math.max(a.y, b.y);
+        const inset = (x1 - x0) * TRAPEZIO_INSET;
+        return [{ x: x0 + inset, y: y0 }, { x: x1 - inset, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }, { x: x0 + inset, y: y0 }];
       }
+      if (POLIGONO_LADOS[d.tipo]) return pontosPoligonoRegular(d.pontos[0], d.pontos[1], POLIGONO_LADOS[d.tipo], w, h);
       return d.pontos;
     }
 
@@ -1055,8 +1137,11 @@
     function densificarParaApagar(d, w, h) {
       if (d.tipo === 'traco') return d.pontos;
       if (d.tipo === 'linha') return amostrarSegmento(d.pontos[0], d.pontos[1], 40);
-      // retângulo/círculo: outlinePoints já devolve um contorno fechado
-      // (o último ponto repete o primeiro) — subdivide cada segmento dele.
+      // Qualquer forma fechada: outlinePoints já devolve um contorno
+      // fechado (o último ponto repete o primeiro) — subdivide cada
+      // segmento dele. O círculo já tem 24 segmentos curtos (poucos passos
+      // bastam); as demais têm poucos lados retos e longos (mais passos
+      // pra poder cortar em qualquer ponto da borda, não só nas quinas).
       const contorno = outlinePoints(d, w, h);
       const passos = d.tipo === 'circulo' ? 4 : 20;
       const out = [];
@@ -1095,12 +1180,13 @@
       return pedacos;
     }
 
-    // Apaga só a parte de qualquer desenho (traço, linha, retângulo ou
-    // círculo) que cai dentro do raio da borracha em `p`, cortando em
-    // pedaços separados em vez de remover o desenho inteiro. Retângulo e
-    // círculo viram um ou mais traços abertos depois de cortados — uma
-    // forma fechada com um pedaço faltando não é mais um "retângulo" nem
-    // um "círculo", é só o contorno que sobrou.
+    // Apaga só a parte de qualquer desenho (traço, linha ou qualquer forma
+    // fechada — retângulo, trapézio, círculo, triângulo, pentágono,
+    // hexágono) que cai dentro do raio da borracha em `p`, cortando em
+    // pedaços separados em vez de remover o desenho inteiro. Uma forma
+    // fechada vira um ou mais traços abertos depois de cortada — com um
+    // pedaço faltando ela deixa de ser um "retângulo"/"círculo"/etc., é só
+    // o contorno que sobrou.
     function eraseAt(p) {
       const c = canvasEl();
       const raioPx = borrachaRaioPx();
@@ -1121,7 +1207,7 @@
         if (fora.every(Boolean)) { mantidos.push(d); return; }
 
         removidosIds.push(d.id);
-        const fechado = d.tipo === 'retangulo' || d.tipo === 'circulo';
+        const fechado = d.tipo === 'retangulo' || d.tipo === 'trapezio' || !!POLIGONO_LADOS[d.tipo];
         pedacosMantidos(pts, fora, fechado).forEach(function (atual) {
           const novo = { id: TT_SALA.newDrawId(), tipo: 'traco', pontos: atual, cor: d.cor, espessura: d.espessura };
           mantidos.push(novo); adicionados.push(novo);
@@ -1572,6 +1658,13 @@
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
       evt.preventDefault();
       apagarSelecionados();
+    });
+
+    // Fecha o menu "Formas" ao clicar fora dele.
+    document.addEventListener('click', function (evt) {
+      if (view !== 'room') return;
+      const dropdown = document.querySelector('.shapes-dropdown');
+      if (dropdown && !dropdown.contains(evt.target)) fecharFormasMenu();
     });
 
     boot();
