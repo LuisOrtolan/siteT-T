@@ -24,10 +24,43 @@ create policy "Apenas o mestre cria a sala"
   on public.salas for insert
   with check (auth.uid() = gm_id);
 
-create policy "Apenas o mestre atualiza a sala"
+-- Cor de fundo do quadro é liberada pra qualquer participante (não só o
+-- mestre) — o trigger abaixo barra a tentativa se qualquer OUTRA coluna
+-- da sala for alterada por quem não é o mestre.
+create or replace function public.restringir_update_sala_nao_mestre()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() = old.gm_id then
+    return new; -- mestre pode mudar qualquer coisa da sala
+  end if;
+  -- Compara linha inteira menos "fundo" — pega qualquer coluna, inclusive
+  -- as que forem adicionadas depois, sem precisar listar campo por campo.
+  if (to_jsonb(new) - 'fundo') is distinct from (to_jsonb(old) - 'fundo') then
+    raise exception 'Só o mestre pode alterar esse campo da sala.';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger trg_restringir_update_sala_nao_mestre
+  before update on public.salas
+  for each row
+  execute function public.restringir_update_sala_nao_mestre();
+
+create policy "Mestre ou participantes atualizam a sala (colunas restritas por trigger)"
   on public.salas for update
-  using (auth.uid() = gm_id)
-  with check (auth.uid() = gm_id);
+  using (
+    auth.uid() = gm_id
+    or exists (
+      select 1 from public.sala_participantes sp
+      where sp.sala_id = salas.id and sp.user_id = auth.uid()
+    )
+  )
+  with check (true);
 
 create policy "Apenas o mestre apaga a sala"
   on public.salas for delete
