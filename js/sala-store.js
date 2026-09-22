@@ -344,6 +344,7 @@ window.TT_SALA = (function () {
     if (!client) return null;
     handlers = handlers || {};
     const channel = client.channel('sala:' + salaId, { config: { broadcast: { self: false } } });
+    let jaConectouUmaVez = false;
 
     channel.on('broadcast', { event: 'draw-add' }, function (msg) { if (handlers.onDrawAdd) handlers.onDrawAdd(msg.payload); });
     channel.on('broadcast', { event: 'draw-remove' }, function (msg) { if (handlers.onDrawRemove) handlers.onDrawRemove(msg.payload); });
@@ -364,6 +365,17 @@ window.TT_SALA = (function () {
         window.TT_AUTH.getSession().then(function (session) {
           channel.track({ user_id: session && session.user && session.user.id, nome_exibicao: nomeExibicao });
         });
+        // Broadcast é efêmero — qualquer evento enviado enquanto este
+        // cliente estava com o socket caído (wifi oscilando, celular
+        // travando a aba em segundo plano, notebook suspenso etc.) se
+        // perde pra sempre, e nunca chega aqui. O cliente do Supabase
+        // detecta a queda e reconecta/reinscreve o canal sozinho quando
+        // a rede volta, disparando 'SUBSCRIBED' de novo — não é só a
+        // entrada inicial. Por isso avisa quem chamou toda vez que o
+        // canal fica pronto (não só na primeira), pra rebuscar o estado
+        // do banco e fechar qualquer buraco de eventos perdidos.
+        if (handlers.onReady) handlers.onReady(jaConectouUmaVez);
+        jaConectouUmaVez = true;
       }
     });
 
