@@ -271,13 +271,13 @@
     let tokens = [];
     let arrastandoToken = null;
     let meusTokensSalvos = [];
-    // O "mundo" do quadro é um canvas Fabric.js de tamanho FIXO (o tamanho
-    // visível do #board-wrap) — zoom/pan viram viewportTransform do próprio
-    // Fabric, em vez de redimensionar DOM e usar rolagem nativa como antes.
-    // zoom/ZOOM_MIN/ZOOM_MAX continuam existindo só pra UI (rótulo, "Ver
-    // tudo", tamanho da grade); o zoom de verdade do Fabric é zoom/ZOOM_MIN.
-    // Ver criarFabricCanvas()/setZoom().
-    const MUNDO_POR_TELA = 4;
+    // O quadro é um mundo bem maior que a tela — MUNDO_POR_TELA vezes maior
+    // em cada dimensão — pra caber muita coisa desenhada ao longo de várias
+    // sessões e vários mapas na mesma sala, sem esbarrar em limite de
+    // espaço. zoom/pan viram viewportTransform do próprio Fabric.Canvas
+    // (que tem tamanho de tela fixo), em vez de redimensionar DOM e usar
+    // rolagem nativa como antes. Ver criarFabricCanvas()/setZoom().
+    const MUNDO_POR_TELA = 16;
     const ZOOM_MIN = 1 / MUNDO_POR_TELA;
     const ZOOM_MAX = 3;
     let zoom = ZOOM_MIN;
@@ -802,12 +802,19 @@
       });
     }
 
+    // O canvas de verdade (backing store do Fabric) sempre tem o tamanho
+    // VISÍVEL do #board-wrap — isso não muda com zoom nem com
+    // MUNDO_POR_TELA, só com o tamanho da janela. WORLD_W/WORLD_H (usado
+    // pra toda conta de fração⇄pixel) é MUNDO_POR_TELA vezes maior — é
+    // esse espaço extra, fora da tela, que o zoom/pan revelam.
     function criarFabricCanvas() {
       const wrap = wrapEl();
-      WORLD_W = wrap.clientWidth || 800;
-      WORLD_H = wrap.clientHeight || 600;
+      const viewportW = wrap.clientWidth || 800;
+      const viewportH = wrap.clientHeight || 600;
+      WORLD_W = viewportW * MUNDO_POR_TELA;
+      WORLD_H = viewportH * MUNDO_POR_TELA;
       fabricCanvas = new fabric.Canvas('board-canvas', {
-        width: WORLD_W, height: WORLD_H, selection: true,
+        width: viewportW, height: viewportH, selection: true,
         preserveObjectStacking: true, stopContextMenu: true,
         enablePointerEvents: true // mantém o arraste funcionando mesmo se o ponteiro sair do canvas, igual o setPointerCapture de antes
       });
@@ -827,9 +834,11 @@
     function redimensionarCanvas() {
       const wrap = wrapEl();
       if (!wrap || !fabricCanvas) return;
-      WORLD_W = wrap.clientWidth || WORLD_W;
-      WORLD_H = wrap.clientHeight || WORLD_H;
-      fabricCanvas.setDimensions({ width: WORLD_W, height: WORLD_H });
+      const viewportW = wrap.clientWidth || fabricCanvas.getWidth();
+      const viewportH = wrap.clientHeight || fabricCanvas.getHeight();
+      WORLD_W = viewportW * MUNDO_POR_TELA;
+      WORLD_H = viewportH * MUNDO_POR_TELA;
+      fabricCanvas.setDimensions({ width: viewportW, height: viewportH });
       // O "mundo" mudou de tamanho — a geometria em pixels de cada forma
       // (calculada a partir das frações 0..1 de pontos) precisa recalcular.
       fabricObjById.forEach(function (obj) { obj.atualizarGeometria(); });
@@ -844,22 +853,22 @@
     }
 
     // ---------- Zoom/pan ----------
-    // zoom/ZOOM_MIN/ZOOM_MAX continuam com o mesmo significado de antes (pra
-    // UI e pro tamanho da grade); o zoom de verdade aplicado no Fabric é
-    // zoom/ZOOM_MIN (assim ZOOM_MIN vira zoom do Fabric = 1, "mapa inteiro").
+    // `zoom` é ao mesmo tempo o valor de UI e o zoom de verdade aplicado no
+    // Fabric (zoom=1 é "tamanho natural", 1 pixel do mundo = 1 pixel de
+    // tela; zoom=ZOOM_MIN mostra o mundo inteiro — MUNDO_POR_TELA vezes
+    // maior que a tela — encolhido pra caber).
     function setZoom(z, anchorClientX, anchorClientY) {
       zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z * 100) / 100));
       if (!fabricCanvas) return;
-      const fabricZoom = zoom / ZOOM_MIN;
       if (anchorClientX != null && anchorClientY != null) {
         const rect = fabricCanvas.upperCanvasEl.getBoundingClientRect();
-        fabricCanvas.zoomToPoint(new fabric.Point(anchorClientX - rect.left, anchorClientY - rect.top), fabricZoom);
+        fabricCanvas.zoomToPoint(new fabric.Point(anchorClientX - rect.left, anchorClientY - rect.top), zoom);
       } else {
-        fabricCanvas.zoomToPoint(new fabric.Point(WORLD_W / 2, WORLD_H / 2), fabricZoom);
+        fabricCanvas.zoomToPoint(new fabric.Point(fabricCanvas.getWidth() / 2, fabricCanvas.getHeight() / 2), zoom);
       }
       const label = document.getElementById('zoom-label');
       if (label) label.textContent = Math.round(zoom * 100) + '%';
-      syncTokenLayerTransform();
+      reposicionarTodosTokens();
       fabricCanvas.requestRenderAll();
     }
 
@@ -869,27 +878,23 @@
     function verTudo() {
       zoom = ZOOM_MIN;
       if (fabricCanvas) {
-        fabricCanvas.setZoom(1);
+        fabricCanvas.setZoom(ZOOM_MIN);
         fabricCanvas.absolutePan(new fabric.Point(0, 0));
       }
       const label = document.getElementById('zoom-label');
       if (label) label.textContent = Math.round(zoom * 100) + '%';
-      syncTokenLayerTransform();
+      reposicionarTodosTokens();
       if (fabricCanvas) fabricCanvas.requestRenderAll();
     }
 
     // Tokens continuam sendo uma camada de DOM à parte nesta PR (ver
-    // initTokenLayer) — essa função só espelha o viewportTransform do
-    // Fabric nela via CSS, pra continuarem grudados no mapa durante
-    // pan/zoom (sem isso, eles ficariam "presos" no lugar já que
-    // #board-inner parou de ser redimensionado a cada zoom).
-    function syncTokenLayerTransform() {
-      const layer = document.getElementById('board-tokens');
-      if (!layer || !fabricCanvas) return;
-      const vpt = fabricCanvas.viewportTransform;
-      layer.style.transform = 'translate(' + vpt[4] + 'px,' + vpt[5] + 'px) scale(' + vpt[0] + ')';
-      layer.style.transformOrigin = '0 0';
-    }
+    // initTokenLayer) — pra continuarem grudados no mapa durante pan/zoom,
+    // reposiciona cada um usando o viewportTransform atual do Fabric (a
+    // mesma conta que o Fabric faz pros próprios objetos), em vez de tentar
+    // escalar a camada inteira por CSS — uma transform CSS escalaria
+    // também o tamanho de cada token (que já é recalculado em pixels de
+    // tela dentro de posicionarTokenEl), dobrando o efeito do zoom.
+    function reposicionarTodosTokens() { tokens.forEach(posicionarTokenEl); }
 
     function canvasEl() { return document.getElementById('board-canvas'); }
     function wrapEl() { return document.getElementById('board-wrap'); }
@@ -940,7 +945,7 @@
         if (!panning) return;
         fabricCanvas.relativePan(new fabric.Point(evt.clientX - panLast.x, evt.clientY - panLast.y));
         panLast = { x: evt.clientX, y: evt.clientY };
-        syncTokenLayerTransform();
+        reposicionarTodosTokens();
         return;
       }
       if (tool === 'apagar') {
@@ -1234,21 +1239,26 @@
     // pedaço faltando ela deixa de ser um "retângulo"/"círculo"/etc., é só
     // o contorno que sobrou.
     function eraseAt(p) {
-      const c = canvasEl();
-      const raioPx = borrachaRaioPx();
+      // raioPx é um tamanho de TELA (fica igual não importa o zoom, como
+      // toda borracha) — convertido aqui pra pixels do MUNDO dividindo pelo
+      // zoom atual, já que a partir da migração pro Fabric o canvas de
+      // verdade tem tamanho de tela fixo (não cresce mais junto com o
+      // zoom), então a conta de distância precisa usar WORLD_W/WORLD_H
+      // (não canvasEl().width/height) pra continuar em pixels do mundo.
+      const raioMundoPx = borrachaRaioPx() / (fabricCanvas ? fabricCanvas.getZoom() : 1);
       const mantidos = [];
       const removidosIds = [];
       const adicionados = [];
 
       desenhos.forEach(function (d) {
-        const pts = densificarParaApagar(d, c.width, c.height);
+        const pts = densificarParaApagar(d, WORLD_W, WORLD_H);
         // Distância em pixels de verdade (escalando x e y pelas dimensões
-        // reais do canvas antes do hypot) — o quadro quase nunca é
+        // reais do mundo antes do hypot) — o quadro quase nunca é
         // quadrado, então comparar direto as frações x/y sem escalar
         // distorce a distância (fica "elíptica" em vez de circular),
         // mais perceptível justamente ao apagar um círculo.
         const fora = pts.map(function (pt) {
-          return Math.hypot((pt.x - p.x) * c.width, (pt.y - p.y) * c.height) > raioPx;
+          return Math.hypot((pt.x - p.x) * WORLD_W, (pt.y - p.y) * WORLD_H) > raioMundoPx;
         });
         if (fora.every(Boolean)) { mantidos.push(d); return; }
 
@@ -1310,17 +1320,16 @@
       });
       layer.addEventListener('pointermove', function (evt) {
         if (!arrastandoToken) return;
-        const inner = document.getElementById('board-inner');
         const tok = tokens.find(function (t) { return t.id === arrastandoToken.id; });
-        if (!tok || !inner) return;
-        // A camada de tokens é ampliada por CSS (scale) durante o zoom do
-        // Fabric (ver syncTokenLayerTransform) — sem dividir pelo zoom
-        // atual, o mesmo deslocamento de mouse em pixels de tela arrastaria
-        // o token rápido demais (ou devagar demais) sempre que o zoom não
-        // for o mínimo.
-        const zoomAtual = fabricCanvas ? fabricCanvas.getZoom() : 1;
-        tok.x = arrastandoToken.origX + (evt.clientX - arrastandoToken.startX) / (inner.clientWidth * zoomAtual);
-        tok.y = arrastandoToken.origY + (evt.clientY - arrastandoToken.startY) / (inner.clientHeight * zoomAtual);
+        if (!tok) return;
+        // t.x/t.y são frações do MUNDO (WORLD_W/WORLD_H), igual pontos de
+        // desenho — não da tela. 1px de tela = 1/zoomAtual px do mundo, daí
+        // dividir o deslocamento do mouse por (WORLD_W * zoomAtual) pra
+        // chegar na fração de mundo correspondente, esteja lá qual zoom
+        // estiver.
+        const zoomAtual = fabricCanvas ? fabricCanvas.getZoom() : ZOOM_MIN;
+        tok.x = arrastandoToken.origX + (evt.clientX - arrastandoToken.startX) / (WORLD_W * zoomAtual);
+        tok.y = arrastandoToken.origY + (evt.clientY - arrastandoToken.startY) / (WORLD_H * zoomAtual);
         posicionarTokenEl(tok);
       });
       layer.addEventListener('pointerup', function (evt) {
@@ -1352,18 +1361,25 @@
       tokens.forEach(posicionarTokenEl);
     }
 
+    // Converte a posição do token (fração do MUNDO, igual pontos de
+    // desenho) pra pixels de TELA usando o viewportTransform atual do
+    // Fabric — a mesma conta que o Fabric faz internamente pros próprios
+    // objetos, só que feita à mão aqui porque o token continua sendo DOM
+    // (ver initTokenLayer), não um objeto do canvas.
     function posicionarTokenEl(t) {
-      const inner = document.getElementById('board-inner');
       const el = document.querySelector('.token[data-id="' + t.id + '"]');
-      if (!inner || !el) return;
-      // Tamanho mínimo pra continuar clicável/arrastável em zoom baixo — sem
-      // isso, num zoom bem afastado o token encolhe tanto que o botão de
-      // remover (que fica no cantinho dele) acaba cobrindo o token inteiro.
-      const tamanhoPx = Math.max((t.tamanho || 56) * zoom, 28);
-      el.style.left = (t.x * inner.clientWidth) + 'px';
-      el.style.top = (t.y * inner.clientHeight) + 'px';
-      el.style.width = tamanhoPx + 'px';
-      el.style.height = tamanhoPx + 'px';
+      if (!el || !fabricCanvas) return;
+      const vpt = fabricCanvas.viewportTransform;
+      const zoomAtual = fabricCanvas.getZoom();
+      // Tamanho mínimo em pixels de TELA pra continuar clicável/arrastável
+      // em zoom baixo — sem isso, num zoom bem afastado o token encolhe
+      // tanto que o botão de remover (que fica no cantinho dele) acaba
+      // cobrindo o token inteiro.
+      const tamanhoTelaPx = Math.max((t.tamanho || 56) * zoomAtual, 28);
+      el.style.left = (t.x * WORLD_W * vpt[0] + vpt[4]) + 'px';
+      el.style.top = (t.y * WORLD_H * vpt[3] + vpt[5]) + 'px';
+      el.style.width = tamanhoTelaPx + 'px';
+      el.style.height = tamanhoTelaPx + 'px';
     }
 
     function onTokenFileChosen(evt) {
