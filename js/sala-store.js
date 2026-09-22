@@ -162,6 +162,35 @@ window.TT_SALA = (function () {
     });
   }
 
+  // Versões em lote (uma ida ao banco em vez de uma por forma), usadas pelo
+  // gesto da borracha: um arrasto pode cortar dezenas de formas e gerar
+  // dezenas de pedaços, e mandar cada um separado entope tanto o banco
+  // quanto o canal de tempo real.
+  function removeDrawings(salaId, ids) {
+    if (!ids || !ids.length) return Promise.resolve({ ok: true });
+    return withSession(function (client) {
+      return client.from('sala_desenhos').delete().eq('sala_id', salaId).in('id', ids).then(function (res) {
+        return { ok: !res.error };
+      });
+    });
+  }
+
+  function addDrawings(salaId, lista) {
+    if (!lista || !lista.length) return Promise.resolve({ ok: true, desenhos: [] });
+    return withSession(function (client, session) {
+      const rows = lista.map(function (d) {
+        return {
+          id: d.id || newDrawId(), sala_id: salaId, autor_id: session.user.id,
+          tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3
+        };
+      });
+      return client.from('sala_desenhos').insert(rows).then(function (res) {
+        if (res.error) return { ok: false, reason: 'error', error: res.error };
+        return { ok: true, desenhos: rows };
+      });
+    });
+  }
+
   function clearDrawings(salaId) {
     return withSession(function (client) {
       return client.from('sala_desenhos').delete().eq('sala_id', salaId).then(function (res) {
@@ -350,6 +379,7 @@ window.TT_SALA = (function () {
     channel.on('broadcast', { event: 'draw-remove' }, function (msg) { if (handlers.onDrawRemove) handlers.onDrawRemove(msg.payload); });
     channel.on('broadcast', { event: 'draw-update' }, function (msg) { if (handlers.onDrawUpdate) handlers.onDrawUpdate(msg.payload); });
     channel.on('broadcast', { event: 'draw-clear' }, function () { if (handlers.onDrawClear) handlers.onDrawClear(); });
+    channel.on('broadcast', { event: 'draw-erase' }, function (msg) { if (handlers.onDrawErase) handlers.onDrawErase(msg.payload); });
     channel.on('broadcast', { event: 'roll' }, function (msg) { if (handlers.onRoll) handlers.onRoll(msg.payload); });
     channel.on('broadcast', { event: 'notes-update' }, function (msg) { if (handlers.onNotesUpdate) handlers.onNotesUpdate(msg.payload); });
     channel.on('broadcast', { event: 'initiative-update' }, function (msg) { if (handlers.onInitiativeUpdate) handlers.onInitiativeUpdate(msg.payload); });
@@ -386,6 +416,7 @@ window.TT_SALA = (function () {
   function broadcastDrawRemove(channel, id) { if (channel) channel.send({ type: 'broadcast', event: 'draw-remove', payload: id }); }
   function broadcastDrawUpdate(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'draw-update', payload: payload }); }
   function broadcastDrawClear(channel) { if (channel) channel.send({ type: 'broadcast', event: 'draw-clear', payload: {} }); }
+  function broadcastDrawErase(channel, payload) { if (channel) channel.send({ type: 'broadcast', event: 'draw-erase', payload: payload }); }
   function broadcastRoll(channel, rolagem) { if (channel) channel.send({ type: 'broadcast', event: 'roll', payload: rolagem }); }
   function broadcastNotes(channel, aba, conteudo) { if (channel) channel.send({ type: 'broadcast', event: 'notes-update', payload: { aba: aba, conteudo: conteudo } }); }
   function broadcastInitiative(channel, estado) { if (channel) channel.send({ type: 'broadcast', event: 'initiative-update', payload: estado }); }
@@ -399,14 +430,14 @@ window.TT_SALA = (function () {
 
   return {
     newRoomCode, newDrawId, newTokenId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
-    listDrawings, addDrawing, updateDrawing, removeDrawing, clearDrawings,
+    listDrawings, addDrawing, addDrawings, updateDrawing, removeDrawing, removeDrawings, clearDrawings,
     getNotes, saveNotes, getNotesGM, saveNotesGM,
     getInitiative, saveInitiative,
     uploadTokenImage, listTokens, addToken, updateToken, removeToken,
     listMyTokens, saveMyToken, deleteMyToken,
     logRoll, listRecentRolls,
     connect, leave,
-    broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastRoll, broadcastNotes, broadcastInitiative,
+    broadcastDrawAdd, broadcastDrawUpdate, broadcastDrawRemove, broadcastDrawClear, broadcastDrawErase, broadcastRoll, broadcastNotes, broadcastInitiative,
     broadcastTokenAdd, broadcastTokenUpdate, broadcastTokenRemove
   };
 })();
