@@ -434,8 +434,56 @@
           onTokenAdd: handleTokenAdd,
           onTokenUpdate: handleTokenUpdate,
           onTokenRemove: handleTokenRemove,
-          onPresenceSync: handlePresenceSync
+          onPresenceSync: handlePresenceSync,
+          onReady: function (jaConectouUmaVez) { if (jaConectouUmaVez) resincronizarEstado(); }
         });
+      });
+    }
+
+    // O canal de broadcast é efêmero: se o socket cair um instante (wifi
+    // oscilando, celular travando a aba em segundo plano, notebook
+    // suspenso...) qualquer draw-add/token-update/etc. enviado nesse
+    // intervalo se perde pra sempre pra este cliente, mesmo depois dele
+    // reconectar sozinho — daí a "dessincronia entre um jogador e outro"
+    // ao longo de uma sessão longa. TT_SALA.connect() chama isto (via
+    // onReady) toda vez que o canal reconecta, não só na entrada inicial
+    // — rebusca tudo do banco (fonte da verdade) e reconcilia o estado
+    // local, fechando qualquer buraco de eventos perdidos.
+    function resincronizarEstado() {
+      if (!sala) return;
+      const salaId = sala.id;
+      Promise.all([
+        TT_SALA.getRoom(salaId),
+        TT_SALA.listDrawings(salaId),
+        TT_SALA.getNotes(salaId),
+        TT_SALA.getNotesGM(salaId),
+        TT_SALA.getInitiative(salaId),
+        TT_SALA.listTokens(salaId)
+      ]).then(function (r) {
+        const salaAtual = r[0];
+        if (salaAtual) {
+          sala.nome = salaAtual.nome;
+          sala.grade_ativa = salaAtual.grade_ativa;
+          sala.grade_tamanho = salaAtual.grade_tamanho;
+          sala.fundo = salaAtual.fundo;
+          aplicarFundo();
+          const gridBtn = document.getElementById('grid-toggle-btn');
+          if (gridBtn) { gridBtn.classList.toggle('on', sala.grade_ativa); gridBtn.textContent = sala.grade_ativa ? 'Ligada' : 'Desligada'; }
+          const fundoBtn = document.getElementById('fundo-toggle-btn');
+          if (fundoBtn) fundoBtn.textContent = fundoLabel(sala.fundo);
+        }
+        if (fabricCanvas) {
+          desenhos = r[1];
+          carregarDesenhosNoCanvas();
+        }
+        anotacoes = r[2];
+        if (souGM) anotacoesGM = r[3];
+        const notesEl = document.getElementById('notes-area');
+        if (notesEl && document.activeElement !== notesEl) notesEl.value = notasConteudoAtual();
+        iniciativa = r[4];
+        renderInitiative();
+        tokens = r[5];
+        renderTokens();
       });
     }
 
