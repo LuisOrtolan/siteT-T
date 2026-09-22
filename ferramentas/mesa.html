@@ -267,7 +267,8 @@
     let desenhando = false;
     let apagando = false;
     let pontosAtuais = [];
-    let previewObj = null;          // objeto Fabric temporário do desenho em andamento
+    let desenhoEmAndamento = null;  // dados do traço sendo desenhado agora (prévia na camada de cima, ver renderizarPrevia)
+    let apagarPendente = { removidos: [], adicionados: [] }; // ver eraseAt/flushApagar
     let tokens = [];
     let arrastandoToken = null;
     let meusTokensSalvos = [];
@@ -428,6 +429,7 @@
           onDrawRemove: handleDrawRemove,
           onDrawClear: handleDrawClear,
           onDrawUpdate: handleDrawUpdate,
+          onDrawErase: handleDrawErase,
           onRoll: handleRollBroadcast,
           onNotesUpdate: handleNotesBroadcast,
           onInitiativeUpdate: handleInitiativeBroadcast,
@@ -488,6 +490,7 @@
     }
 
     function leaveRoom() {
+      flushApagar(); // não deixa um gesto de borracha pendente se perder ao sair
       if (channel) TT_SALA.leave(channel);
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = []; meusTokensSalvos = [];
@@ -496,7 +499,8 @@
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
       if (fabricCanvas) { fabricCanvas.dispose(); fabricCanvas = null; }
       fabricObjById = new Map();
-      previewObj = null; origCentrosSelecao = null; panning = false; panLast = null; arrastandoToken = null;
+      desenhoEmAndamento = null; apagarPendente = { removidos: [], adicionados: [] };
+      origCentrosSelecao = null; panning = false; panLast = null; arrastandoToken = null;
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -646,6 +650,10 @@
       const formasBtn = document.getElementById('formas-btn');
       if (formasBtn) formasBtn.classList.toggle('on', SHAPE_TOOLS.indexOf(name) !== -1);
       if (SHAPE_TOOLS.indexOf(name) !== -1) fecharFormasMenu();
+      // Se a pessoa trocar de ferramenta no meio de um gesto de borracha
+      // (ex: soltar o mouse fora do quadro), o lote pendente ainda tem que
+      // chegar nos outros jogadores.
+      flushApagar();
       sincronizarModoFabric();
       const lbl = document.getElementById('thickness-label');
       if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
@@ -748,7 +756,12 @@
       const y0 = Math.floor(bounds.tl.y / tam) * tam;
       const escuro = sala.fundo === 'claro' || sala.fundo === 'cinza';
       ctx.save();
-      ctx.setTransform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
+      // transform() (multiplica) e não setTransform() (substitui): em tela
+      // retina o Fabric já deixa uma escala de densidade de pixel aplicada
+      // no contexto, e substituí-la desenharia a grade na metade do
+      // tamanho, desalinhada das formas. É a mesma conta que o próprio
+      // renderCanvas do Fabric faz nos objetos.
+      ctx.transform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
       ctx.strokeStyle = escuro ? 'rgba(0,0,0,0.15)' : '#2a2d3550';
       ctx.lineWidth = 1 / zoomFabric;
       ctx.beginPath();
@@ -873,6 +886,12 @@
       });
       fabricCanvas.wrapperEl.style.position = 'absolute';
       fabricCanvas.wrapperEl.style.inset = '0';
+      // Por padrão o Fabric agenda um redesenho da cena a CADA add()/remove().
+      // Carregar uma sala com centenas de formas, ou um corte de borracha que
+      // troca várias formas de uma vez, agendaria um por objeto à toa — todo
+      // ponto do código que adiciona/remove aqui já chama requestRenderAll()
+      // explicitamente depois de terminar o lote.
+      fabricCanvas.renderOnAddRemove = false;
 
       fabricCanvas.on('before:render', function () { desenharGrade(fabricCanvas.contextContainer); });
       fabricCanvas.on('mouse:down', onCanvasMouseDown);
@@ -1003,11 +1022,33 @@
       const p = relPoint(evt);
       desenhando = true;
       pontosAtuais = [p];
-      previewObj = new MesaShape({ tipo: tool, pontos: [p, p], cor: corAtual, espessura: espessuraAtual });
-      previewObj.selectable = false;
-      previewObj.evented = false;
-      fabricCanvas.add(previewObj);
-      fabricCanvas.requestRenderAll();
+      desenhoEmAndamento = { tipo: tool, pontos: [p, p], cor: corAtual, espessura: espessuraAtual };
+      renderizarPrevia();
+    }
+
+    // A prévia do traço em andamento é desenhada na camada DE CIMA do Fabric
+    // (contextTop — o mesmo canvas que ele usa pro laço de seleção), nunca
+    // como um objeto do canvas principal.
+    //
+    // O motivo é de desempenho e foi medido com perfil de CPU: o Fabric não
+    // redesenha só o que mudou — todo renderAll() recompõe a cena INTEIRA,
+    // objeto por objeto. Com algumas centenas de formas acumuladas, colocar
+    // a prévia no canvas principal obrigava a recompor todas elas a cada
+    // ponto do traço (era ~73% do tempo de CPU, travando a thread principal
+    // quase o tempo todo do traço). Na camada de cima, cada ponto custa só
+    // limpar essa camada e redesenhar o traço em andamento — as formas já
+    // existentes nem são tocadas. A forma de verdade só entra no canvas
+    // principal uma vez, no mouseup (ver onCanvasMouseUp).
+    function renderizarPrevia() {
+      if (!fabricCanvas) return;
+      const ctx = fabricCanvas.contextTop;
+      fabricCanvas.clearContext(ctx);
+      if (!desenhoEmAndamento) return;
+      const vpt = fabricCanvas.viewportTransform;
+      ctx.save();
+      ctx.transform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
+      drawElement(ctx, desenhoEmAndamento, WORLD_W, WORLD_H);
+      ctx.restore();
     }
 
     function onCanvasMouseMove(opt) {
@@ -1025,36 +1066,42 @@
         return;
       }
       if (tool === 'selecionar') return; // Fabric cuida do arraste/laço
-      if (!desenhando || !previewObj) return;
+      if (!desenhando || !desenhoEmAndamento) return;
       const p = relPoint(evt);
       if (tool === 'traco') {
+        // Ignora micro-movimentos: sem isso o traço guarda uma amostra por
+        // evento de mouse (centenas por segundo em mouse/tela rápidos),
+        // inflando o que é salvo no banco e transmitido pros outros
+        // jogadores sem mudar nada visível. O limite é em pixels de TELA
+        // (por isso multiplica pelo zoom), pra o traço ficar igual de
+        // detalhado em qualquer nível de zoom.
+        const ultimo = pontosAtuais[pontosAtuais.length - 1];
+        const distTelaPx = Math.hypot((p.x - ultimo.x) * WORLD_W, (p.y - ultimo.y) * WORLD_H) * fabricCanvas.getZoom();
+        if (distTelaPx < 1.5) return;
         pontosAtuais.push(p);
-        previewObj.desenho.pontos = pontosAtuais;
+        desenhoEmAndamento.pontos = pontosAtuais;
       } else {
-        previewObj.desenho.pontos = [pontosAtuais[0], p];
+        desenhoEmAndamento.pontos = [pontosAtuais[0], p];
       }
-      previewObj.atualizarGeometria();
-      fabricCanvas.requestRenderAll();
+      renderizarPrevia();
     }
 
     function onCanvasMouseUp() {
       if (tool === 'mover') { panning = false; return; }
-      if (tool === 'apagar') { apagando = false; return; }
+      if (tool === 'apagar') { apagando = false; flushApagar(); return; }
       if (tool === 'selecionar') return; // persistência acontece em onSelecaoModificada
       if (!desenhando) return;
       desenhando = false;
-      const obj = previewObj;
-      previewObj = null;
-      if (!obj) return;
+      const finalDesenho = desenhoEmAndamento;
+      desenhoEmAndamento = null;
+      renderizarPrevia(); // limpa a camada de cima
+      if (!finalDesenho) return;
       // Desenho otimista: entra no Map/canvas na hora, antes de qualquer
       // chamada de rede — assim o traço nunca depende da nuvem pra
       // continuar visível pra quem desenhou, mesmo se a gravação remota for
       // lenta ou falhar.
-      const finalDesenho = obj.desenho;
       finalDesenho.id = TT_SALA.newDrawId();
-      obj.selectable = tool === 'selecionar';
-      obj.evented = tool === 'selecionar';
-      fabricObjById.set(finalDesenho.id, obj);
+      addShapeToCanvas(finalDesenho);
       desenhos.push(finalDesenho);
       fabricCanvas.requestRenderAll();
       TT_SALA.addDrawing(sala.id, finalDesenho).then(function (res) {
@@ -1100,10 +1147,22 @@
 
     // Bounding box (fração) de um desenho — usado pela MesaShape (geometria
     // em pixels do objeto Fabric) e pela borracha/hit-test lógicos.
+    // Um laço só, sem alocar arrays intermediários: isto roda a cada ponto
+    // de um traço em andamento (via atualizarGeometria) e a cada forma em
+    // cada amostra da borracha, então as duas cópias do array de pontos que
+    // um .map() faria pesavam — ainda mais num traço livre longo, que tem
+    // um ponto por amostra de mouse.
     function bboxDoDesenho(d, w, h) {
       const pts = outlinePoints(d, w, h);
-      const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
-      return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        if (p.x < x0) x0 = p.x;
+        if (p.x > x1) x1 = p.x;
+        if (p.y < y0) y0 = p.y;
+        if (p.y > y1) y1 = p.y;
+      }
+      return { x0: x0, y0: y0, x1: x1, y1: y1 };
     }
 
     // Apaga tudo que estiver selecionado (tecla Delete/Backspace, ver o
@@ -1322,6 +1381,20 @@
       const adicionados = [];
 
       desenhos.forEach(function (d) {
+        // Descarte rápido por caixa envolvente ANTES de densificar: a
+        // borracha roda a cada movimento do mouse, e densificarParaApagar()
+        // gera dezenas de pontos por forma (96 num círculo, 80 num
+        // retângulo), alocando um array por forma por amostra. Como apagar
+        // fragmenta uma forma em várias, o número de formas — e com ele
+        // esse custo — só cresce ao longo da sessão. A esmagadora maioria
+        // está longe da borracha e sai com quatro comparações.
+        const box = bboxDoDesenho(d, WORLD_W, WORLD_H);
+        const folgaX = (raioMundoPx + (d.espessura || 3)) / WORLD_W;
+        const folgaY = (raioMundoPx + (d.espessura || 3)) / WORLD_H;
+        if (p.x < box.x0 - folgaX || p.x > box.x1 + folgaX || p.y < box.y0 - folgaY || p.y > box.y1 + folgaY) {
+          mantidos.push(d);
+          return;
+        }
         const pts = densificarParaApagar(d, WORLD_W, WORLD_H);
         // Distância em pixels de verdade (escalando x e y pelas dimensões
         // reais do mundo antes do hypot) — o quadro quase nunca é
@@ -1346,15 +1419,37 @@
       removidosIds.forEach(removeShapeFromCanvas);
       adicionados.forEach(addShapeToCanvas);
       fabricCanvas.requestRenderAll();
+
+      // Rede NÃO sai por amostra de mouse: acumula e manda uma vez só no
+      // fim do gesto (ver flushApagar). Antes, cada movimento da borracha
+      // disparava um DELETE + um broadcast por forma cortada e um INSERT +
+      // um broadcast por pedaço gerado — um único arrasto virava centenas
+      // de idas ao banco e centenas de mensagens. Além de pesado, isso
+      // estourava o limite de mensagens por segundo do Realtime do
+      // Supabase, que simplesmente DESCARTA o excedente: a mensagem
+      // perdida nunca chega, e o quadro de quem estava do outro lado fica
+      // permanentemente diferente (a "dessincronia" relatada).
       removidosIds.forEach(function (id) {
-        TT_SALA.removeDrawing(sala.id, id);
-        TT_SALA.broadcastDrawRemove(channel, id);
+        // Um pedaço criado neste mesmo gesto e já recortado de novo nunca
+        // chegou ao banco nem aos outros jogadores — sai da lista de
+        // adições em vez de virar uma remoção de algo que nunca existiu
+        // pra eles.
+        const i = apagarPendente.adicionados.findIndex(function (d) { return d.id === id; });
+        if (i >= 0) apagarPendente.adicionados.splice(i, 1);
+        else apagarPendente.removidos.push(id);
       });
-      adicionados.forEach(function (novo) {
-        TT_SALA.addDrawing(sala.id, novo).then(function (res) {
-          if (res.ok) TT_SALA.broadcastDrawAdd(channel, res.desenho);
-        });
-      });
+      adicionados.forEach(function (novo) { apagarPendente.adicionados.push(novo); });
+    }
+
+    // Fim do gesto da borracha: manda o resultado líquido de uma vez.
+    function flushApagar() {
+      const removidos = apagarPendente.removidos;
+      const adicionados = apagarPendente.adicionados;
+      apagarPendente = { removidos: [], adicionados: [] };
+      if (!removidos.length && !adicionados.length) return;
+      if (removidos.length) TT_SALA.removeDrawings(sala.id, removidos);
+      if (adicionados.length) TT_SALA.addDrawings(sala.id, adicionados);
+      TT_SALA.broadcastDrawErase(channel, { removidos: removidos, adicionados: adicionados });
     }
 
     function apagarNoPonto(p) {
@@ -1369,6 +1464,19 @@
     function handleDrawUpdate(payload) {
       const d = desenhos.find(function (x) { return x.id === payload.id; });
       if (d) { d.pontos = payload.pontos; updateShapeGeometry(d); fabricCanvas.requestRenderAll(); }
+    }
+    // Resultado inteiro de um gesto de borracha de outro jogador, numa
+    // mensagem só (ver flushApagar).
+    function handleDrawErase(payload) {
+      const removidos = payload.removidos || [];
+      const adicionados = payload.adicionados || [];
+      if (removidos.length) {
+        const fora = new Set(removidos);
+        desenhos = desenhos.filter(function (d) { return !fora.has(d.id); });
+        removidos.forEach(removeShapeFromCanvas);
+      }
+      adicionados.forEach(function (d) { desenhos.push(d); addShapeToCanvas(d); });
+      fabricCanvas.requestRenderAll();
     }
 
     // ---------- Tokens ----------
