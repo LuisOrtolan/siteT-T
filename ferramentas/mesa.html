@@ -486,7 +486,7 @@
               '<button class="btn" onclick="verTudo()">Ver tudo</button>' +
               (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
               '<span class="lbl" style="margin-left:auto">Fundo:</span>' +
-              '<button class="btn" id="fundo-toggle-btn" onclick="cycleFundo()" ' + (souGM ? '' : 'disabled') + '>' + fundoLabel(sala.fundo) + '</button>' +
+              '<button class="btn" id="fundo-toggle-btn" onclick="cycleFundo()">' + fundoLabel(sala.fundo) + '</button>' +
               '<span class="lbl">Grade:</span>' +
               '<button class="btn' + (sala.grade_ativa ? ' on' : '') + '" id="grid-toggle-btn" onclick="toggleGrid()" ' + (souGM ? '' : 'disabled') + '>' + (sala.grade_ativa ? 'Ligada' : 'Desligada') + '</button>' +
             '</div>' +
@@ -688,9 +688,13 @@
     function desenharGrade(ctx) {
       if (!sala || !sala.grade_ativa || !fabricCanvas) return;
       const vpt = fabricCanvas.viewportTransform;
-      const tam = Math.max(4, sala.grade_tamanho || 50);
       const zoomFabric = fabricCanvas.getZoom();
-      if (tam * zoomFabric < 4) return; // grudado demais em zoom bem baixo — não risca
+      let tam = Math.max(4, sala.grade_tamanho || 50);
+      // Em zoom bem baixo (mundo bem maior que a tela), a célula real vira
+      // uma poeira ilegível — dobra o tamanho da célula desenhada (sempre
+      // múltiplo da célula de verdade, então continua alinhada) até ficar
+      // visível, em vez de simplesmente sumir com a grade inteira.
+      while (tam * zoomFabric < 8) tam *= 2;
       const bounds = fabricCanvas.calcViewportBoundaries();
       const x0 = Math.floor(bounds.tl.x / tam) * tam;
       const y0 = Math.floor(bounds.tl.y / tam) * tam;
@@ -1382,6 +1386,19 @@
       el.style.height = tamanhoTelaPx + 'px';
     }
 
+    // Fração do mundo (mesmo referencial de t.x/t.y) que está bem no meio
+    // da área visível AGORA — usado pra colocar um token novo onde a
+    // pessoa está olhando, não no centro fixo do mundo todo. Com o mundo
+    // 16x maior que a tela, colocar sempre em x=0.5,y=0.5 significa que um
+    // token criado enquanto alguém está com zoom/pan longe do centro nasce
+    // fora da área visível — "não aparece" até dar "Ver tudo" ou navegar
+    // até lá.
+    function centroVisivelFrac() {
+      if (!fabricCanvas) return { x: 0.5, y: 0.5 };
+      const c = fabricCanvas.getVpCenter();
+      return { x: c.x / WORLD_W, y: c.y / WORLD_H };
+    }
+
     function onTokenFileChosen(evt) {
       const file = evt.target.files && evt.target.files[0];
       evt.target.value = ''; // permite escolher o mesmo arquivo de novo depois
@@ -1392,7 +1409,8 @@
       if (err) err.textContent = 'Enviando...';
       TT_SALA.uploadTokenImage(sala.id, file).then(function (res) {
         if (!res.ok) { if (err) err.textContent = describeFail(res, 'Não deu pra enviar a imagem.'); return; }
-        const novo = { id: TT_SALA.newTokenId(), nome: nome, imagem_url: res.url, x: 0.5, y: 0.5, tamanho: 56 };
+        const centro = centroVisivelFrac();
+        const novo = { id: TT_SALA.newTokenId(), nome: nome, imagem_url: res.url, x: centro.x, y: centro.y, tamanho: 56 };
         tokens.push(novo);
         renderTokens();
         if (err) err.textContent = '';
@@ -1430,7 +1448,8 @@
     function usarTokenSalvo(id) {
       const salvo = meusTokensSalvos.find(function (t) { return t.id === id; });
       if (!salvo) return;
-      const novo = { id: TT_SALA.newTokenId(), nome: salvo.nome, imagem_url: salvo.imagem_url, x: 0.5, y: 0.5, tamanho: 56 };
+      const centro = centroVisivelFrac();
+      const novo = { id: TT_SALA.newTokenId(), nome: salvo.nome, imagem_url: salvo.imagem_url, x: centro.x, y: centro.y, tamanho: 56 };
       tokens.push(novo);
       renderTokens();
       TT_SALA.addToken(sala.id, novo).then(function (res) {
