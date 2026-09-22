@@ -880,8 +880,26 @@
       fabricCanvas.on('mouse:up', onCanvasMouseUp);
       fabricCanvas.on('mouse:wheel', onCanvasMouseWheel);
       fabricCanvas.on('object:modified', onSelecaoModificada);
+      // Cada MesaShape trava rotação/redimensionamento individualmente
+      // (hasControls:false), mas a ActiveSelection que embrulha uma seleção
+      // de VÁRIAS formas (laço de arraste) é um objeto Fabric à parte, com
+      // seus PRÓPRIOS controles por padrão — não herda a trava dos membros.
+      // Sem isto dava pra girar o grupo pelo canto de rotação; como
+      // onSelecaoModificada só sabe reaplicar translação (nunca rotação)
+      // nos `pontos`, o resultado era a forma pular pra uma posição errada
+      // e ainda ficar com um ângulo do Fabric dessincronizado dos pontos —
+      // "a forma some do mapa". Trava a ActiveSelection igual aos membros.
+      fabricCanvas.on('selection:created', travarControlesDaSelecao);
+      fabricCanvas.on('selection:updated', travarControlesDaSelecao);
 
       verTudo();
+    }
+
+    function travarControlesDaSelecao() {
+      const alvo = fabricCanvas.getActiveObject();
+      if (!alvo || alvo.type !== 'activeSelection') return;
+      alvo.hasControls = false;
+      alvo.lockRotation = true;
     }
 
     function redimensionarCanvas() {
