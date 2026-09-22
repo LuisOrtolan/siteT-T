@@ -107,16 +107,14 @@
     .shapes-menu.aberto { display: flex }
     .shapes-menu .btn { text-align: left }
 
-    .board-wrap { flex: 1; position: relative; overflow: auto; background: #08090c }
+    .board-wrap { flex: 1; position: relative; overflow: hidden; background: #08090c }
     .board-wrap.fundo-claro { background: #ffffff }
     .board-wrap.fundo-cinza { background: #dcdce0 }
-    .board-inner { position: relative }
-    .board-grid { position: absolute; inset: 0; }
-    .board-canvas { position: absolute; inset: 0; touch-action: none; cursor: crosshair }
-    .board-canvas.erase-mode { cursor: not-allowed }
-    .board-canvas.pan-mode { cursor: grab }
-    .board-canvas.pan-mode:active { cursor: grabbing }
-    .board-canvas.select-mode { cursor: pointer }
+    .board-inner { position: absolute; inset: 0 }
+    /* Fabric envolve o <canvas> num .canvas-container próprio — o
+       posicionamento que antes ia direto no <canvas> agora vai nesse
+       wrapper (ver criarFabricCanvas()). */
+    .board-inner .canvas-container { position: absolute !important; inset: 0 }
     .zoom-label { font-size: 11px; color: #b0b3c0; min-width: 34px; text-align: center }
 
     .erase-cursor {
@@ -237,6 +235,7 @@
   <div id="app"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fabric@5.5.2/dist/fabric.min.js"></script>
   <script src="../js/supabase-config.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/dice.js"></script>
@@ -268,26 +267,25 @@
     let desenhando = false;
     let apagando = false;
     let pontosAtuais = [];
-    let previewEl = null;
-    let selecionados = [];          // array de ids
-    let arrastandoSelecao = false;
-    let arrastarOrigem = null;
-    let pontosOriginaisSelecao = null; // { id: [pontos originais...] }
-    let retanguloSelecao = null;    // {x0,y0,x1,y1} fração, durante o arraste do laço
+    let previewObj = null;          // objeto Fabric temporário do desenho em andamento
     let tokens = [];
     let arrastandoToken = null;
     let meusTokensSalvos = [];
-    // O quadro é um mapa grande e fixo — MUNDO_POR_TELA vezes maior que a
-    // área visível quando o tamanho da célula está "natural" (zoom 1). No
-    // zoom mínimo (ZOOM_MIN = 1/MUNDO_POR_TELA), esse mapa inteiro cabe
-    // exatamente na tela; dar zoom vai aproximando e mostrando só uma parte
-    // dele, maior. Ver applyZoom().
+    // O "mundo" do quadro é um canvas Fabric.js de tamanho FIXO (o tamanho
+    // visível do #board-wrap) — zoom/pan viram viewportTransform do próprio
+    // Fabric, em vez de redimensionar DOM e usar rolagem nativa como antes.
+    // zoom/ZOOM_MIN/ZOOM_MAX continuam existindo só pra UI (rótulo, "Ver
+    // tudo", tamanho da grade); o zoom de verdade do Fabric é zoom/ZOOM_MIN.
+    // Ver criarFabricCanvas()/setZoom().
     const MUNDO_POR_TELA = 4;
     const ZOOM_MIN = 1 / MUNDO_POR_TELA;
     const ZOOM_MAX = 3;
     let zoom = ZOOM_MIN;
     let panning = false;
-    let panStart = null;
+    let panLast = null;
+    let fabricCanvas = null;
+    let fabricObjById = new Map(); // id do desenho -> objeto MesaShape no canvas
+    let WORLD_W = 0, WORLD_H = 0;  // tamanho fixo (px) do canvas/"mundo"
     let minhasSalas = [];
 
     const app = document.getElementById('app');
@@ -448,7 +446,9 @@
       anotacoes = { geral: '', equipamentos: '', tesouro: '', historia: '' };
       anotacoesGM = ''; abaNotas = 'geral';
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
-      selecionados = []; arrastandoSelecao = false; retanguloSelecao = null; arrastandoToken = null;
+      if (fabricCanvas) { fabricCanvas.dispose(); fabricCanvas = null; }
+      fabricObjById = new Map();
+      previewObj = null; origCentrosSelecao = null; panning = false; panLast = null; arrastandoToken = null;
       history.replaceState(null, '', location.pathname);
       renderLanding();
     }
@@ -483,7 +483,7 @@
               '<button class="btn" onclick="setZoom(zoom-0.25)">−</button>' +
               '<span class="zoom-label" id="zoom-label">100%</span>' +
               '<button class="btn" onclick="setZoom(zoom+0.25)">+</button>' +
-              '<button class="btn" onclick="setZoom(ZOOM_MIN)">Ver tudo</button>' +
+              '<button class="btn" onclick="verTudo()">Ver tudo</button>' +
               (souGM ? '<button class="btn red" onclick="doClearAll()">&#128465; Limpar tudo</button>' : '') +
               '<span class="lbl" style="margin-left:auto">Fundo:</span>' +
               '<button class="btn" id="fundo-toggle-btn" onclick="cycleFundo()" ' + (souGM ? '' : 'disabled') + '>' + fundoLabel(sala.fundo) + '</button>' +
@@ -492,7 +492,6 @@
             '</div>' +
             '<div class="board-wrap" id="board-wrap">' +
               '<div class="board-inner" id="board-inner">' +
-                '<div class="board-grid" id="board-grid"></div>' +
                 '<canvas class="board-canvas" id="board-canvas"></canvas>' +
                 '<div class="token-layer" id="board-tokens"></div>' +
                 '<div class="erase-cursor" id="erase-cursor"></div>' +
@@ -599,17 +598,44 @@
       const formasBtn = document.getElementById('formas-btn');
       if (formasBtn) formasBtn.classList.toggle('on', SHAPE_TOOLS.indexOf(name) !== -1);
       if (SHAPE_TOOLS.indexOf(name) !== -1) fecharFormasMenu();
-      const c = canvasEl();
-      if (c) {
-        c.classList.toggle('erase-mode', tool === 'apagar');
-        c.classList.toggle('pan-mode', tool === 'mover');
-        c.classList.toggle('select-mode', tool === 'selecionar');
-      }
+      sincronizarModoFabric();
       const lbl = document.getElementById('thickness-label');
       if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
       const cursor = document.getElementById('erase-cursor');
       if (cursor && tool !== 'apagar') cursor.style.display = 'none';
-      if (tool !== 'selecionar' && selecionados.length) { selecionados = []; redrawCanvas(); }
+      if (tool !== 'selecionar' && fabricCanvas) { fabricCanvas.discardActiveObject(); fabricCanvas.requestRenderAll(); }
+    }
+
+    // Alterna o modo de interação do Fabric conforme a ferramenta ativa —
+    // substitui as classes CSS erase-mode/pan-mode/select-mode de antes: o
+    // Fabric tem seu próprio <canvas> de interação por cima do original, e
+    // cursor/seleção têm que vir da API dele, não de CSS no <canvas> base.
+    function sincronizarModoFabric() {
+      if (!fabricCanvas) return;
+      const podeSelecionar = tool === 'selecionar';
+      if (podeSelecionar) {
+        fabricCanvas.selection = true;
+        fabricCanvas.skipTargetFind = false;
+        fabricCanvas.defaultCursor = 'default';
+      } else if (tool === 'mover') {
+        fabricCanvas.selection = false;
+        fabricCanvas.skipTargetFind = true;
+        fabricCanvas.defaultCursor = 'grab';
+      } else if (tool === 'apagar') {
+        fabricCanvas.selection = false;
+        fabricCanvas.skipTargetFind = true;
+        fabricCanvas.defaultCursor = 'not-allowed';
+      } else {
+        fabricCanvas.selection = false;
+        fabricCanvas.skipTargetFind = true;
+        fabricCanvas.defaultCursor = 'crosshair';
+      }
+      // addShapeToCanvas()/onCanvasMouseUp() só definem selectable/evented no
+      // momento em que um desenho é criado, com base na ferramenta ativa
+      // NAQUELE instante — sem isso aqui, um desenho feito com "Caneta" e
+      // ativo continuaria não-selecionável pra sempre mesmo depois de trocar
+      // pra "Selecionar".
+      fabricObjById.forEach(function (obj) { obj.selectable = podeSelecionar; obj.evented = podeSelecionar; });
     }
     function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
@@ -622,10 +648,9 @@
     function toggleGrid() {
       sala.grade_ativa = !sala.grade_ativa;
       TT_SALA.updateGrid(sala.id, { ativa: sala.grade_ativa });
-      const grid = document.getElementById('board-grid');
-      if (grid) grid.style.display = sala.grade_ativa ? 'block' : 'none';
       const btn = document.getElementById('grid-toggle-btn');
       if (btn) { btn.textContent = sala.grade_ativa ? 'Ligada' : 'Desligada'; btn.classList.toggle('on', sala.grade_ativa); }
+      if (fabricCanvas) fabricCanvas.requestRenderAll();
     }
 
     // ---------- Fundo do quadro ----------
@@ -635,19 +660,16 @@
       return 'Escuro';
     }
     // A cor da grade precisa se inverter conforme o fundo — linhas claras
-    // somem num fundo claro, e vice-versa.
+    // somem num fundo claro, e vice-versa. A grade em si é desenhada dentro
+    // do próprio ciclo de render do Fabric (ver desenharGrade) — aqui só
+    // cuida da cor de fundo por trás do canvas e pede um redesenho.
     function aplicarFundo() {
       const wrap = wrapEl();
-      const grid = document.getElementById('board-grid');
-      if (!wrap || !grid) return;
+      if (!wrap) return;
       wrap.classList.remove('fundo-claro', 'fundo-cinza');
-      const escuro = sala.fundo === 'claro' || sala.fundo === 'cinza';
       if (sala.fundo === 'claro') wrap.classList.add('fundo-claro');
       else if (sala.fundo === 'cinza') wrap.classList.add('fundo-cinza');
-      const corLinha = escuro ? 'rgba(0,0,0,0.15)' : '#2a2d3550';
-      grid.style.backgroundImage =
-        'linear-gradient(to right, ' + corLinha + ' 1px, transparent 1px),' +
-        'linear-gradient(to bottom, ' + corLinha + ' 1px, transparent 1px)';
+      if (fabricCanvas) fabricCanvas.requestRenderAll();
     }
     function cycleFundo() {
       const ordem = ['escuro', 'claro', 'cinza'];
@@ -659,157 +681,266 @@
       if (btn) btn.textContent = fundoLabel(sala.fundo);
     }
 
+    // Risca só as linhas da grade dentro da área visível (calcViewportBoundaries),
+    // aplicando a transformação de viewport do próprio Fabric — fica travada
+    // em pan/zoom por construção, em vez de sincronizar um <div> de CSS à
+    // parte (jeito antigo, que corria o risco de ficar um frame dessincronizado).
+    function desenharGrade(ctx) {
+      if (!sala || !sala.grade_ativa || !fabricCanvas) return;
+      const vpt = fabricCanvas.viewportTransform;
+      const tam = Math.max(4, sala.grade_tamanho || 50);
+      const zoomFabric = fabricCanvas.getZoom();
+      if (tam * zoomFabric < 4) return; // grudado demais em zoom bem baixo — não risca
+      const bounds = fabricCanvas.calcViewportBoundaries();
+      const x0 = Math.floor(bounds.tl.x / tam) * tam;
+      const y0 = Math.floor(bounds.tl.y / tam) * tam;
+      const escuro = sala.fundo === 'claro' || sala.fundo === 'cinza';
+      ctx.save();
+      ctx.setTransform(vpt[0], vpt[1], vpt[2], vpt[3], vpt[4], vpt[5]);
+      ctx.strokeStyle = escuro ? 'rgba(0,0,0,0.15)' : '#2a2d3550';
+      ctx.lineWidth = 1 / zoomFabric;
+      ctx.beginPath();
+      for (let x = x0; x <= bounds.br.x; x += tam) { ctx.moveTo(x, bounds.tl.y); ctx.lineTo(x, bounds.br.y); }
+      for (let y = y0; y <= bounds.br.y; y += tam) { ctx.moveTo(bounds.tl.x, y); ctx.lineTo(bounds.br.x, y); }
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // ---------- Canvas / desenho ----------
+    // A partir daqui o quadro roda em cima de um fabric.Canvas (ver
+    // criarFabricCanvas) em vez de desenhar direto num <canvas> 2D cru. O
+    // "mundo" tem tamanho FIXO (WORLD_W/WORLD_H, igual ao tamanho visível
+    // de #board-wrap) — zoom/pan não redimensionam mais nada, são só o
+    // viewportTransform do próprio Fabric por cima. Cada linha de
+    // `desenhos` vira um objeto MesaShape espelhado num Map (fabricObjById)
+    // por id, então adicionar/remover/mover um desenho mexe só nesse
+    // objeto específico — nunca mais um redesenho da cena inteira (era
+    // exatamente isso que deixava o quadro lento com várias pessoas
+    // desenhando ao mesmo tempo: o antigo redrawCanvas() recalculava TODOS
+    // os desenhos a cada movimento do mouse, local ou remoto).
+
+    // Objeto Fabric customizado que representa qualquer desenho da mesa
+    // (traço/linha/qualquer forma). Guarda a forma como dado puro
+    // (this.desenho) e desenha chamando drawElement() — a mesma função de
+    // sempre, inalterada — via um translate que desfaz o referencial
+    // centrado que o Fabric usa por padrão. Isso garante que o resultado
+    // visual continue idêntico ao de antes (inclusive a suavização por
+    // curva do traço livre, o inset do trapézio, o ctx.arc do círculo etc).
+    const MesaShape = fabric.util.createClass(fabric.Object, {
+      type: 'mesaShape',
+      initialize: function (d) {
+        this.desenho = d;
+        this.callSuper('initialize', {});
+        this.hasControls = false;
+        this.lockRotation = true;
+        this.lockScalingX = true;
+        this.lockScalingY = true;
+        this.hasBorders = true;
+        this.borderColor = '#c7a25a';
+        this.borderDashArray = [6, 4];
+        this.padding = 10;
+        this.perPixelTargetFind = true;
+        this.originX = 'center';
+        this.originY = 'center';
+        this.atualizarGeometria();
+      },
+      // Recalcula a caixa (em pixels do mundo) a partir de this.desenho.pontos
+      // — chamado na criação e sempre que os pontos do desenho mudam (corte
+      // de apagar, arrasto de seleção, atualização remota, redimensionar
+      // janela).
+      atualizarGeometria: function () {
+        const box = bboxDoDesenho(this.desenho, WORLD_W, WORLD_H);
+        const pad = (this.desenho.espessura || 3) + 4;
+        const x0 = box.x0 * WORLD_W - pad, y0 = box.y0 * WORLD_H - pad;
+        const x1 = box.x1 * WORLD_W + pad, y1 = box.y1 * WORLD_H + pad;
+        this._centroMundoX = (x0 + x1) / 2;
+        this._centroMundoY = (y0 + y1) / 2;
+        this.set({ left: this._centroMundoX, top: this._centroMundoY, width: Math.max(1, x1 - x0), height: Math.max(1, y1 - y0) });
+        this.setCoords();
+      },
+      _render: function (ctx) {
+        ctx.save();
+        ctx.translate(-this._centroMundoX, -this._centroMundoY);
+        drawElement(ctx, this.desenho, WORLD_W, WORLD_H);
+        ctx.restore();
+      }
+    });
+
+    // Espelha um desenho (novo ou vindo de outro jogador) num objeto Fabric.
+    function addShapeToCanvas(d) {
+      const obj = new MesaShape(d);
+      obj.selectable = tool === 'selecionar';
+      obj.evented = tool === 'selecionar';
+      fabricObjById.set(d.id, obj);
+      fabricCanvas.add(obj);
+      return obj;
+    }
+    function removeShapeFromCanvas(id) {
+      const obj = fabricObjById.get(id);
+      if (obj) { fabricCanvas.remove(obj); fabricObjById.delete(id); }
+    }
+    function updateShapeGeometry(d) {
+      const obj = fabricObjById.get(d.id);
+      if (obj) { obj.desenho = d; obj.atualizarGeometria(); }
+    }
+
     // Registrado uma única vez por entrada na sala (chamado só por
     // renderRoom). Trocar de ferramenta, ligar/desligar grade e dar zoom NÃO
     // chamam isso de novo — só mexem no canvas/DOM já existente.
     function initCanvas() {
-      const grid = document.getElementById('board-grid');
-      const canvas = canvasEl();
       const wrap = wrapEl();
+      criarFabricCanvas();
       aplicarFundo();
-      grid.style.display = sala.grade_ativa ? 'block' : 'none';
       initTokenLayer();
+      carregarDesenhosNoCanvas();
+      sincronizarModoFabric();
 
-      applyZoom();
-      window.addEventListener('resize', function () { applyZoom(); });
-      // Zoom com a rolagem do mouse (roda pra cima = zoom in), ancorado no
-      // ponteiro — o ponto embaixo do mouse fica no mesmo lugar da tela.
-      wrap.addEventListener('wheel', function (evt) {
-        evt.preventDefault();
-        setZoom(zoom + (evt.deltaY < 0 ? 0.15 : -0.15), evt.clientX, evt.clientY);
-      }, { passive: false });
+      window.addEventListener('resize', redimensionarCanvas);
       wrap.addEventListener('mouseleave', function () {
         const cursor = document.getElementById('erase-cursor');
         if (cursor) cursor.style.display = 'none';
       });
-
-      canvas.classList.toggle('erase-mode', tool === 'apagar');
-      canvas.classList.toggle('pan-mode', tool === 'mover');
-      canvas.classList.toggle('select-mode', tool === 'selecionar');
-      canvas.addEventListener('pointerdown', onPointerDown);
-      canvas.addEventListener('pointermove', onPointerMove);
-      canvas.addEventListener('pointerup', onPointerUp);
-      canvas.addEventListener('pointercancel', onPointerUp);
     }
 
-    // ---------- Zoom ----------
-    // O quadro (grade + traços) escala junto, sempre pelo MESMO fator —
-    // ambos são filhos de #board-inner e dimensionados a partir do mesmo
-    // zoom, então nunca dessincronizam. anchorClientX/Y (opcionais, em
-    // coordenadas de tela) é o ponto que deve continuar no mesmo lugar da
-    // tela depois do zoom mudar — sem isso, o conteúdo "pula" porque só o
-    // canto superior esquerdo do quadro fica fixo.
+    function criarFabricCanvas() {
+      const wrap = wrapEl();
+      WORLD_W = wrap.clientWidth || 800;
+      WORLD_H = wrap.clientHeight || 600;
+      fabricCanvas = new fabric.Canvas('board-canvas', {
+        width: WORLD_W, height: WORLD_H, selection: true,
+        preserveObjectStacking: true, stopContextMenu: true,
+        enablePointerEvents: true // mantém o arraste funcionando mesmo se o ponteiro sair do canvas, igual o setPointerCapture de antes
+      });
+      fabricCanvas.wrapperEl.style.position = 'absolute';
+      fabricCanvas.wrapperEl.style.inset = '0';
+
+      fabricCanvas.on('before:render', function () { desenharGrade(fabricCanvas.contextContainer); });
+      fabricCanvas.on('mouse:down', onCanvasMouseDown);
+      fabricCanvas.on('mouse:move', onCanvasMouseMove);
+      fabricCanvas.on('mouse:up', onCanvasMouseUp);
+      fabricCanvas.on('mouse:wheel', onCanvasMouseWheel);
+      fabricCanvas.on('object:modified', onSelecaoModificada);
+
+      verTudo();
+    }
+
+    function redimensionarCanvas() {
+      const wrap = wrapEl();
+      if (!wrap || !fabricCanvas) return;
+      WORLD_W = wrap.clientWidth || WORLD_W;
+      WORLD_H = wrap.clientHeight || WORLD_H;
+      fabricCanvas.setDimensions({ width: WORLD_W, height: WORLD_H });
+      // O "mundo" mudou de tamanho — a geometria em pixels de cada forma
+      // (calculada a partir das frações 0..1 de pontos) precisa recalcular.
+      fabricObjById.forEach(function (obj) { obj.atualizarGeometria(); });
+      fabricCanvas.requestRenderAll();
+    }
+
+    function carregarDesenhosNoCanvas() {
+      fabricObjById.forEach(function (obj) { fabricCanvas.remove(obj); });
+      fabricObjById.clear();
+      desenhos.forEach(addShapeToCanvas);
+      fabricCanvas.requestRenderAll();
+    }
+
+    // ---------- Zoom/pan ----------
+    // zoom/ZOOM_MIN/ZOOM_MAX continuam com o mesmo significado de antes (pra
+    // UI e pro tamanho da grade); o zoom de verdade aplicado no Fabric é
+    // zoom/ZOOM_MIN (assim ZOOM_MIN vira zoom do Fabric = 1, "mapa inteiro").
     function setZoom(z, anchorClientX, anchorClientY) {
-      const wrap = wrapEl();
-      const inner = document.getElementById('board-inner');
-      const novoZoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z * 100) / 100));
-      if (!wrap || !inner) { zoom = novoZoom; applyZoom(); return; }
-
-      const rect = wrap.getBoundingClientRect();
-      const ancoraX = anchorClientX != null ? anchorClientX - rect.left : wrap.clientWidth / 2;
-      const ancoraY = anchorClientY != null ? anchorClientY - rect.top : wrap.clientHeight / 2;
-      const larguraAntes = inner.clientWidth || 1, alturaAntes = inner.clientHeight || 1;
-      const fracX = (wrap.scrollLeft + ancoraX) / larguraAntes;
-      const fracY = (wrap.scrollTop + ancoraY) / alturaAntes;
-
-      zoom = novoZoom;
-      applyZoom();
-
-      wrap.scrollLeft = fracX * inner.clientWidth - ancoraX;
-      wrap.scrollTop = fracY * inner.clientHeight - ancoraY;
-    }
-
-    function applyZoom() {
-      const wrap = wrapEl();
-      const inner = document.getElementById('board-inner');
-      if (!wrap || !inner) return;
-      // wrap.clientWidth/Height é o tamanho VISÍVEL do contêiner com scroll —
-      // não muda com o zoom, serve de base estável. O mapa (#board-inner) é
-      // MUNDO_POR_TELA vezes esse tamanho quando o zoom está "natural" (1);
-      // no ZOOM_MIN ele cai exatamente pro tamanho da tela (mapa inteiro
-      // visível, sem sobrar nem faltar nada), e cresce dali pra cima — nunca
-      // fica menor que a tela. Grade e traços escalam pelo mesmo `zoom`,
-      // então nunca dessincronizam.
-      inner.style.width = Math.round((wrap.clientWidth / ZOOM_MIN) * zoom) + 'px';
-      inner.style.height = Math.round((wrap.clientHeight / ZOOM_MIN) * zoom) + 'px';
-      const grid = document.getElementById('board-grid');
-      if (grid) {
-        const g = Math.max(4, Math.round((sala.grade_tamanho || 50) * zoom));
-        grid.style.backgroundSize = g + 'px ' + g + 'px';
-      }
-      const canvas = canvasEl();
-      if (canvas) {
-        canvas.width = inner.clientWidth;
-        canvas.height = inner.clientHeight;
-        redrawCanvas();
+      zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.round(z * 100) / 100));
+      if (!fabricCanvas) return;
+      const fabricZoom = zoom / ZOOM_MIN;
+      if (anchorClientX != null && anchorClientY != null) {
+        const rect = fabricCanvas.upperCanvasEl.getBoundingClientRect();
+        fabricCanvas.zoomToPoint(new fabric.Point(anchorClientX - rect.left, anchorClientY - rect.top), fabricZoom);
+      } else {
+        fabricCanvas.zoomToPoint(new fabric.Point(WORLD_W / 2, WORLD_H / 2), fabricZoom);
       }
       const label = document.getElementById('zoom-label');
       if (label) label.textContent = Math.round(zoom * 100) + '%';
-      renderTokens();
+      syncTokenLayerTransform();
+      fabricCanvas.requestRenderAll();
+    }
+
+    // "Ver tudo": volta pro estado inicial de verdade (zoom mínimo E
+    // deslocamento zero) — diferente de simplesmente dar zoom out a partir
+    // de onde a pessoa estiver, que não necessariamente recentra o mapa.
+    function verTudo() {
+      zoom = ZOOM_MIN;
+      if (fabricCanvas) {
+        fabricCanvas.setZoom(1);
+        fabricCanvas.absolutePan(new fabric.Point(0, 0));
+      }
+      const label = document.getElementById('zoom-label');
+      if (label) label.textContent = Math.round(zoom * 100) + '%';
+      syncTokenLayerTransform();
+      if (fabricCanvas) fabricCanvas.requestRenderAll();
+    }
+
+    // Tokens continuam sendo uma camada de DOM à parte nesta PR (ver
+    // initTokenLayer) — essa função só espelha o viewportTransform do
+    // Fabric nela via CSS, pra continuarem grudados no mapa durante
+    // pan/zoom (sem isso, eles ficariam "presos" no lugar já que
+    // #board-inner parou de ser redimensionado a cada zoom).
+    function syncTokenLayerTransform() {
+      const layer = document.getElementById('board-tokens');
+      if (!layer || !fabricCanvas) return;
+      const vpt = fabricCanvas.viewportTransform;
+      layer.style.transform = 'translate(' + vpt[4] + 'px,' + vpt[5] + 'px) scale(' + vpt[0] + ')';
+      layer.style.transformOrigin = '0 0';
     }
 
     function canvasEl() { return document.getElementById('board-canvas'); }
     function wrapEl() { return document.getElementById('board-wrap'); }
 
+    // Ponto (fração 0..1 do mundo) a partir de um evento nativo de mouse —
+    // getPointer() do Fabric já desfaz o viewportTransform atual (zoom/pan),
+    // então isso funciona igual em qualquer zoom/posição de deslocamento.
     function relPoint(evt) {
-      const c = canvasEl();
-      const r = c.getBoundingClientRect();
-      return { x: (evt.clientX - r.left) / r.width, y: (evt.clientY - r.top) / r.height };
+      const p = fabricCanvas.getPointer(evt);
+      return { x: p.x / WORLD_W, y: p.y / WORLD_H };
     }
 
-    function onPointerDown(evt) {
+    function onCanvasMouseWheel(opt) {
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+      setZoom(zoom + (opt.e.deltaY < 0 ? 0.15 : -0.15), opt.e.clientX, opt.e.clientY);
+    }
+
+    function onCanvasMouseDown(opt) {
+      const evt = opt.e;
       if (tool === 'mover') {
         panning = true;
-        panStart = { x: evt.clientX, y: evt.clientY, left: wrapEl().scrollLeft, top: wrapEl().scrollTop };
-        canvasEl().setPointerCapture(evt.pointerId);
+        panLast = { x: evt.clientX, y: evt.clientY };
         return;
       }
       if (tool === 'apagar') {
         apagando = true;
-        canvasEl().setPointerCapture(evt.pointerId);
         apagarNoPonto(relPoint(evt));
         return;
       }
-      if (tool === 'selecionar') {
-        const p0 = relPoint(evt);
-        const hit = hitTestQualquer(p0);
-        if (hit) {
-          // Clicar num item que já faz parte da seleção arrasta o grupo
-          // inteiro; clicar num item de fora troca a seleção pra só ele.
-          if (selecionados.indexOf(hit.id) === -1) selecionados = [hit.id];
-          arrastandoSelecao = true;
-          arrastarOrigem = p0;
-          pontosOriginaisSelecao = {};
-          selecionados.forEach(function (id) {
-            const d = desenhos.find(function (x) { return x.id === id; });
-            if (d) pontosOriginaisSelecao[id] = d.pontos.map(function (pt) { return { x: pt.x, y: pt.y }; });
-          });
-          canvasEl().setPointerCapture(evt.pointerId);
-        } else {
-          // Clicar em área vazia começa um retângulo de seleção (laço): tudo
-          // que estiver dentro dele quando soltar o botão entra na seleção.
-          selecionados = [];
-          retanguloSelecao = { x0: p0.x, y0: p0.y, x1: p0.x, y1: p0.y };
-          canvasEl().setPointerCapture(evt.pointerId);
-        }
-        redrawCanvas();
-        return;
-      }
+      // "Selecionar": laço/seleção/arraste ficam por conta do próprio
+      // Fabric (canvas.selection=true) — só reagimos ao resultado em
+      // onSelecaoModificada().
+      if (tool === 'selecionar') return;
       const p = relPoint(evt);
       desenhando = true;
-      canvasEl().setPointerCapture(evt.pointerId);
       pontosAtuais = [p];
-      previewEl = { tipo: tool, pontos: [p, p], cor: corAtual, espessura: espessuraAtual };
-      redrawCanvas();
+      previewObj = new MesaShape({ tipo: tool, pontos: [p, p], cor: corAtual, espessura: espessuraAtual });
+      previewObj.selectable = false;
+      previewObj.evented = false;
+      fabricCanvas.add(previewObj);
+      fabricCanvas.requestRenderAll();
     }
 
-    function onPointerMove(evt) {
+    function onCanvasMouseMove(opt) {
+      const evt = opt.e;
       if (tool === 'mover') {
         if (!panning) return;
-        const wrap = wrapEl();
-        wrap.scrollLeft = panStart.left - (evt.clientX - panStart.x);
-        wrap.scrollTop = panStart.top - (evt.clientY - panStart.y);
+        fabricCanvas.relativePan(new fabric.Point(evt.clientX - panLast.x, evt.clientY - panLast.y));
+        panLast = { x: evt.clientX, y: evt.clientY };
+        syncTokenLayerTransform();
         return;
       }
       if (tool === 'apagar') {
@@ -817,160 +948,106 @@
         if (apagando) apagarNoPonto(relPoint(evt));
         return;
       }
-      if (tool === 'selecionar') {
-        const p = relPoint(evt);
-        if (arrastandoSelecao) {
-          const dx = p.x - arrastarOrigem.x, dy = p.y - arrastarOrigem.y;
-          selecionados.forEach(function (id) {
-            const d = desenhos.find(function (x) { return x.id === id; });
-            const orig = pontosOriginaisSelecao[id];
-            if (d && orig) d.pontos = orig.map(function (pt) { return { x: pt.x + dx, y: pt.y + dy }; });
-          });
-          redrawCanvas();
-        } else if (retanguloSelecao) {
-          retanguloSelecao.x1 = p.x;
-          retanguloSelecao.y1 = p.y;
-          redrawCanvas();
-        }
-        return;
-      }
-      if (!desenhando) return;
+      if (tool === 'selecionar') return; // Fabric cuida do arraste/laço
+      if (!desenhando || !previewObj) return;
       const p = relPoint(evt);
       if (tool === 'traco') {
         pontosAtuais.push(p);
-        previewEl = { tipo: 'traco', pontos: pontosAtuais, cor: corAtual, espessura: espessuraAtual };
+        previewObj.desenho.pontos = pontosAtuais;
       } else {
-        previewEl = { tipo: tool, pontos: [pontosAtuais[0], p], cor: corAtual, espessura: espessuraAtual };
+        previewObj.desenho.pontos = [pontosAtuais[0], p];
       }
-      redrawCanvas();
+      previewObj.atualizarGeometria();
+      fabricCanvas.requestRenderAll();
     }
 
-    function onPointerUp() {
+    function onCanvasMouseUp() {
       if (tool === 'mover') { panning = false; return; }
       if (tool === 'apagar') { apagando = false; return; }
-      if (tool === 'selecionar') {
-        if (arrastandoSelecao) {
-          arrastandoSelecao = false;
-          selecionados.forEach(function (id) {
-            const d = desenhos.find(function (x) { return x.id === id; });
-            if (d) {
-              TT_SALA.updateDrawing(sala.id, id, d.pontos);
-              TT_SALA.broadcastDrawUpdate(channel, { id: id, pontos: d.pontos });
-            }
-          });
-        } else if (retanguloSelecao) {
-          const rx0 = Math.min(retanguloSelecao.x0, retanguloSelecao.x1);
-          const rx1 = Math.max(retanguloSelecao.x0, retanguloSelecao.x1);
-          const ry0 = Math.min(retanguloSelecao.y0, retanguloSelecao.y1);
-          const ry1 = Math.max(retanguloSelecao.y0, retanguloSelecao.y1);
-          // Ignora arrastos quase nulos (clique parado) — já foi tratado
-          // como "desmarcar tudo" no pointerdown.
-          if (rx1 - rx0 > 0.003 || ry1 - ry0 > 0.003) {
-            const ret = { x0: rx0, y0: ry0, x1: rx1, y1: ry1 };
-            const cnv = canvasEl();
-            selecionados = desenhos.filter(function (d) { return retangulosSeSobrepoe(bboxDoDesenho(d, cnv.width, cnv.height), ret); }).map(function (d) { return d.id; });
-          }
-          retanguloSelecao = null;
-          redrawCanvas();
-        }
-        return;
-      }
+      if (tool === 'selecionar') return; // persistência acontece em onSelecaoModificada
       if (!desenhando) return;
       desenhando = false;
-      const finalEl = previewEl;
-      previewEl = null;
-      if (!finalEl) return;
-      // Desenho otimista: entra no array local (única fonte usada por
-      // redrawCanvas) na hora, antes de qualquer chamada de rede — assim o
-      // traço nunca depende da nuvem pra continuar visível na tela de quem
-      // desenhou, mesmo se a gravação remota for lenta ou falhar.
-      finalEl.id = TT_SALA.newDrawId();
-      desenhos.push(finalEl);
-      redrawCanvas();
-      TT_SALA.addDrawing(sala.id, finalEl).then(function (res) {
+      const obj = previewObj;
+      previewObj = null;
+      if (!obj) return;
+      // Desenho otimista: entra no Map/canvas na hora, antes de qualquer
+      // chamada de rede — assim o traço nunca depende da nuvem pra
+      // continuar visível pra quem desenhou, mesmo se a gravação remota for
+      // lenta ou falhar.
+      const finalDesenho = obj.desenho;
+      finalDesenho.id = TT_SALA.newDrawId();
+      obj.selectable = tool === 'selecionar';
+      obj.evented = tool === 'selecionar';
+      fabricObjById.set(finalDesenho.id, obj);
+      desenhos.push(finalDesenho);
+      fabricCanvas.requestRenderAll();
+      TT_SALA.addDrawing(sala.id, finalDesenho).then(function (res) {
         if (!res.ok) { console.error('Desenho não sincronizou com a nuvem (ficou salvo só neste navegador por enquanto):', res); return; }
         TT_SALA.broadcastDrawAdd(channel, res.desenho);
+      });
+    }
+
+    // Fim de um arraste de seleção (1 objeto ou um grupo/ActiveSelection).
+    // Como toda MesaShape trava rotação/redimensionamento (só translada),
+    // opt.transform.original guarda a posição de ANTES do arraste — a
+    // diferença pro left/top de AGORA é exatamente o quanto tudo se moveu,
+    // igual pro grupo inteiro. Converte esse delta (em pixels do mundo) pra
+    // fração e aplica em cada desenho selecionado, persistindo/transmitindo
+    // cada um (mesmo comportamento por-forma de antes).
+    function onSelecaoModificada(opt) {
+      const alvo = opt.target;
+      if (!alvo || !opt.transform) return;
+      const dxPx = alvo.left - opt.transform.original.left;
+      const dyPx = alvo.top - opt.transform.original.top;
+      if (!dxPx && !dyPx) return;
+      const dxFrac = dxPx / WORLD_W, dyFrac = dyPx / WORLD_H;
+      const objs = alvo.type === 'activeSelection' ? alvo.getObjects() : [alvo];
+      objs.forEach(function (o) {
+        if (!o.desenho) return;
+        const d = o.desenho;
+        d.pontos = d.pontos.map(function (pt) { return { x: pt.x + dxFrac, y: pt.y + dyFrac }; });
+        o.atualizarGeometria();
+        TT_SALA.updateDrawing(sala.id, d.id, d.pontos);
+        TT_SALA.broadcastDrawUpdate(channel, { id: d.id, pontos: d.pontos });
       });
     }
 
     function doClearAll() {
       if (!confirm('Apagar tudo que está desenhado nesta sala?')) return;
       desenhos = [];
-      redrawCanvas();
+      fabricObjById.forEach(function (obj) { fabricCanvas.remove(obj); });
+      fabricObjById.clear();
+      fabricCanvas.requestRenderAll();
       TT_SALA.clearDrawings(sala.id);
       TT_SALA.broadcastDrawClear(channel);
     }
 
-    function redrawCanvas() {
-      const c = canvasEl();
-      if (!c) return;
-      const ctx = c.getContext('2d');
-      ctx.clearRect(0, 0, c.width, c.height);
-      desenhos.forEach(function (d) { drawElement(ctx, d, c.width, c.height); });
-      if (previewEl) drawElement(ctx, previewEl, c.width, c.height);
-      selecionados.forEach(function (id) {
-        const sel = desenhos.find(function (d) { return d.id === id; });
-        if (sel) desenharDestaqueSelecao(ctx, sel, c.width, c.height);
-      });
-      if (retanguloSelecao) desenharRetanguloSelecao(ctx, c.width, c.height);
-    }
-
-    // Retângulo semitransparente que acompanha o arraste do laço de seleção.
-    function desenharRetanguloSelecao(ctx, w, h) {
-      const x0 = Math.min(retanguloSelecao.x0, retanguloSelecao.x1) * w;
-      const y0 = Math.min(retanguloSelecao.y0, retanguloSelecao.y1) * h;
-      const x1 = Math.max(retanguloSelecao.x0, retanguloSelecao.x1) * w;
-      const y1 = Math.max(retanguloSelecao.y0, retanguloSelecao.y1) * h;
-      ctx.save();
-      ctx.fillStyle = 'rgba(199,162,90,0.12)';
-      ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
-      ctx.strokeStyle = '#c7a25a';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 3]);
-      ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
-      ctx.restore();
-    }
-
-    // Bounding box (fração) de um desenho, pra testar sobreposição com o
-    // retângulo do laço de seleção.
+    // Bounding box (fração) de um desenho — usado pela MesaShape (geometria
+    // em pixels do objeto Fabric) e pela borracha/hit-test lógicos.
     function bboxDoDesenho(d, w, h) {
       const pts = outlinePoints(d, w, h);
       const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
       return { x0: Math.min.apply(null, xs), y0: Math.min.apply(null, ys), x1: Math.max.apply(null, xs), y1: Math.max.apply(null, ys) };
     }
-    function retangulosSeSobrepoe(a, b) {
-      return a.x0 <= b.x1 && a.x1 >= b.x0 && a.y0 <= b.y1 && a.y1 >= b.y0;
-    }
 
     // Apaga tudo que estiver selecionado (tecla Delete/Backspace, ver o
-    // listener de teclado perto do boot() no fim do arquivo).
+    // listener de teclado perto do boot() no fim do arquivo). A seleção
+    // agora é a própria seleção nativa do Fabric (1 objeto ou uma
+    // ActiveSelection de vários).
     function apagarSelecionados() {
-      const ids = selecionados.slice();
+      const ativo = fabricCanvas.getActiveObject();
+      if (!ativo) return;
+      const objs = ativo.type === 'activeSelection' ? ativo.getObjects().slice() : [ativo];
+      const ids = objs.map(function (o) { return o.desenho && o.desenho.id; }).filter(Boolean);
       if (!ids.length) return;
+      fabricCanvas.discardActiveObject();
       desenhos = desenhos.filter(function (d) { return ids.indexOf(d.id) === -1; });
-      selecionados = [];
-      redrawCanvas();
+      ids.forEach(removeShapeFromCanvas);
+      fabricCanvas.requestRenderAll();
       ids.forEach(function (id) {
         TT_SALA.removeDrawing(sala.id, id);
         TT_SALA.broadcastDrawRemove(channel, id);
       });
-    }
-
-    // Retângulo tracejado ao redor do desenho selecionado, com uma margem
-    // (padding) pra ficar visível mesmo em traços finos.
-    function desenharDestaqueSelecao(ctx, d, w, h) {
-      const pts = outlinePoints(d, w, h).map(function (p) { return { x: p.x * w, y: p.y * h }; });
-      const xs = pts.map(function (p) { return p.x; }), ys = pts.map(function (p) { return p.y; });
-      const pad = 10;
-      const x = Math.min.apply(null, xs) - pad, y = Math.min.apply(null, ys) - pad;
-      const largura = Math.max.apply(null, xs) - Math.min.apply(null, xs) + pad * 2;
-      const altura = Math.max.apply(null, ys) - Math.min.apply(null, ys) + pad * 2;
-      ctx.save();
-      ctx.strokeStyle = '#c7a25a';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 4]);
-      ctx.strokeRect(x, y, largura, altura);
-      ctx.restore();
     }
 
     function drawElement(ctx, d, w, h) {
@@ -1074,36 +1151,6 @@
       return d.pontos;
     }
 
-    function distToSegment(p, a, b) {
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const len2 = dx * dx + dy * dy;
-      let t = len2 ? ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2 : 0;
-      t = Math.max(0, Math.min(1, t));
-      const cx = a.x + t * dx, cy = a.y + t * dy;
-      return Math.hypot(p.x - cx, p.y - cy);
-    }
-
-    // Qualquer tipo de desenho (traço/linha/retângulo/círculo) — usado pela
-    // ferramenta "Selecionar", que precisa poder pegar qualquer coisa no
-    // quadro, diferente da borracha (que trata traço/linha à parte).
-    function hitTestQualquer(p) {
-      const c = canvasEl();
-      const thresholdFrac = 10 / Math.max(c.width, c.height);
-      let best = null, bestDist = Infinity;
-      desenhos.forEach(function (d) {
-        const pts = outlinePoints(d, c.width, c.height);
-        for (let i = 0; i < pts.length - 1; i++) {
-          const dist = distToSegment(p, pts[i], pts[i + 1]);
-          if (dist < bestDist) { bestDist = dist; best = d; }
-        }
-        if (pts.length === 1) {
-          const dist = Math.hypot(p.x - pts[0].x, p.y - pts[0].y);
-          if (dist < bestDist) { bestDist = dist; best = d; }
-        }
-      });
-      return bestDist <= thresholdFrac + (best ? best.espessura / Math.max(c.width, c.height) : 0) ? best : null;
-    }
-
     // Raio da borracha em pixels de tela — um pouco maior que a espessura
     // do traço, pra ser fácil de acertar (igual no Owlbear: a borracha é
     // sempre mais "gorda" que a caneta do mesmo tamanho).
@@ -1112,12 +1159,11 @@
     function updateEraseCursor(evt) {
       const cursor = document.getElementById('erase-cursor');
       if (!cursor) return;
-      const wrap = wrapEl();
-      const rect = wrap.getBoundingClientRect();
+      const rect = wrapEl().getBoundingClientRect();
       const raio = borrachaRaioPx();
       cursor.style.width = cursor.style.height = (raio * 2) + 'px';
-      cursor.style.left = (evt.clientX - rect.left + wrap.scrollLeft) + 'px';
-      cursor.style.top = (evt.clientY - rect.top + wrap.scrollTop) + 'px';
+      cursor.style.left = (evt.clientX - rect.left) + 'px';
+      cursor.style.top = (evt.clientY - rect.top) + 'px';
       cursor.style.display = 'block';
     }
 
@@ -1216,7 +1262,9 @@
 
       if (!removidosIds.length) return;
       desenhos = mantidos;
-      redrawCanvas();
+      removidosIds.forEach(removeShapeFromCanvas);
+      adicionados.forEach(addShapeToCanvas);
+      fabricCanvas.requestRenderAll();
       removidosIds.forEach(function (id) {
         TT_SALA.removeDrawing(sala.id, id);
         TT_SALA.broadcastDrawRemove(channel, id);
@@ -1232,12 +1280,14 @@
       eraseAt(p);
     }
 
-    function handleDrawAdd(d) { desenhos.push(d); redrawCanvas(); }
-    function handleDrawRemove(id) { desenhos = desenhos.filter(function (d) { return d.id !== id; }); redrawCanvas(); }
-    function handleDrawClear() { desenhos = []; redrawCanvas(); }
+    // Handlers de tempo real — mutação direcionada no objeto Fabric
+    // correspondente, nunca mais um redesenho da cena inteira.
+    function handleDrawAdd(d) { desenhos.push(d); addShapeToCanvas(d); fabricCanvas.requestRenderAll(); }
+    function handleDrawRemove(id) { desenhos = desenhos.filter(function (d) { return d.id !== id; }); removeShapeFromCanvas(id); fabricCanvas.requestRenderAll(); }
+    function handleDrawClear() { desenhos = []; fabricObjById.forEach(function (obj) { fabricCanvas.remove(obj); }); fabricObjById.clear(); fabricCanvas.requestRenderAll(); }
     function handleDrawUpdate(payload) {
       const d = desenhos.find(function (x) { return x.id === payload.id; });
-      if (d) { d.pontos = payload.pontos; redrawCanvas(); }
+      if (d) { d.pontos = payload.pontos; updateShapeGeometry(d); fabricCanvas.requestRenderAll(); }
     }
 
     // ---------- Tokens ----------
@@ -1263,8 +1313,14 @@
         const inner = document.getElementById('board-inner');
         const tok = tokens.find(function (t) { return t.id === arrastandoToken.id; });
         if (!tok || !inner) return;
-        tok.x = arrastandoToken.origX + (evt.clientX - arrastandoToken.startX) / inner.clientWidth;
-        tok.y = arrastandoToken.origY + (evt.clientY - arrastandoToken.startY) / inner.clientHeight;
+        // A camada de tokens é ampliada por CSS (scale) durante o zoom do
+        // Fabric (ver syncTokenLayerTransform) — sem dividir pelo zoom
+        // atual, o mesmo deslocamento de mouse em pixels de tela arrastaria
+        // o token rápido demais (ou devagar demais) sempre que o zoom não
+        // for o mínimo.
+        const zoomAtual = fabricCanvas ? fabricCanvas.getZoom() : 1;
+        tok.x = arrastandoToken.origX + (evt.clientX - arrastandoToken.startX) / (inner.clientWidth * zoomAtual);
+        tok.y = arrastandoToken.origY + (evt.clientY - arrastandoToken.startY) / (inner.clientHeight * zoomAtual);
         posicionarTokenEl(tok);
       });
       layer.addEventListener('pointerup', function (evt) {
@@ -1652,7 +1708,7 @@
         if (backdrop && backdrop.classList.contains('aberto')) fecharEstatisticas();
         return;
       }
-      if (tool !== 'selecionar' || !selecionados.length) return;
+      if (tool !== 'selecionar' || !fabricCanvas || !fabricCanvas.getActiveObject()) return;
       if (evt.key !== 'Delete' && evt.key !== 'Backspace') return;
       const tag = (document.activeElement && document.activeElement.tagName) || '';
       if (tag === 'INPUT' || tag === 'TEXTAREA') return;
