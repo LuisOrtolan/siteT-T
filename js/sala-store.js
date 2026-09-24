@@ -137,7 +137,8 @@ window.TT_SALA = (function () {
     return withSession(function (client, session) {
       const row = {
         id: d.id || newDrawId(), sala_id: salaId, autor_id: session.user.id,
-        tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3
+        tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3,
+        texto: d.texto || null
       };
       return client.from('sala_desenhos').insert(row).then(function (res) {
         if (res.error) return { ok: false, reason: 'error', error: res.error };
@@ -146,9 +147,12 @@ window.TT_SALA = (function () {
     });
   }
 
-  function updateDrawing(salaId, id, pontos) {
+  // patch: objeto com os campos que mudaram, ex. {pontos} pra mover ou
+  // {texto} pra editar o conteúdo de um texto — nunca os dois de uma vez
+  // hoje, mas aceita qualquer subconjunto de colunas de sala_desenhos.
+  function updateDrawing(salaId, id, patch) {
     return withSession(function (client) {
-      return client.from('sala_desenhos').update({ pontos: pontos }).eq('sala_id', salaId).eq('id', id).then(function (res) {
+      return client.from('sala_desenhos').update(patch).eq('sala_id', salaId).eq('id', id).then(function (res) {
         return { ok: !res.error };
       });
     });
@@ -181,7 +185,8 @@ window.TT_SALA = (function () {
       const rows = lista.map(function (d) {
         return {
           id: d.id || newDrawId(), sala_id: salaId, autor_id: session.user.id,
-          tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3
+          tipo: d.tipo, pontos: d.pontos, cor: d.cor || '#c7a25a', espessura: d.espessura || 3,
+          texto: d.texto || null
         };
       });
       return client.from('sala_desenhos').insert(rows).then(function (res) {
