@@ -242,6 +242,26 @@ window.TT_SALA = (function () {
     });
   }
 
+  // Nota individual e privada de QUEM ESTÁ LOGADO (mestre ou jogador) — uma
+  // por sala por usuário (RLS de sala_anotacoes_jogador só deixa ler/gravar
+  // a própria linha). Mesmo princípio de getNotesGM/saveNotesGM: nunca
+  // passa pelo canal de broadcast, só sincroniza salvando/recarregando.
+  function getMyNotes(salaId) {
+    return withSession(function (client, session) {
+      return client.from('sala_anotacoes_jogador').select('*')
+        .eq('sala_id', salaId).eq('user_id', session.user.id).maybeSingle()
+        .then(function (res) { return (res.data && res.data.conteudo) || ''; });
+    }).then(function (r) { return r || ''; });
+  }
+
+  function saveMyNotes(salaId, conteudo) {
+    return withSession(function (client, session) {
+      return client.from('sala_anotacoes_jogador')
+        .upsert({ sala_id: salaId, user_id: session.user.id, conteudo: conteudo, updated_at: new Date().toISOString() }, { onConflict: 'sala_id,user_id' })
+        .then(function (res) { return { ok: !res.error }; });
+    });
+  }
+
   // --- Tokens (imagem de personagem/monstro) ---
 
   function uploadTokenImage(salaId, file) {
@@ -431,7 +451,7 @@ window.TT_SALA = (function () {
   return {
     newRoomCode, newDrawId, newTokenId, createRoom, joinRoom, getRoom, listMyRooms, updateGrid, deleteRoom,
     listDrawings, addDrawing, addDrawings, updateDrawing, removeDrawing, removeDrawings, clearDrawings,
-    getNotes, saveNotes, getNotesGM, saveNotesGM,
+    getNotes, saveNotes, getNotesGM, saveNotesGM, getMyNotes, saveMyNotes,
     getInitiative, saveInitiative,
     uploadTokenImage, listTokens, addToken, updateToken, removeToken,
     listMyTokens, saveMyToken, deleteMyToken,

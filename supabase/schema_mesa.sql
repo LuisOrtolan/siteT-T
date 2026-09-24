@@ -260,6 +260,37 @@ create policy "Mestre edita as próprias anotações"
   );
 
 
+-- Nota individual e privada de CADA participante (mestre ou jogador) — uma
+-- linha por (sala, usuário), igual ao princípio de sala_anotacoes_gm (RLS
+-- protege a linha inteira, então cada pessoa precisa da sua própria linha
+-- pra ter privacidade de verdade). Diferente da nota do mestre, aqui
+-- qualquer participante tem a sua — inclusive nunca é transmitida pelo
+-- canal de broadcast da sala, pelo mesmo motivo do comentário acima de
+-- sala_anotacoes_gm.
+create table if not exists public.sala_anotacoes_jogador (
+  sala_id text not null references public.salas(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  conteudo text not null default '',
+  updated_at timestamptz not null default now(),
+  primary key (sala_id, user_id)
+);
+
+alter table public.sala_anotacoes_jogador enable row level security;
+
+create policy "Participante lê só a própria nota individual"
+  on public.sala_anotacoes_jogador for select
+  using (auth.uid() = user_id);
+
+create policy "Participante cria só a própria nota individual"
+  on public.sala_anotacoes_jogador for insert
+  with check (auth.uid() = user_id);
+
+create policy "Participante edita só a própria nota individual"
+  on public.sala_anotacoes_jogador for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+
 create table if not exists public.sala_iniciativa (
   sala_id text primary key references public.salas(id) on delete cascade,
   combatentes jsonb not null default '[]'::jsonb,  -- [{id, nome, valor}]

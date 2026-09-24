@@ -250,11 +250,15 @@
     let desenhos = [];
     let rolagens = [];
     // 4 abas visíveis por todo mundo + 1 aba "gm" (só existe/carrega/aparece
-    // pro mestre — ver souGM). anotacoesGM nunca é preenchida nem exibida
-    // pra quem não é mestre; a proteção de verdade é a política de RLS de
-    // sala_anotacoes_gm no banco, isso aqui só evita mostrar a aba na UI.
+    // pro mestre — ver souGM) + 1 aba "minhas" (individual e privada de
+    // QUALQUER participante, inclusive o mestre — cada um só vê a própria).
+    // anotacoesGM/anotacoesMinhas nunca são preenchidas com o conteúdo de
+    // outra pessoa; a proteção de verdade é a política de RLS de
+    // sala_anotacoes_gm/sala_anotacoes_jogador no banco, isso aqui só evita
+    // mostrar/pedir dado que o servidor nunca devolveria mesmo.
     let anotacoes = { geral: '', equipamentos: '', tesouro: '', historia: '' };
     let anotacoesGM = '';
+    let anotacoesMinhas = '';
     let abaNotas = 'geral';
     let notesTimer = null;
     let iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
@@ -409,6 +413,7 @@
         TT_SALA.listRecentRolls(salaId, 100),
         TT_SALA.getNotes(salaId),
         TT_SALA.getNotesGM(salaId),
+        TT_SALA.getMyNotes(salaId),
         TT_SALA.getInitiative(salaId),
         TT_SALA.listTokens(salaId),
         TT_SALA.listMyTokens()
@@ -418,10 +423,11 @@
         rolagens = r[2];
         anotacoes = r[3];
         anotacoesGM = r[4];
+        anotacoesMinhas = r[5];
         abaNotas = 'geral';
-        iniciativa = r[5];
-        tokens = r[6];
-        meusTokensSalvos = r[7];
+        iniciativa = r[6];
+        tokens = r[7];
+        meusTokensSalvos = r[8];
         souGM = sala && sala.gm_id === meuUserId;
         renderRoom();
         channel = TT_SALA.connect(salaId, meuNome, {
@@ -459,6 +465,7 @@
         TT_SALA.listDrawings(salaId),
         TT_SALA.getNotes(salaId),
         TT_SALA.getNotesGM(salaId),
+        TT_SALA.getMyNotes(salaId),
         TT_SALA.getInitiative(salaId),
         TT_SALA.listTokens(salaId)
       ]).then(function (r) {
@@ -480,11 +487,12 @@
         }
         anotacoes = r[2];
         if (souGM) anotacoesGM = r[3];
+        anotacoesMinhas = r[4];
         const notesEl = document.getElementById('notes-area');
         if (notesEl && document.activeElement !== notesEl) notesEl.value = notasConteudoAtual();
-        iniciativa = r[4];
+        iniciativa = r[5];
         renderInitiative();
-        tokens = r[5];
+        tokens = r[6];
         renderTokens();
       });
     }
@@ -495,7 +503,7 @@
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = []; meusTokensSalvos = [];
       anotacoes = { geral: '', equipamentos: '', tesouro: '', historia: '' };
-      anotacoesGM = ''; abaNotas = 'geral';
+      anotacoesGM = ''; anotacoesMinhas = ''; abaNotas = 'geral';
       iniciativa = { combatentes: [], turnoId: null, rodada: 1 };
       if (fabricCanvas) { fabricCanvas.dispose(); fabricCanvas = null; }
       fabricObjById = new Map();
@@ -575,6 +583,7 @@
             '<div class="sec"><div class="sec-t">Anotações da sala</div>' +
               '<div class="notes-tabs">' +
                 NOTES_TABS.map(function (t) { return notesTabBtn(t.id, t.label); }).join('') +
+                notesTabBtn('minhas', 'Minhas') +
                 (souGM ? notesTabBtn('gm', 'GM', ' red') : '') +
               '</div>' +
               '<textarea class="notes-area" id="notes-area" oninput="onNotesInput()" placeholder="' + notasPlaceholder(abaNotas) + '">' + escapeHtml(notasConteudoAtual()) + '</textarea></div>' +
@@ -1649,13 +1658,16 @@
     // ---------- Anotações ----------
     // 4 abas (geral/equipamentos/tesouro/história) ficam numa única linha
     // da tabela sala_anotacoes (uma coluna por aba) e são visíveis e
-    // editáveis por todo mundo, sincronizadas por broadcast igual antes. A
-    // aba "gm" é outra tabela (sala_anotacoes_gm) com política de RLS que só
-    // deixa o mestre ler/escrever — e por isso nunca é enviada pelo canal de
-    // broadcast da sala (esse canal não tem controle de acesso: qualquer
-    // participante recebe tudo que é transmitido nele, RLS ou não, então
-    // transmitir o conteúdo do mestre ali vazaria pros jogadores mesmo com o
-    // banco protegido). Sincroniza só por salvar/recarregar.
+    // editáveis por todo mundo, sincronizadas por broadcast igual antes.
+    //
+    // "gm" (sala_anotacoes_gm) e "minhas" (sala_anotacoes_jogador) são
+    // privadas — RLS só deixa o dono da linha ler/escrever (o mestre numa,
+    // qualquer participante na outra, cada um só a própria) — e por isso
+    // NUNCA são enviadas pelo canal de broadcast da sala: esse canal não
+    // tem controle de acesso, qualquer participante recebe tudo que é
+    // transmitido nele, RLS ou não, então transmitir esse conteúdo ali
+    // vazaria pra outra pessoa mesmo com o banco protegido. Sincroniza só
+    // por salvar/recarregar (ver enterRoom/resincronizarEstado).
     const NOTES_TABS = [
       { id: 'geral', label: 'Geral' },
       { id: 'equipamentos', label: 'Equipamentos' },
@@ -1665,9 +1677,15 @@
     function notesTabBtn(aba, label, extraClass) {
       return '<button class="btn' + (extraClass || '') + (abaNotas === aba ? ' on' : '') + '" data-aba="' + aba + '" onclick="trocarAbaNotas(\'' + aba + '\')">' + label + '</button>';
     }
-    function notasConteudoAtual() { return abaNotas === 'gm' ? anotacoesGM : (anotacoes[abaNotas] || ''); }
+    function notasConteudoAtual() {
+      if (abaNotas === 'gm') return anotacoesGM;
+      if (abaNotas === 'minhas') return anotacoesMinhas;
+      return anotacoes[abaNotas] || '';
+    }
     function notasPlaceholder(aba) {
-      return aba === 'gm' ? 'Anotações só suas — não aparecem pros jogadores...' : 'Anotações da aventura, visíveis e editáveis por todo mundo...';
+      if (aba === 'gm') return 'Anotações só suas — não aparecem pros jogadores...';
+      if (aba === 'minhas') return 'Anotações só suas — ninguém mais vê, nem o mestre...';
+      return 'Anotações da aventura, visíveis e editáveis por todo mundo...';
     }
     function trocarAbaNotas(aba) {
       abaNotas = aba;
@@ -1680,11 +1698,15 @@
     function onNotesInput() {
       const aba = abaNotas;
       const val = document.getElementById('notes-area').value;
-      if (aba === 'gm') anotacoesGM = val; else anotacoes[aba] = val;
+      if (aba === 'gm') anotacoesGM = val;
+      else if (aba === 'minhas') anotacoesMinhas = val;
+      else anotacoes[aba] = val;
       clearTimeout(notesTimer);
       notesTimer = setTimeout(function () {
         if (aba === 'gm') {
           TT_SALA.saveNotesGM(sala.id, val);
+        } else if (aba === 'minhas') {
+          TT_SALA.saveMyNotes(sala.id, val);
         } else {
           TT_SALA.saveNotes(sala.id, aba, val);
           TT_SALA.broadcastNotes(channel, aba, val);
