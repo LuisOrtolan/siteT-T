@@ -61,15 +61,22 @@
   let audioCtx = null;
   function ensureAudio() {
     if (!els.toggleSound.checked) return null;
-    if (!audioCtx) {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return null;
-      audioCtx = new Ctx();
+    try {
+      if (!audioCtx) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return null;
+        audioCtx = new Ctx();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    } catch (err) {
+      // Alguns navegadores/extensões de privacidade bloqueiam ou lançam erro
+      // ao criar um AudioContext. Som é decoração, não pode derrubar o resto
+      // do clique (ex.: acender a vela e destravar o botão de rolar).
+      return null;
     }
-    if (audioCtx.state === "suspended") {
-      audioCtx.resume().catch(() => {});
-    }
-    return audioCtx;
   }
 
   function ping(type = "tick") {

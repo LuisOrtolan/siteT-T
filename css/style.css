@@ -867,6 +867,14 @@ body {
   z-index: 10;
 }
 
+/* [hidden] tem a mesma especificidade de .board-overlay — sem isso, o
+   atributo hidden não vence e o overlay some visualmente (opacidade 0)
+   mas continua no layout, bloqueando cliques em tudo que está atrás dele
+   (inclusive os botões dos cards) pro resto da sessão. */
+.board-overlay[hidden] {
+  display: none;
+}
+
 .board-overlay.is-show {
   animation: overlayIn 0.25s ease-out both;
 }
@@ -1136,5 +1144,12 @@ body {
   .funil-board::before,
   .funil-card {
     animation: none !important;
+  }
+  /* .funil-card parte de opacity:0/translateY(6px) e só chega ao estado
+     final através da animação desligada acima — sem fixar o estado final
+     aqui, o card fica invisível pra sempre pra quem usa essa preferência. */
+  .funil-card {
+    opacity: 1;
+    transform: none;
   }
 }
