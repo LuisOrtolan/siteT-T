@@ -123,6 +123,14 @@
       transform: translate(-50%, -50%);
     }
 
+    .texto-editor-mapa {
+      position: absolute; z-index: 6; transform: translate(-50%, -50%);
+      min-width: 60px; max-width: 60vw; background: #14161cdd;
+      border: 1px dashed #c7a25a; border-radius: 4px; padding: 3px 6px;
+      font-family: system-ui, -apple-system, sans-serif; line-height: 1.25;
+      resize: none; overflow: hidden; outline: none;
+    }
+
     .token-layer { position: absolute; inset: 0; pointer-events: none; z-index: 4 }
     .token {
       position: absolute; pointer-events: auto; cursor: grab; text-align: center;
@@ -273,6 +281,7 @@
     let pontosAtuais = [];
     let desenhoEmAndamento = null;  // dados do traço sendo desenhado agora (prévia na camada de cima, ver renderizarPrevia)
     let apagarPendente = { removidos: [], adicionados: [] }; // ver eraseAt/flushApagar
+    let editorTextoAtual = null;    // caixinha de texto flutuante aberta agora (criar ou editar), ver abrirEditorDeTexto
     let tokens = [];
     let arrastandoToken = null;
     let meusTokensSalvos = [];
@@ -499,6 +508,7 @@
 
     function leaveRoom() {
       flushApagar(); // não deixa um gesto de borracha pendente se perder ao sair
+      fecharEditorDeTexto(true); // idem pra um texto ainda sendo digitado
       if (channel) TT_SALA.leave(channel);
       channel = null;
       sala = null; desenhos = []; rolagens = []; participantes = {}; tokens = []; meusTokensSalvos = [];
@@ -535,9 +545,10 @@
               toolBtn('selecionar', '&#8598; Selecionar') +
               toolBtn('traco', '&#9998; Caneta') + toolBtn('linha', '&#8211; Linha') +
               formasDropdownHtml() +
+              toolBtn('texto', '<b>T</b> Texto') +
               toolBtn('apagar', '&#10060; Apagar') + toolBtn('mover', '&#9995; Mover mapa') +
               '<input type="color" id="tb-cor" value="' + corAtual + '" onchange="corAtual=this.value">' +
-              '<span class="lbl" id="thickness-label">' + (tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura') + '</span>' +
+              '<span class="lbl" id="thickness-label">' + rotuloEspessura() + '</span>' +
               '<input type="range" min="1" max="16" value="' + espessuraAtual + '" oninput="espessuraAtual=parseInt(this.value)">' +
               '<span class="lbl">Zoom</span>' +
               '<button class="btn" onclick="setZoom(zoom-0.25)">−</button>' +
@@ -651,6 +662,11 @@
     // Só troca a ferramenta ativa — não recria o canvas nem o resto do DOM
     // (recriar apagava traços que ainda não tinham sido confirmados, ver
     // onPointerUp).
+    function rotuloEspessura() {
+      if (tool === 'apagar') return 'Tamanho da borracha';
+      if (tool === 'texto') return 'Tamanho do texto';
+      return 'Espessura';
+    }
     function setTool(name) {
       tool = name;
       document.querySelectorAll('.toolbar [data-tool]').forEach(function (b) {
@@ -661,11 +677,15 @@
       if (SHAPE_TOOLS.indexOf(name) !== -1) fecharFormasMenu();
       // Se a pessoa trocar de ferramenta no meio de um gesto de borracha
       // (ex: soltar o mouse fora do quadro), o lote pendente ainda tem que
-      // chegar nos outros jogadores.
+      // chegar nos outros jogadores. O mesmo vale pra uma caixinha de texto
+      // ainda aberta (o blur do próprio campo já cuidaria disso na maioria
+      // dos casos, mas aqui garante mesmo se o clique no botão não tirar o
+      // foco a tempo).
       flushApagar();
+      fecharEditorDeTexto(true);
       sincronizarModoFabric();
       const lbl = document.getElementById('thickness-label');
-      if (lbl) lbl.textContent = tool === 'apagar' ? 'Tamanho da borracha' : 'Espessura';
+      if (lbl) lbl.textContent = rotuloEspessura();
       const cursor = document.getElementById('erase-cursor');
       if (cursor && tool !== 'apagar') cursor.style.display = 'none';
       if (tool !== 'selecionar' && fabricCanvas) { fabricCanvas.discardActiveObject(); fabricCanvas.requestRenderAll(); }
@@ -690,6 +710,10 @@
         fabricCanvas.selection = false;
         fabricCanvas.skipTargetFind = true;
         fabricCanvas.defaultCursor = 'not-allowed';
+      } else if (tool === 'texto') {
+        fabricCanvas.selection = false;
+        fabricCanvas.skipTargetFind = true;
+        fabricCanvas.defaultCursor = 'text';
       } else {
         fabricCanvas.selection = false;
         fabricCanvas.skipTargetFind = true;
@@ -813,7 +837,15 @@
         this.borderColor = '#c7a25a';
         this.borderDashArray = [6, 4];
         this.padding = 10;
-        this.perPixelTargetFind = true;
+        // Texto é a exceção: perPixelTargetFind checa a opacidade real do
+        // pixel clicado, o que funciona bem pro CONTORNO fino de linhas/
+        // formas (clicar no miolo vazio de um círculo não seleciona ele,
+        // de propósito), mas texto tem tinta esparsa — o meio da caixa
+        // costuma cair no espaço entre letras ou entre linhas, tornando o
+        // clique/duplo-clique impossível de acertar por acidente. Texto
+        // usa a caixa envolvente inteira como área clicável, como
+        // qualquer rótulo/botão normal.
+        this.perPixelTargetFind = d.tipo !== 'texto';
         this.originX = 'center';
         this.originY = 'center';
         this.atualizarGeometria();
@@ -841,7 +873,11 @@
     });
 
     // Espelha um desenho (novo ou vindo de outro jogador) num objeto Fabric.
+    // garantirMedidaTexto ANTES de criar o MesaShape: o construtor já chama
+    // atualizarGeometria() sozinho, que precisa de largura/altura prontas
+    // pra desenhos tipo 'texto' (ver outlinePoints/bboxDoDesenho).
     function addShapeToCanvas(d) {
+      garantirMedidaTexto(d);
       const obj = new MesaShape(d);
       obj.selectable = tool === 'selecionar';
       obj.evented = tool === 'selecionar';
@@ -853,7 +889,13 @@
       const obj = fabricObjById.get(id);
       if (obj) { fabricCanvas.remove(obj); fabricObjById.delete(id); }
     }
+    // Ao contrário de addShapeToCanvas/garantirMedidaTexto (que só medem se
+    // ainda não tiver largura/altura), aqui SEMPRE remede quando é texto —
+    // esta função é chamada depois de qualquer mudança de geometria OU de
+    // conteúdo (edição de texto), então o texto pode ter mudado desde a
+    // última medição.
     function updateShapeGeometry(d) {
+      if (d.tipo === 'texto') { const m = medirTexto(d.texto, d.espessura); d.largura = m.largura; d.altura = m.altura; }
       const obj = fabricObjById.get(d.id);
       if (obj) { obj.desenho = d; obj.atualizarGeometria(); }
     }
@@ -907,6 +949,7 @@
       fabricCanvas.on('mouse:move', onCanvasMouseMove);
       fabricCanvas.on('mouse:up', onCanvasMouseUp);
       fabricCanvas.on('mouse:wheel', onCanvasMouseWheel);
+      fabricCanvas.on('mouse:dblclick', onCanvasDoubleClick);
       fabricCanvas.on('object:modified', onSelecaoModificada);
       // Cada MesaShape trava rotação/redimensionamento individualmente
       // (hasControls:false), mas a ActiveSelection que embrulha uma seleção
@@ -1024,6 +1067,17 @@
         apagarNoPonto(relPoint(evt));
         return;
       }
+      if (tool === 'texto') {
+        // preventDefault É ESSENCIAL aqui: sem isso, a ação padrão do
+        // navegador pro mousedown (mover o foco pro alvo focável do
+        // clique — o próprio canvas do Fabric, que tem tabindex pra
+        // aceitar teclado) rouba o foco de volta da caixinha de texto
+        // logo depois dela ser criada e focada, disparando o blur e
+        // fechando o editor no mesmo instante em que abre.
+        evt.preventDefault();
+        abrirEditorDeTexto(relPoint(evt), evt.clientX, evt.clientY, null);
+        return;
+      }
       // "Selecionar": laço/seleção/arraste ficam por conta do próprio
       // Fabric (canvas.selection=true) — só reagimos ao resultado em
       // onSelecaoModificada().
@@ -1119,6 +1173,143 @@
       });
     }
 
+    // ---------- Texto no mapa ----------
+    // Texto é uma forma como outra qualquer em `desenhos` (tipo:'texto'),
+    // reaproveitando 100% da infraestrutura já existente (MesaShape,
+    // seleção/arraste/Delete, sincronização, resync) — a única parte nova é
+    // COMO o conteúdo é digitado: uma caixinha de HTML flutuante sobre o
+    // quadro (não um objeto do canvas), porque digitar precisa de um campo
+    // de verdade (cursor, seleção de texto, IME, etc.) que um <canvas> não
+    // dá de graça. O texto só vira objeto do quadro quando confirmado —
+    // nenhum redesenho da cena acontece enquanto a pessoa está digitando.
+    //
+    // largura/altura (pixels do MUNDO) são medidas localmente por cada
+    // cliente a partir de texto+espessura (ver medirTexto/garantirMedida) e
+    // NUNCA persistidas nem transmitidas — só o texto em si viaja pela rede.
+    // Isso evita depender de métricas de fonte idênticas entre navegadores
+    // (o pior caso é uma caixa de seleção alguns pixels diferente entre
+    // clientes, nunca uma dessincronia de conteúdo).
+    function onCanvasDoubleClick(opt) {
+      const alvo = opt.target;
+      if (tool !== 'selecionar' || !alvo || !alvo.desenho || alvo.desenho.tipo !== 'texto') return;
+      if (opt.e && opt.e.preventDefault) opt.e.preventDefault(); // mesmo motivo do mousedown em onCanvasMouseDown: sem isso o foco volta pro canvas e fecha o editor na hora
+      const d = alvo.desenho;
+      const vpt = fabricCanvas.viewportTransform;
+      const sx = d.pontos[0].x * WORLD_W * vpt[0] + vpt[4];
+      const sy = d.pontos[0].y * WORLD_H * vpt[3] + vpt[5];
+      const rect = wrapEl().getBoundingClientRect();
+      fabricCanvas.discardActiveObject();
+      fabricCanvas.requestRenderAll();
+      abrirEditorDeTexto(d.pontos[0], rect.left + sx, rect.top + sy, d.id);
+    }
+
+    // Mede o texto com o MESMO font-string usado em drawElement (ver mais
+    // abaixo) — um <canvas> de rascunho só pra medir, criado uma vez e
+    // reaproveitado, então isto nunca toca no DOM visível nem no quadro.
+    let ctxMedidorTexto = null;
+    function fonteTexto(tamanho) { return tamanho + 'px system-ui, -apple-system, sans-serif'; }
+    function medirTexto(texto, tamanhoFonte) {
+      if (!ctxMedidorTexto) ctxMedidorTexto = document.createElement('canvas').getContext('2d');
+      ctxMedidorTexto.font = fonteTexto(tamanhoFonte);
+      const linhas = (texto || '').split('\n');
+      let largura = 0;
+      linhas.forEach(function (l) { largura = Math.max(largura, ctxMedidorTexto.measureText(l).width); });
+      return { largura: Math.max(largura, 4), altura: Math.max(linhas.length * tamanhoFonte * 1.25, tamanhoFonte) };
+    }
+    // Garante que um desenho tipo 'texto' tem largura/altura calculadas —
+    // chamado sempre que uma forma entra no canvas (addShapeToCanvas), pra
+    // cobrir texto criado localmente, recebido por broadcast, ou carregado
+    // do banco (todos passam por addShapeToCanvas).
+    function garantirMedidaTexto(d) {
+      if (d.tipo !== 'texto' || d.largura !== undefined) return;
+      const m = medirTexto(d.texto, d.espessura);
+      d.largura = m.largura; d.altura = m.altura;
+    }
+
+    // pFrac: ponto (fração do mundo) onde o texto fica ancorado (o CENTRO
+    // da caixa, igual ao referencial de todo MesaShape). clientX/clientY:
+    // onde a caixinha de digitação aparece na tela. idExistente: null pra
+    // criar um texto novo, ou o id de um texto já existente pra editá-lo
+    // (aberto via duplo-clique, ver onCanvasDoubleClick).
+    function abrirEditorDeTexto(pFrac, clientX, clientY, idExistente) {
+      fecharEditorDeTexto(true); // por segurança, nunca deveria haver 2 abertos ao mesmo tempo
+      const existente = idExistente ? desenhos.find(function (d) { return d.id === idExistente; }) : null;
+      const zoomAtual = fabricCanvas ? fabricCanvas.getZoom() : 1;
+      const tamanhoFonte = existente ? existente.espessura : espessuraAtual * 8;
+      const rect = wrapEl().getBoundingClientRect();
+      const el = document.createElement('textarea');
+      el.className = 'texto-editor-mapa';
+      el.value = existente ? existente.texto : '';
+      el.rows = 1;
+      el.style.left = (clientX - rect.left) + 'px';
+      el.style.top = (clientY - rect.top) + 'px';
+      el.style.color = existente ? existente.cor : corAtual;
+      el.style.fontSize = Math.max(11, tamanhoFonte * zoomAtual) + 'px';
+      wrapEl().appendChild(el);
+      // Sem isso, texto de mais de 1 linha (Shift+Enter) ficaria cortado —
+      // overflow:hidden esconde o que passa da altura inicial de 1 linha.
+      // Ajusta a altura pro conteúdo a cada tecla, incluindo agora, pro
+      // texto pré-existente (edição) já abrir do tamanho certo.
+      function ajustarAltura() { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+      el.addEventListener('input', ajustarAltura);
+      ajustarAltura();
+      el.focus();
+      if (existente) el.select();
+      editorTextoAtual = { idExistente: idExistente, pFrac: pFrac };
+      el.addEventListener('keydown', function (evt) {
+        if (evt.key === 'Enter' && !evt.shiftKey) { evt.preventDefault(); evt.stopPropagation(); fecharEditorDeTexto(true); }
+        else if (evt.key === 'Escape') { evt.preventDefault(); evt.stopPropagation(); fecharEditorDeTexto(false); }
+      });
+      el.addEventListener('blur', function () { fecharEditorDeTexto(true); });
+      editorTextoAtual.el = el;
+    }
+
+    // salvar=false descarta sem persistir nada (Escape). salvar=true (Enter
+    // ou perder o foco) grava: cria/atualiza/apaga conforme o conteúdo.
+    function fecharEditorDeTexto(salvar) {
+      const ed = editorTextoAtual;
+      if (!ed) return;
+      editorTextoAtual = null; // primeiro, pra o próprio blur/remove() não reentrar
+      const valor = ed.el.value;
+      ed.el.remove();
+      if (!salvar) return;
+      const texto = valor.trim();
+
+      if (ed.idExistente) {
+        const d = desenhos.find(function (x) { return x.id === ed.idExistente; });
+        if (!d) return;
+        if (!texto) { removerDesenhoPorId(d.id); return; } // apagar todo o texto = remover a nota
+        if (texto === d.texto) return; // nada mudou, não gasta rede à toa
+        d.texto = texto;
+        updateShapeGeometry(d); // recalcula largura/altura (garantirMedidaTexto não recalcula se já existia)
+        fabricCanvas.requestRenderAll();
+        TT_SALA.updateDrawing(sala.id, d.id, { texto: texto });
+        TT_SALA.broadcastDrawUpdate(channel, { id: d.id, texto: texto });
+        return;
+      }
+
+      if (!texto) return; // nada digitado num texto novo: cancela, não cria nada
+      const novo = { id: TT_SALA.newDrawId(), tipo: 'texto', pontos: [ed.pFrac], cor: corAtual, espessura: espessuraAtual * 8, texto: texto };
+      addShapeToCanvas(novo);
+      desenhos.push(novo);
+      fabricCanvas.requestRenderAll();
+      TT_SALA.addDrawing(sala.id, novo).then(function (res) {
+        if (!res.ok) { console.error('Texto não sincronizou com a nuvem (ficou salvo só neste navegador por enquanto):', res); return; }
+        TT_SALA.broadcastDrawAdd(channel, res.desenho);
+      });
+    }
+
+    // Remove um desenho qualquer (id) do estado local + canvas + banco +
+    // broadcast — extraído de apagarSelecionados() pra reaproveitar aqui
+    // (apagar um texto editando-o até ficar vazio) sem duplicar os 4 passos.
+    function removerDesenhoPorId(id) {
+      desenhos = desenhos.filter(function (d) { return d.id !== id; });
+      removeShapeFromCanvas(id);
+      fabricCanvas.requestRenderAll();
+      TT_SALA.removeDrawing(sala.id, id);
+      TT_SALA.broadcastDrawRemove(channel, id);
+    }
+
     // Fim de um arraste de seleção (1 objeto ou um grupo/ActiveSelection).
     // Como toda MesaShape trava rotação/redimensionamento (só translada),
     // opt.transform.original guarda a posição de ANTES do arraste — a
@@ -1139,7 +1330,7 @@
         const d = o.desenho;
         d.pontos = d.pontos.map(function (pt) { return { x: pt.x + dxFrac, y: pt.y + dyFrac }; });
         o.atualizarGeometria();
-        TT_SALA.updateDrawing(sala.id, d.id, d.pontos);
+        TT_SALA.updateDrawing(sala.id, d.id, { pontos: d.pontos });
         TT_SALA.broadcastDrawUpdate(channel, { id: d.id, pontos: d.pontos });
       });
     }
@@ -1242,6 +1433,17 @@
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.closePath(); ctx.stroke();
+      } else if (d.tipo === 'texto') {
+        // pts[0] é o CENTRO da caixa (mesmo referencial de toda MesaShape,
+        // ver atualizarGeometria) — desenha a partir do canto superior
+        // esquerdo, então recua metade da largura/altura medidas.
+        ctx.font = fonteTexto(d.espessura);
+        ctx.textBaseline = 'top';
+        const x0 = pts[0].x - (d.largura || 0) / 2;
+        const y0 = pts[0].y - (d.altura || 0) / 2;
+        (d.texto || '').split('\n').forEach(function (linha, i) {
+          ctx.fillText(linha, x0, y0 + i * d.espessura * 1.25);
+        });
       }
     }
 
@@ -1292,6 +1494,19 @@
         return [{ x: x0 + inset, y: y0 }, { x: x1 - inset, y: y0 }, { x: x1, y: y1 }, { x: x0, y: y1 }, { x: x0 + inset, y: y0 }];
       }
       if (POLIGONO_LADOS[d.tipo]) return pontosPoligonoRegular(d.pontos[0], d.pontos[1], POLIGONO_LADOS[d.tipo], w, h);
+      if (d.tipo === 'texto') {
+        // Caixa envolvente a partir do centro (d.pontos[0]) + largura/altura
+        // medidas em pixels do MUNDO (ver medirTexto) — convertidas aqui
+        // pra fração dividindo por w/h, igual toda outra conta deste
+        // arquivo (frações 0..1 do mundo, nunca pixels crus).
+        const cx = d.pontos[0].x, cy = d.pontos[0].y;
+        const meiaLarguraFrac = (d.largura || 0) / 2 / w, meiaAlturaFrac = (d.altura || 0) / 2 / h;
+        return [
+          { x: cx - meiaLarguraFrac, y: cy - meiaAlturaFrac }, { x: cx + meiaLarguraFrac, y: cy - meiaAlturaFrac },
+          { x: cx + meiaLarguraFrac, y: cy + meiaAlturaFrac }, { x: cx - meiaLarguraFrac, y: cy + meiaAlturaFrac },
+          { x: cx - meiaLarguraFrac, y: cy - meiaAlturaFrac }
+        ];
+      }
       return d.pontos;
     }
 
@@ -1404,6 +1619,12 @@
           mantidos.push(d);
           return;
         }
+        // Texto é atômico pro apagador: nunca fragmenta em pedaços (isso
+        // viraria um "traco" com o contorno da caixa, destruindo o
+        // conteúdo de verdade). Se a borracha chegou perto o bastante pra
+        // passar no filtro de caixa envolvente acima, remove o texto
+        // inteiro; do contrário ele já saiu ileso no `return` de cima.
+        if (d.tipo === 'texto') { removidosIds.push(d.id); return; }
         const pts = densificarParaApagar(d, WORLD_W, WORLD_H);
         // Distância em pixels de verdade (escalando x e y pelas dimensões
         // reais do mundo antes do hypot) — o quadro quase nunca é
@@ -1472,7 +1693,11 @@
     function handleDrawClear() { desenhos = []; fabricObjById.forEach(function (obj) { fabricCanvas.remove(obj); }); fabricObjById.clear(); fabricCanvas.requestRenderAll(); }
     function handleDrawUpdate(payload) {
       const d = desenhos.find(function (x) { return x.id === payload.id; });
-      if (d) { d.pontos = payload.pontos; updateShapeGeometry(d); fabricCanvas.requestRenderAll(); }
+      if (!d) return;
+      if (payload.pontos) d.pontos = payload.pontos;
+      if (payload.texto !== undefined) d.texto = payload.texto;
+      updateShapeGeometry(d);
+      fabricCanvas.requestRenderAll();
     }
     // Resultado inteiro de um gesto de borracha de outro jogador, numa
     // mensagem só (ver flushApagar).
